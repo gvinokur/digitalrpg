@@ -49,7 +49,7 @@ public class RegistrationController {
 	public ModelAndView registerUser(@Valid @ModelAttribute("user") UserRegistrationVO user, BindingResult bindingResult, HttpServletRequest request) {
 		String remoteAddr = request.getRemoteAddr();
 		ReCaptchaImpl reCaptcha = new ReCaptchaImpl();
-		reCaptcha.setPrivateKey("6LcnSOgSAAAAALOAHmpxI-AWVJ5U8UQgPXyrn3FT");
+		reCaptcha.setPrivateKey("6LfGTOgSAAAAABbQhBkr36lp24ucA_NVEIJQKBDq");
 		ReCaptchaResponse answer = reCaptcha.checkAnswer(remoteAddr, user.getRecaptcha_challenge_field(), user.getRecaptcha_response_field());
 		if(!answer.isValid()) {
 			bindingResult.rejectValue("recaptcha_response_field", "captcha.code.invalid", "Invalid captcha code");

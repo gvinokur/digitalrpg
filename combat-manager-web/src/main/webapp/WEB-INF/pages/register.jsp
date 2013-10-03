@@ -71,7 +71,7 @@
 		src="http://www.google.com/recaptcha/api/js/recaptcha_ajax.js">&#160;</script>
 	<script>
 	$(document).ready(function() {
-		Recaptcha.create("6LcnSOgSAAAAANJHc2G4CI7VggPV3APEpi442Flb",
+		Recaptcha.create("6LfGTOgSAAAAABuwtdtoRSYDcRv-yxLse_KAbCw3",
 		    "reCaptcha",
 		    {
 		      theme: "blackglass",
