@@ -59,12 +59,11 @@ public class RegistrationController {
 		}
 		
 		String contextPath = "http://" + request.getServerName() + 
-				(request.getLocalPort() != 80 ? ":" + request.getLocalPort() : "" ) + 
 				(request.getContextPath()!=null && !request.getContextPath().isEmpty()? "/" + request.getContextPath(): "");
 		registrationService.registerUser(user.getUsername(), user.getEmail(), user.getPassword(), contextPath);
 		//TODO: Send activationToken by email.
 		
-		return new ModelAndView("redirect:login");
+		return new ModelAndView("redirect:/login");
 	}
 	
 	@RequestMapping(value= "/confirm", method = RequestMethod.GET)
