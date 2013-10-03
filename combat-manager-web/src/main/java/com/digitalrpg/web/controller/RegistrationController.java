@@ -69,7 +69,7 @@ public class RegistrationController {
 	@RequestMapping(value= "/confirm", method = RequestMethod.GET)
 	public String activateUser(@RequestParam String username, @RequestParam String activationToken) {
 		registrationService.activate(username, activationToken);
-		return "redirect:login";
+		return "redirect:/login";
 	}
 	
 	@RequestMapping(value= "/check-username/{username}", method = RequestMethod.GET)
