@@ -1,0 +1,13 @@
+<html>
+<body>
+<h3>Hi ${username}, welcome to Digital RPG</h3>
+
+<div>
+   Your have recently registered with the email <a href="mailto:${email}">${email}</a>.
+</div>
+<div>
+	To Activate your account please follow this <a href="${contextPath}/register/confirm?username=${username}&activationToken=${activationToken}">link</a>.
+</div>
+</body>
+
+</html>
