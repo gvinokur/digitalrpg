@@ -37,7 +37,7 @@ public class RegistrationService {
 	 * @return
 	 */
 	public void registerUser(String user, String email, String password, String contextPath) {
-		String activationToken = userDao.createUser(user, password);
+		String activationToken = userDao.createUser(user, password, email);
 		sendMail(user, email, activationToken, contextPath);
 	}
 

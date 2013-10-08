@@ -15,7 +15,7 @@ public class UserDaoImpl implements UserDao {
 	private SessionFactory sessionFactory;
 	
 	@Transactional(isolation = Isolation.SERIALIZABLE)
-	public String createUser(String name, String password) {
+	public String createUser(String name, String password, String email) {
 		String sha1HexPassword = DigestUtils.sha1Hex(password);
 		String activationToken = DigestUtils.sha1Hex(name + sha1HexPassword);
 		User user = new User();
@@ -64,7 +64,11 @@ public class UserDaoImpl implements UserDao {
 			String sha1HexPassword = DigestUtils.sha1Hex(password);
 			User user = list.iterator().next();
 			if(user.getPassword().equals(sha1HexPassword)) {
-				return user;
+				if(user.getActive()) {
+					return user;
+				} else {
+					//TODO: Throw Inactive user
+				}
 			} else {
 				//TODO: Throw InvalidPassword
 			}

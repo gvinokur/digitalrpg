@@ -15,7 +15,7 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
-			<version>3.6.10.Final</version>
+			<version>4.2.2.Final</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -61,5 +61,12 @@
 			<artifactId>javassist</artifactId>
 			<version>3.12.1.GA</version>
 		</dependency>
+<!-- 		Leave search out of this for now, simple search will suffice and  -->
+<!-- 		this is too expensive in heroku -->
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.hibernate</groupId> -->
+<!-- 			<artifactId>hibernate-search</artifactId> -->
+<!-- 			<version>4.3.0.Final</version> -->
+<!-- 		</dependency> -->
 	</dependencies>
 </project>

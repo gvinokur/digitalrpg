@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name = "users")
@@ -22,7 +23,10 @@ public class User {
 	
 	private String activationToken;
 	
+	private String email;
+	
 	@Id
+	@Type(type = "long")
 	@GeneratedValue(generator="increment")
 	@GenericGenerator(name="increment", strategy = "increment")
 	public Long getId() {
@@ -64,6 +68,14 @@ public class User {
 
 	public void setActivationToken(String activationToken) {
 		this.activationToken = activationToken;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 }

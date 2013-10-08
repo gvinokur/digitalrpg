@@ -11,7 +11,7 @@ public interface UserDao {
 	 * @param password
 	 * @return
 	 */
-	public String createUser(String name, String password);
+	public String createUser(String name, String password, String email);
 	
 	/**
 	 * Activates user with tokenCode

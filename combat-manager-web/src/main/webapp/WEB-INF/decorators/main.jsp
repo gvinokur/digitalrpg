@@ -34,10 +34,16 @@
     
     <div id="templatemo_menu">
 	    <ul>
-            <li><a href="#" class="current">Home</a></li>
-            <li><a href="#">Games</a></li>
-            <li><a href="#">Popular</a></li>
-            <li><a href="#">Download</a></li>
+	    	<c:url var="homeUrl" value="/home"/>
+	    	<c:url var="campaignsUrl" value="/campaigns"/>
+	    	<c:url var="pcsUrl" value="/player-characters"/>
+	    	<c:url var="combatsUrl" value="/combats"/>
+	    	<c:url var="homeUrl" value="/home"/>
+	    	
+            <li><a href="${homeUrl}" class="${fn:startsWith(pageContext.request.servletPath,homeUrl)?'current':' '}">Home</a></li>
+            <li><a href="${campaignsUrl }" class="${fn:startsWith(pageContext.request.servletPath,campaignsUrl)?'current':' '}">Campaigns</a></li>
+            <li><a href="${pcsUrl }" class="${fn:startsWith(pageContext.request.servletPath,pcsUrl)?'current':''}">Player Characters</a></li>
+            <li><a href="${combatsUrl }" class="${fn:startsWith(pageContext.request.servletPath,combatsUrl)?'current':''}">Combats</a></li>
             <li><a href="#">Contact</a></li>
         </ul>
     </div> <!-- end of menu -->

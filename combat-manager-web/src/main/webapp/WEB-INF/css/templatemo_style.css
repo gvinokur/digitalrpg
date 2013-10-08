@@ -100,14 +100,14 @@ img {
 
 #templatemo_menu {
 	clear: both;
-	width: 500px;
+	width: 600px;
 	height: 65px;
-	padding: 0 240px;
+	padding: 0 220px;
 	background: url(../img/templatemo_menu_bg.jpg) no-repeat;
 }
 
 #templatemo_menu ul {
-	width: 500px;
+	width: 600px;
 	margin: 0px;
 	padding: 20px 0 0 15px;
 	list-style: none;
@@ -207,6 +207,10 @@ img {
 	list-style: none;
 }
 
+.templatemo_side_bar ul li.gm {
+	border-color: green;
+}
+
 .templatemo_side_bar ul li a {
 	display: block;
 	background: #242224;
@@ -292,6 +296,10 @@ img {
 .content_section {
 	clear: both;
 	padding: 0 0 0 0;
+}
+
+.content_section.hidden {
+	display: none;
 }
 
 .content_section p span {
