@@ -14,8 +14,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
-import org.springframework.orm.hibernate4.HibernateTransactionManager;
-import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
+import org.springframework.orm.hibernate3.HibernateTransactionManager;
+import org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
@@ -28,8 +28,8 @@ public class PersistenceConfig {
    private Environment env;
 
    @Bean
-   public LocalSessionFactoryBean sessionFactory() throws URISyntaxException {
-      LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
+   public AnnotationSessionFactoryBean sessionFactory() throws URISyntaxException {
+	   AnnotationSessionFactoryBean sessionFactory = new AnnotationSessionFactoryBean();
       sessionFactory.setDataSource(restDataSource());
       sessionFactory.setPackagesToScan(new String[] { "com.digitalrpg.domain.**" });
       sessionFactory.setHibernateProperties(hibernateProperties());
