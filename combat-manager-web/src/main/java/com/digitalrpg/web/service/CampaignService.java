@@ -1,8 +1,10 @@
 package com.digitalrpg.web.service;
 
 import java.net.URI;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedSet;
 
 import javax.mail.internet.MimeMessage;
 
@@ -14,40 +16,40 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
-import com.digitalrpg.domain.dao.MessageDao;
+import com.digitalrpg.domain.dao.CampaignDao;
 import com.digitalrpg.domain.dao.UserDao;
+import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.User;
 
-public class RegistrationService {
+public class CampaignService {
 
+	@Autowired
+	private CampaignDao campaignDao;
+	
 	@Autowired 
 	private UserDao userDao;
 	
 	@Autowired
-	private MessageDao messageDao;
-	
-	@Autowired
 	private JavaMailSender javaMailSender;
-
-	@Autowired
+	
+	@Autowired 
 	private VelocityEngine velocityEngine;
 	
 	private String from;
 	
-	/**
-	 * Register user and send email, assume everything is validated;
-	 * @param user
-	 * @param email
-	 * @param password
-	 * @return
-	 */
-	public void registerUser(String username, String email, String password, String contextPath) {
-		User user = userDao.createUser(username, password, email);
-		sendMail(username, email, user.getActivationToken(), contextPath);
-		messageDao.assignOrphanMessages(user);
+	public boolean invite(Long id, User from, String emailTo, String contextPath) {
+		Campaign campaign = campaignDao.get(id);
+		if(campaign != null) {
+			User userTo = userDao.findByMail(emailTo);
+			sendMail(from.getName(), emailTo, contextPath, campaign);
+			return campaignDao.invite(id, from, emailTo, userTo);
+		}
+		return false;
 	}
-
-	private void sendMail(final String user, final String email, final String activationToken, final String contextPath) {
+	
+	
+	
+	private void sendMail(final String user, final String email, final String contextPath, final Campaign campaign) {
 		MimeMessagePreparator preparator = new MimeMessagePreparator() {
 	         public void prepare(MimeMessage mimeMessage) throws Exception {
 	            MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
@@ -55,12 +57,12 @@ public class RegistrationService {
 	            message.setTo(email);
 	            message.setFrom(from); // could be parameterized...
 	            Map<String, Object> model = new HashMap<String, Object>();
-	            model.put("activationToken", activationToken);
 	            model.put("email", email);
 	            model.put("username", user);
 	            model.put("contextPath", new URI(contextPath));
+	            model.put("campaign", campaign);
 	            String text = VelocityEngineUtils.mergeTemplateIntoString(
-	               velocityEngine, "com/digitalrpg/templates/mail/registration-confirmation.vm", model);
+	               velocityEngine, "com/digitalrpg/templates/mail/invite-to-campaign.vm", model);
 	            message.setText(text, true);
 	         }
 	      };
@@ -76,12 +78,26 @@ public class RegistrationService {
 		this.from = from;
 	}
 
-	public void activate(String username, String activationToken) {
-		userDao.activateUser(username, activationToken);
+	public void createCampaign(String name, String description, User gm,
+			Boolean isPublic) {
+		campaignDao.createCampaign(name, description, gm, isPublic);
 	}
 
-	public Boolean validateUsernameAvailability(String username) {
-		return userDao.checkUsername(username);
+	public SortedSet<Campaign> getCampaignsForUser(String user) {
+		return campaignDao.getCampaignsForUser(user);
+	}
+
+	public Campaign get(Long id) {
+		return campaignDao.get(id);
+	}
+
+	public Collection<Campaign> search(String searchString, int offset,
+			int limit) {
+		return campaignDao.search(searchString, offset, limit);
+	}
+
+	public void addPlayerCharacter(Long campaignd, Long playerCharacterId) {
+		campaignDao.addPlayerCharacter(campaignd, playerCharacterId);
 	}
 	
 }

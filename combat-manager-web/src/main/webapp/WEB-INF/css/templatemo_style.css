@@ -298,12 +298,16 @@ img {
 	padding: 0 0 0 0;
 }
 
-.content_section.hidden {
+.hidden {
 	display: none;
 }
 
 .content_section p span {
 	color: #ffffff;
+}
+
+.templatemo_dialog {
+	
 }
 
 .image_wrapper_01 {

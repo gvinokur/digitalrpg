@@ -7,9 +7,11 @@ import org.springframework.context.annotation.Configuration;
 
 import com.digitalrpg.domain.dao.CampaignDao;
 import com.digitalrpg.domain.dao.CharacterDao;
+import com.digitalrpg.domain.dao.MessageDao;
 import com.digitalrpg.domain.dao.UserDao;
 import com.digitalrpg.domain.dao.hibernate.CampaignDaoImpl;
 import com.digitalrpg.domain.dao.hibernate.CharacterDaoImpl;
+import com.digitalrpg.domain.dao.hibernate.MessageDaoImpl;
 import com.digitalrpg.domain.dao.hibernate.UserDaoImpl;
 
 @Configuration
@@ -37,5 +39,12 @@ public class DaoConfig {
 		CharacterDaoImpl characterDaoImpl = new CharacterDaoImpl();
 		characterDaoImpl.setSessionFactory(sessionFactory);
 		return characterDaoImpl;
+	}
+	
+	@Bean 
+	public MessageDao getMessageDao() {
+		MessageDaoImpl messageDaoImpl = new MessageDaoImpl();
+		messageDaoImpl.setSessionFactory(sessionFactory);
+		return messageDaoImpl;
 	}
 }

@@ -15,17 +15,18 @@ public class UserDaoImpl implements UserDao {
 	private SessionFactory sessionFactory;
 	
 	@Transactional(isolation = Isolation.SERIALIZABLE)
-	public String createUser(String name, String password, String email) {
+	public User createUser(String name, String password, String email) {
 		String sha1HexPassword = DigestUtils.sha1Hex(password);
 		String activationToken = DigestUtils.sha1Hex(name + sha1HexPassword);
 		User user = new User();
 		user.setName(name);
 		user.setPassword(sha1HexPassword);
+		user.setEmail(email);
 		user.setActive(false);
 		user.setActivationToken(activationToken);
 		sessionFactory.getCurrentSession()
 			.save(user);
-		return activationToken;
+		return user;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -87,6 +88,18 @@ public class UserDaoImpl implements UserDao {
 	
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
+	}
+
+	@Transactional(readOnly = true)
+	public User findByMail(String emailTo) {
+		List<User> list = sessionFactory.getCurrentSession()
+				.createQuery("from User where email = ?")
+				.setParameter(0, emailTo)
+				.list();
+		if(list.size() > 0) {
+			return list.iterator().next();
+		}
+		return null;
 	}
 
 

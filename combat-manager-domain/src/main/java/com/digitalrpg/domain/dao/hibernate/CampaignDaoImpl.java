@@ -2,6 +2,7 @@ package com.digitalrpg.domain.dao.hibernate;
 
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.digitalrpg.domain.dao.CampaignDao;
 import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.User;
+import com.digitalrpg.domain.model.messages.InviteToCampaignMessage;
 
 public class CampaignDaoImpl implements CampaignDao {
 
@@ -56,7 +58,10 @@ public class CampaignDaoImpl implements CampaignDao {
 		List<Campaign> campaigns = sessionFactory.getCurrentSession().createQuery("from Campaign where id = ?")
 			.setParameter(0, id).list();
 		if(campaigns.size() == 1) {
-			return campaigns.iterator().next();
+			Campaign campaign = campaigns.iterator().next();
+			campaign.getPendingInvitations();
+			campaign.getPendingRequest();
+			return campaign;
 		}
 		return null;
 	}
@@ -81,6 +86,25 @@ public class CampaignDaoImpl implements CampaignDao {
 
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
+	}
+
+	@Transactional
+	public Boolean invite(Long id, User from, String toMail, User toUser) {
+		Campaign campaign = this.get(id);
+		if(campaign != null) {
+			if(campaign.getPendingInvitations() == null) {
+				campaign.setPendingInvitations(new HashSet<InviteToCampaignMessage>());
+			}
+			InviteToCampaignMessage message = new InviteToCampaignMessage();
+			message.setCampaign(campaign);
+			message.setFrom(from);
+			message.setToMail(toMail);
+			message.setTo(toUser);
+			campaign.getPendingInvitations().add(message );
+			this.sessionFactory.getCurrentSession().update(campaign);
+			return true;
+		}
+		return false;
 	}
 
 }

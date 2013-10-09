@@ -20,10 +20,10 @@
            		<c:forEach items="${campaigns}" var="campaign">
            			<c:choose>
            				<c:when test="${campaign.gameMaster.name == pageContext.request.userPrincipal.principal.name }">
-           					<li class="gm"><a id="campaign_${campaign.id }">${campaign.name }</a></li>
+           					<li class="gm"><a class="campaign_list_item" id="campaign_${campaign.id }">${campaign.name }</a></li>
            				</c:when>
            				<c:otherwise>
-           					<li class="player"><a id="campaign_${campaign.id }">${campaign.name }</a></li>
+           					<li class="player"><a class="campaign_list_item" id="campaign_${campaign.id }">${campaign.name }</a></li>
            				</c:otherwise>
            			</c:choose>
            		</c:forEach>
@@ -38,10 +38,13 @@
             <div class="margin_bottom_20 horizontal_divider">&#160;</div> 
 			<div class="margin_bottom_20">&#160;</div>
 
+			
             <div class="header_01">Search Campaign</div>     
-            <input type="text" id="search_field" name="campaign" />
-            <input type="button" value="Search" id="search_button" class="small_button" />
-            
+            <div id="search_form">
+            	<input type="text" id="search_field" name="campaign" />
+            	<input type="button" value="Search" id="search_button" class="small_button" />
+            	<div style="clear:both; height: 0px">&#160;</div>
+            </div>
             <div class="margin_bottom_20">&#160;</div>
         </div> <!-- end of left side bar -->
         
@@ -101,41 +104,58 @@
                 <div class="cleaner">&#160;</div>
             </div>
             
+            <div id="campaign_view" class="content_section hidden">
+            	<div class="header_02"><span id="campaign_name"></span></div>
+            	<p id="campaign_description"></p>
+            	<p>Game Master: <span id="campaign_gm"></span></p>
+            	
+           		<div id="campaign_active_players">
+           			<span>Active Players:</span>
+           			<ul id="campaign_active_players_list">
+           			</ul>
+           		</div>
+           		<div id="campaign_pending_players" class="hidden">
+           			<span>Pending Invitations:</span>
+           			<ul id="campaign_pending_players_list">
+           			</ul>
+           		</div>
+           		<div id="campaign_requested_players" class="hidden">
+           			<span>Pending Requests:</span>
+           			<ul id="campaign_pending_requests_list">
+           			</ul>
+           		</div>
+           		<input id="invite_player_button" type="button" value="Invite Player" class="small_button hidden">
+           		</input>            		
+            	
+            	<div class="margin_bottom_20">&#160;</div>
+                <div class="cleaner">&#160;</div>
+            </div>
+            
             <div class="margin_bottom_20 horizontal_divider">&#160;</div> 
             
             
         	<div class="margin_bottom_40">&#160;</div>
         </div> <!-- end of content -->
         
-        <div class="templatemo_side_bar">
-       		
-            <div class="header_01">Latest News</div>
-            
-<!--             <div class="latest_news border_bottom"> -->
-<!--                 <div class="header_03"><a href="#">Aenean a bibendum augue</a></div> -->
-<!--                 <p>Fusce egestas feugiat turpis, ac ultrices turpis vestibulum at.</p> -->
-<!-- 			</div> -->
-                        
-<!--             <div class="margin_bottom_10">&#160;</div> -->
-            
-<!-- 			<div class="latest_news"> -->
-<!--                 <div class="header_03"><a href="#">Sed nec enim magna</a></div> -->
-<!--                 <p>Proin lectus orci, iaculis at facilisis sed, sodales a neque.</p> -->
-<!-- 			</div> -->
-            
-<!--           	<div class="margin_bottom_20 horizontal_divider">&#160;</div>  -->
-<!-- 			<div class="margin_bottom_20">&#160;</div> -->
-            
-<!--             <div class="header_01">Sample Video</div> -->
-
-<!--             <div class="latest_news"> -->
-<!--             	<div class="image_wrapper_02"><span></span><a href="#"><img src="images/templatemo_image_03.jpg" alt="video" /></a></div> -->
-<!--                 <p>Donec venenatis tellus non massa blandit vitae volutpat urna fringilla. Aenean ante lorem, vestibulum eu lacinia.</p> -->
-<!-- 	     	 </div> -->
-                        
-<!--           <div class="margin_bottom_10">&#160;</div> -->
-        </div> <!-- end of right side bar -->
-   	
+        <jsp:include page="messages.jsp"/>
+   		
+   		<div id="invite_user_form" style="display:none; cursor: default"> 
+   			<form:form id="invite_form">
+   				<h1>Invite To Campaign</h1>
+   				<p>Send an Invitation to another user and ask him to join your campaign</p>
+   				<div class="margin_bottom_20">&#160;</div>
+				<div class="to_email">
+					<label for="email">Email</label>
+				</div>
+				<input type="text" id="invite_email" name="email"
+					class="field" email="true"/>
+					
+				<input id="send_invite_button" type="button" value="Invite" class="small_button">
+           		</input>
+           		<input id="cancel_invite_button" type="button" value="Cancel" class="small_button">
+           		</input>  
+   			</form:form>
+   		</div>
    
 <script type="text/javascript">
 	$(document).ready(function(){
@@ -152,7 +172,7 @@
 		$("#search_button").click(function(){
 			
 			var searchValue = $("#search_field").val();
-			//TODO: Replace button text and disable it
+			$('#search_form').block({message : "<h3>Searching Campaigns...</h3>", css: { border: '2px solid #363434', width: '100%', left: '0px', height: '100%', top: '0px' }})			
 			var url = "${searchUrl}" + searchValue
 			if(searchValue.length > 0) {
 				$.ajax({
@@ -186,10 +206,93 @@
 					$("#central_panel > .content_section").addClass("hidden");
 					$("#campaign_search_result").removeClass("hidden");
 				}).always(function() {
-					//TODO: Restore button text and enable
+					$('#search_form').unblock()
 				})
 			} 
 		})
+		
+		<c:url var="getUrl" value="/campaigns/"/>
+		$(".campaign_list_item").click(function(){
+			var url = "${getUrl}" + $(this).attr("id").split("_")[1];
+			$.ajax(url).done(function(campaign) {
+				$("#campaign_view").attr("campaign_id", campaign.id)
+				$("#campaign_name").text(campaign.name)
+				$("#campaign_description").text(campaign.description)
+				$("#campaign_gm").text(campaign.game_master.name)
+				
+				$("#campaign_active_players_list li").remove()
+				for(i=0; i &lt; campaign.player_characters.length; i++) {
+					var newLine = $("<li/>")
+					newLine.attr("id", "campaign_pc_" + campaign.player_characters[i].id)
+					newLine.html("<span>" + campaign.player_characters[i].name + "</span> Owner: " + campaign.player_characters[i].owner.name)
+					$("#campaign_active_players_list").append(newLine)
+				}
+				
+				$("#campaign_pending_players_list li").remove()
+				for(i=0; i &lt; campaign.pending_invitations.length; i++) {
+					var newLine = $("<li/>")
+					if(campaign.pending_invitations[i].to) {
+						newLine.html("<span>" + campaign.pending_invitations[i].to.name + "</span> Email: " + campaign.pending_invitations[i].to.email)
+					}else {
+						newLine.html("<span>" + campaign.pending_invitations[i].mail_to + "</span>")
+					}
+					$("#campaign_pending_players_list").append(newLine)
+					
+				}
+				var principalName = "${pageContext.request.userPrincipal.principal.name}"
+				if(principalName == campaign.game_master.name) {
+					$("#campaign_pending_players").removeClass("hidden");
+					$("#campaign_requested_players").removeClass("hidden");
+					$("#invite_player_button").removeClass("hidden");	
+				} else {
+					$("#campaign_pending_players").addClass("hidden");
+					$("#campaign_requested_players").addClass("hidden");
+					$("#invite_player_button").addClass("hidden");
+				}
+				$("#central_panel > .content_section").addClass("hidden");
+				$("#campaign_view").removeClass("hidden");
+			})
+		})
+		
+		$('#invite_player_button').click(function() { 
+            $.blockUI({ message: $('#invite_user_form'), css: { width: '325px' } }); 
+        });
+        
+        <c:url var="inviteUrl" value="/campaigns/[id]/invite/[email]"/>
+        $('#send_invite_button').click(function() {
+        	var isValid = $("#invite_form").valid();
+	          if(isValid) {
+	            var campaignId = $("#campaign_view").attr("campaign_id")
+	            var email = $("#invite_email").val();
+	          	var url = "${inviteUrl}".replace("[id]",campaignId).replace("[email]", email)
+	          	$.blockUI({ message: "<h1>Sending invitation...</h1>" });
+	          	$.ajax(url).done(function(result) {
+	          		if(result == true) {
+		          		var pendingList = $("#campaign_pending_players ul")
+		          		newItem = $("<li/>")
+		          		newItem.text(email);
+		          		pendingList.append(newItem);
+		          		$.unblockUI();
+	          		} else {
+	          			alert("Could not send mail");
+	          			$.blockUI({ message: $('#invite_user_form'), css: { width: '275px' } }); 
+	          		}
+	          	});
+	          }
+        }) 
+        
+        $('#cancel_invite_button').click(function(){
+        	$.unblockUI();
+        })
+	    
+	    $("#invite_form").validate({
+	    	rules: {
+				email: {
+			      required: true,
+			      email: true
+			    }
+			}
+	    })
 	})
 </script> 	
    

@@ -144,34 +144,7 @@
         	<div class="margin_bottom_40">&#160;</div>
         </div> <!-- end of content -->
         
-        <div class="templatemo_side_bar">
-       		
-            <div class="header_01">Latest News</div>
-            
-<!--             <div class="latest_news border_bottom"> -->
-<!--                 <div class="header_03"><a href="#">Aenean a bibendum augue</a></div> -->
-<!--                 <p>Fusce egestas feugiat turpis, ac ultrices turpis vestibulum at.</p> -->
-<!-- 			</div> -->
-                        
-<!--             <div class="margin_bottom_10">&#160;</div> -->
-            
-<!-- 			<div class="latest_news"> -->
-<!--                 <div class="header_03"><a href="#">Sed nec enim magna</a></div> -->
-<!--                 <p>Proin lectus orci, iaculis at facilisis sed, sodales a neque.</p> -->
-<!-- 			</div> -->
-            
-<!--           	<div class="margin_bottom_20 horizontal_divider">&#160;</div>  -->
-<!-- 			<div class="margin_bottom_20">&#160;</div> -->
-            
-<!--             <div class="header_01">Sample Video</div> -->
-
-<!--             <div class="latest_news"> -->
-<!--             	<div class="image_wrapper_02"><span></span><a href="#"><img src="images/templatemo_image_03.jpg" alt="video" /></a></div> -->
-<!--                 <p>Donec venenatis tellus non massa blandit vitae volutpat urna fringilla. Aenean ante lorem, vestibulum eu lacinia.</p> -->
-<!-- 	     	 </div> -->
-                        
-<!--           <div class="margin_bottom_10">&#160;</div> -->
-        </div> <!-- end of right side bar -->
+        <jsp:include page="messages.jsp"/>
    	
    
 <script type="text/javascript">

@@ -50,5 +50,7 @@ public interface CampaignDao {
 	 * @param playerCharacterId
 	 */
 	public void addPlayerCharacter(Long campaignd, Long playerCharacterId);
+
+	public Boolean invite(Long id, User from, String to, User userTo);
 	
 }

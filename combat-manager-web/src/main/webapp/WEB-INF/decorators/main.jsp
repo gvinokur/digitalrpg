@@ -19,10 +19,14 @@
     <c:url var="faviconUrl" value="/img/favicon.ico"/>
     <link rel="icon" type="image/x-icon" href="${faviconUrl}"/>
     
-<c:url var="mainCssUrl" value="css/templatemo_style.css"/>
+<c:url var="mainCssUrl" value="/css/templatemo_style.css"/>
 <link href="${mainCssUrl}" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 <script src='http://code.jquery.com/jquery-1.10.2.js'>&#160;</script>
+<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js">&#160;</script>
 <script src='http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js'>&#160;</script>
+<c:url var="jQueryBlockUIUrl" value="/js/jquery.blockUI.js"/>
+<script src='${jQueryBlockUIUrl}'>&#160;</script>
 </head>
 <body>
 <div id="templatemo_wrapper_outer">

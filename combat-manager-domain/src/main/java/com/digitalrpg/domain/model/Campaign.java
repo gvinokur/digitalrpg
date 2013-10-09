@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -19,6 +20,8 @@ import org.hibernate.annotations.Where;
 
 import com.digitalrpg.domain.model.characters.NonPlayerCharacter;
 import com.digitalrpg.domain.model.characters.PlayerCharacter;
+import com.digitalrpg.domain.model.messages.InviteToCampaignMessage;
+import com.digitalrpg.domain.model.messages.RequestJoinToCampaignMessage;
 
 @Entity
 @Table(name = "campaigns")
@@ -35,6 +38,10 @@ public class Campaign {
 	private Set<PlayerCharacter> playerCharacters;
 	
 	private Set<NonPlayerCharacter> nonPlayerCharacters;
+	
+	private Set<InviteToCampaignMessage> pendingInvitations;
+	
+	private Set<RequestJoinToCampaignMessage> pendingRequest;
 	
 	private Boolean isPublic;
 
@@ -105,6 +112,27 @@ public class Campaign {
 
 	public void setNonPlayerCharacters(Set<NonPlayerCharacter> nonPlayerCharacters) {
 		this.nonPlayerCharacters = nonPlayerCharacters;
+	}
+	
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,
+			mappedBy = "campaign", fetch = FetchType.EAGER)
+	public Set<InviteToCampaignMessage> getPendingInvitations() {
+		return pendingInvitations;
+	}
+
+	public void setPendingInvitations(
+			Set<InviteToCampaignMessage> pendingInvitations) {
+		this.pendingInvitations = pendingInvitations;
+	}
+
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,
+			mappedBy = "campaign", fetch = FetchType.EAGER)
+	public Set<RequestJoinToCampaignMessage> getPendingRequest() {
+		return pendingRequest;
+	}
+
+	public void setPendingRequest(Set<RequestJoinToCampaignMessage> pendingRequest) {
+		this.pendingRequest = pendingRequest;
 	}
 	
 	

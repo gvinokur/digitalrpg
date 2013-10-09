@@ -14,6 +14,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
+import com.digitalrpg.web.service.CampaignService;
 import com.digitalrpg.web.service.RegistrationService;
 
 @Configuration
@@ -30,6 +31,13 @@ public class RootConfiguration {
 		RegistrationService registrationService = new RegistrationService();
 		registrationService.setFrom(env.getProperty("mail.from"));
 		return registrationService;
+	}
+	
+	@Bean 
+	public CampaignService getCampaignService() {
+		CampaignService campaignService = new CampaignService();
+		campaignService.setFrom(env.getProperty("mail.from"));
+		return campaignService;
 	}
 	
 	@Bean 
