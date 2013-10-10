@@ -3,10 +3,9 @@ package com.digitalrpg.domain.dao.hibernate;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import org.hibernate.SessionFactory;
 import org.springframework.transaction.annotation.Isolation;
@@ -15,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.digitalrpg.domain.dao.CampaignDao;
 import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.User;
-import com.digitalrpg.domain.model.messages.InviteToCampaignMessage;
+import com.digitalrpg.domain.model.characters.SystemCharacter;
 
 public class CampaignDaoImpl implements CampaignDao {
 
@@ -34,21 +33,14 @@ public class CampaignDaoImpl implements CampaignDao {
 
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
-	public SortedSet<Campaign> getCampaignsForUser(final String user) {
-		List<Campaign> campaigns = sessionFactory.getCurrentSession().createQuery("from Campaign c where c.gameMaster.name = :user")
+	public List<Campaign> getCampaignsForUser(final String user) {
+		List<Campaign> campaignsAsPlayer = sessionFactory.getCurrentSession().createQuery("select c from Campaign c join c.playerCharacters psc, PlayerCharacter pc where psc!= null and psc = pc and pc.owner.name = :user")
 			.setParameter("user", user).list();
-		SortedSet<Campaign> sorted = new TreeSet<Campaign>(new Comparator<Campaign>() {
-
-			public int compare(Campaign o1, Campaign o2) {
-				boolean isGMof1 = user.equals(o1.getGameMaster().getName());
-				boolean isGMof2 = user.equals(o2.getGameMaster().getName());
-				if(isGMof1 && !isGMof2) return -1;
-				if(isGMof2 && !isGMof1) return 1;
-				
-				return o1.getName().compareTo(o2.getName());
-			}
-		});
-		sorted.addAll(campaigns);
+		List<Campaign> campaignsAsGameMaster = sessionFactory.getCurrentSession().createQuery("select c from Campaign c where c.gameMaster.name = :user")
+				.setParameter("user", user).list();
+		List<Campaign> sorted = new LinkedList<Campaign>();
+		sorted.addAll(campaignsAsGameMaster);
+		sorted.addAll(campaignsAsPlayer);
 		return sorted;
 	}
 
@@ -79,32 +71,19 @@ public class CampaignDaoImpl implements CampaignDao {
 	}
 
 	@Transactional(isolation = Isolation.SERIALIZABLE)
-	public void addPlayerCharacter(Long campaignd, Long playerCharacterId) {
-		// TODO Auto-generated method stub
-
+	public void addPlayerCharacter(Long id, SystemCharacter character) {
+		Campaign campaign = get(id);
+		Set<SystemCharacter> playerCharacters = campaign.getPlayerCharacters();
+		if(playerCharacters == null) {
+			playerCharacters = new HashSet<SystemCharacter>();
+			campaign.setPlayerCharacters(playerCharacters);
+		}
+		playerCharacters.add(character);
+		sessionFactory.getCurrentSession().save(campaign);
 	}
 
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
-	}
-
-	@Transactional
-	public Boolean invite(Long id, User from, String toMail, User toUser) {
-		Campaign campaign = this.get(id);
-		if(campaign != null) {
-			if(campaign.getPendingInvitations() == null) {
-				campaign.setPendingInvitations(new HashSet<InviteToCampaignMessage>());
-			}
-			InviteToCampaignMessage message = new InviteToCampaignMessage();
-			message.setCampaign(campaign);
-			message.setFrom(from);
-			message.setToMail(toMail);
-			message.setTo(toUser);
-			campaign.getPendingInvitations().add(message );
-			this.sessionFactory.getCurrentSession().update(campaign);
-			return true;
-		}
-		return false;
 	}
 
 }

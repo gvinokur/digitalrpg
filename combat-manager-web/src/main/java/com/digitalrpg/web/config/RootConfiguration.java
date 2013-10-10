@@ -11,10 +11,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+import org.springframework.integration.channel.interceptor.MessageSelectingInterceptor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import com.digitalrpg.web.service.CampaignService;
+import com.digitalrpg.web.service.MessageService;
 import com.digitalrpg.web.service.RegistrationService;
 
 @Configuration
@@ -38,6 +40,11 @@ public class RootConfiguration {
 		CampaignService campaignService = new CampaignService();
 		campaignService.setFrom(env.getProperty("mail.from"));
 		return campaignService;
+	}
+	
+	@Bean
+	public MessageService getMessageService(){
+		return new MessageService();
 	}
 	
 	@Bean 

@@ -2,7 +2,8 @@ package com.digitalrpg.web.controller;
 
 import java.security.Principal;
 import java.util.Collection;
-import java.util.SortedSet;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -15,15 +16,21 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.digitalrpg.domain.dao.CampaignDao;
+import com.digitalrpg.domain.dao.CharacterDao;
 import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.User;
+import com.digitalrpg.domain.model.characters.SystemCharacter;
 import com.digitalrpg.web.controller.model.CampaignVO;
 import com.digitalrpg.web.controller.model.CreateCampaignVO;
+import com.digitalrpg.web.controller.model.JoinCampaignVO;
+import com.digitalrpg.web.controller.model.MessageVO;
 import com.digitalrpg.web.service.CampaignService;
+import com.digitalrpg.web.service.MessageService;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 
@@ -34,6 +41,12 @@ public class CampaignController {
 	@Autowired
 	private CampaignService campaignService;
 
+	@Autowired
+	private MessageService messageService;
+	
+	@Autowired
+	private CharacterDao characterDao;
+	
 	private Function<Campaign, CampaignVO> campaignToVOFunction = new Function<Campaign, CampaignVO>() {
 		public CampaignVO apply(Campaign in) {
 			CampaignVO out = new CampaignVO();
@@ -49,7 +62,7 @@ public class CampaignController {
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView showCampaigns() {
+	public ModelAndView showCampaigns(@RequestParam(required = false, value="show_content") String showContent) {
 		return new ModelAndView("campaigns");
 	}
 	
@@ -85,5 +98,32 @@ public class CampaignController {
 				(request.getContextPath()!=null && !request.getContextPath().isEmpty()? "/" + request.getContextPath(): "");
 		
 		return campaignService.invite(id, user, email, contextPath);
+	}
+	
+	@RequestMapping(value = "/{id}/join", method = RequestMethod.GET)
+	public ModelAndView showJoinCampaign(@PathVariable Long id, @RequestParam Long messageId, Principal principal) {
+		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+		Map<String, Object> model = new HashMap<String, Object>();
+		Campaign campaign = campaignService.get(id);
+		MessageVO message = messageService.getMessage(messageId);
+		Collection<SystemCharacter> characters = characterDao.getUserPlayerCharacters(user.getName());
+		model.put("campaign", campaign);
+		model.put("message", message);
+		model.put("characters", characters);
+		model.put("show_content", "campaign_join");
+		return new ModelAndView("/campaigns", model );
+	}
+	
+	@RequestMapping(value = "/{id}/join", method = RequestMethod.POST)
+	public ModelAndView joinCampaign(@PathVariable Long id, @ModelAttribute("joinCampaign") JoinCampaignVO joinCampaignVO, BindingResult result, Principal principal,
+			RedirectAttributes redirectAttributes) {
+		if(result.hasErrors()) {
+			return this.showJoinCampaign(id, joinCampaignVO.getMessageId(), principal);
+		} else {
+			campaignService.addPlayerCharacter(id, joinCampaignVO.getCharacterId());
+			messageService.deleteMessage(joinCampaignVO.getMessageId());
+			redirectAttributes.addFlashAttribute("message", "You are now part of the campaign");
+			return new ModelAndView("redirect:/campaigns");
+		}
 	}
 }

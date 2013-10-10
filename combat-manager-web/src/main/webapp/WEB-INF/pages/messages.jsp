@@ -11,7 +11,19 @@
 <script>
 	$(document).ready(function(){
 		reloadNews();
+		$("#messages").on("click", ".delete_message", function() {
+			var url = $(this).attr("deleteUrl")
+			$.ajax({
+				url : url,
+				type : "DELETE",
+				headers: {
+					"X-CSRF-TOKEN": "${_csrf.token}"
+				}
+			})
+		});
 	})
+	
+	var timeout
 	
 	<c:url var="newsUrl" value="/messages"/>
 	function reloadNews() {
@@ -22,7 +34,7 @@
 				drawMessage(result[i]);
 			}
 		}).always(function(){
-			setTimeout(reloadNews,5000)
+			timeout = setTimeout(reloadNews,5000)
 		}) 
 	}
 	
@@ -33,14 +45,17 @@
 			drawMessageRequestJoin(message)
 		}
 	}
-	<c:url var="inviteUrl" value="/campaigns?show_form=join&amp;campaign_id=[id]&amp;message_id=[message_id]"/>
+	<c:url var="inviteUrl" value="/campaigns/[id]/join?messageId=[message_id]"/>
+	<c:url var="deleteUrl" value="/messages/[id]"/>
 	function drawMessageInvite(message) {
 		var newDiv = $("<div/>")
 		var url = "${inviteUrl}".replace("[id]",message.campaign_id).replace("[message_id]", message.id)
+		var deleteUrl = "${deleteUrl}".replace("[id]", message.id)
 		newDiv.addClass("latest_news")
 		newDiv.addClass("border_bottom")
 		var title = $("<a/>").attr("href",url).append("Join " + message.from.name + "'s campaign")
-		newDiv.append($("<div/>").addClass("header03").append(title))
+		var deleteIcon = $("<span/>").attr("deleteUrl",deleteUrl).attr("title", "Delete Message").addClass("delete_message").addClass("delete_icon")
+		newDiv.append($("<div/>").addClass("header_03").append(title).append(deleteIcon))
 		$("<p/>")
 			.append("Join one of your characters to the campaign " +  message.campaign_name + " ")
 			.appendTo(newDiv)

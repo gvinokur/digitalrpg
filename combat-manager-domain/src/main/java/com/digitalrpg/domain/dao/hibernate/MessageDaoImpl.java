@@ -8,17 +8,34 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.digitalrpg.domain.dao.MessageDao;
+import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.User;
+import com.digitalrpg.domain.model.messages.InviteToCampaignMessage;
 import com.digitalrpg.domain.model.messages.Message;
 
 public class MessageDaoImpl implements MessageDao {
 
 	private SessionFactory sessionFactory;
-	
+
+	@Transactional
+	public Boolean invite(Long id, User from, String toMail, User toUser,
+			Campaign campaign) {
+		InviteToCampaignMessage message = new InviteToCampaignMessage();
+		message.setCampaign(campaign);
+		message.setFrom(from);
+		message.setToMail(toMail);
+		message.setTo(toUser);
+		this.sessionFactory.getCurrentSession().save(message);
+		return true;
+	}
+
 	@Transactional(isolation = Isolation.SERIALIZABLE)
 	public void assignOrphanMessages(User user) {
-		List<Message> list = sessionFactory.getCurrentSession().createQuery("from Message m where m.to = null and m.toMail = ? ")
-			.setParameter(0, user.getEmail()).list();
+		List<Message> list = sessionFactory
+				.getCurrentSession()
+				.createQuery(
+						"from Message m where m.to = null and m.toMail = ? ")
+				.setParameter(0, user.getEmail()).list();
 		for (Message message : list) {
 			message.setTo(user);
 			sessionFactory.getCurrentSession().update(message);
@@ -27,7 +44,10 @@ public class MessageDaoImpl implements MessageDao {
 
 	@Transactional(readOnly = true)
 	public Collection<Message> getUserMessages(User user) {
-		return sessionFactory.getCurrentSession().createQuery("from Message m where m.to = :user order by m.createdDate")
+		return sessionFactory
+				.getCurrentSession()
+				.createQuery(
+						"from Message m where m.to = :user order by m.createdDate")
 				.setParameter("user", user).list();
 	}
 
@@ -37,8 +57,25 @@ public class MessageDaoImpl implements MessageDao {
 
 	@Transactional(isolation = Isolation.REPEATABLE_READ)
 	public void deleteMessage(Long id) {
-		// TODO Auto-generated method stub
+
+		List list = sessionFactory.getCurrentSession()
+				.createQuery("from Message m where m.id = :id")
+				.setParameter("id", id).list();
+		for (Object object : list) {
+			sessionFactory.getCurrentSession().delete(object);
+		}
+	}
+	
+	@Transactional(readOnly = true)
+	public Message get(Long id) {
+		List<Message> list = sessionFactory.getCurrentSession()
+				.createQuery("from Message m where m.id = :id")
+				.setParameter("id", id).list();
+		if(list.size() == 1) {
+			return list.iterator().next();
+		}
 		
+		return null;
 	}
 
 }

@@ -15,11 +15,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.Where;
 
-import com.digitalrpg.domain.model.characters.NonPlayerCharacter;
-import com.digitalrpg.domain.model.characters.PlayerCharacter;
+import com.digitalrpg.domain.model.characters.SystemCharacter;
 import com.digitalrpg.domain.model.messages.InviteToCampaignMessage;
 import com.digitalrpg.domain.model.messages.RequestJoinToCampaignMessage;
 
@@ -35,9 +32,9 @@ public class Campaign {
 	
 	private User gameMaster;
 	
-	private Set<PlayerCharacter> playerCharacters;
+	private Set<SystemCharacter> playerCharacters;
 	
-	private Set<NonPlayerCharacter> nonPlayerCharacters;
+	private Set<SystemCharacter> nonPlayerCharacters;
 	
 	private Set<InviteToCampaignMessage> pendingInvitations;
 	
@@ -86,7 +83,7 @@ public class Campaign {
     @JoinTable(name="campaign_player_characters", 
                 joinColumns={@JoinColumn(name="campaign_id")}, 
                 inverseJoinColumns={@JoinColumn(name="character_id")})
-	public Set<PlayerCharacter> getPlayerCharacters() {
+	public Set<SystemCharacter> getPlayerCharacters() {
 		return playerCharacters;
 	}
 	
@@ -94,7 +91,7 @@ public class Campaign {
     @JoinTable(name="campaign_non_player_characters", 
                 joinColumns={@JoinColumn(name="campaign_id")}, 
                 inverseJoinColumns={@JoinColumn(name="character_id")})
-	public Set<NonPlayerCharacter> getNonPlayerCharacters() {
+	public Set<SystemCharacter> getNonPlayerCharacters() {
 		return nonPlayerCharacters;
 	}
 
@@ -106,15 +103,15 @@ public class Campaign {
 		this.isPublic = isPublic;
 	}
 
-	public void setPlayerCharacters(Set<PlayerCharacter> playerCharacters) {
+	public void setPlayerCharacters(Set<SystemCharacter> playerCharacters) {
 		this.playerCharacters = playerCharacters;
 	}
 
-	public void setNonPlayerCharacters(Set<NonPlayerCharacter> nonPlayerCharacters) {
+	public void setNonPlayerCharacters(Set<SystemCharacter> nonPlayerCharacters) {
 		this.nonPlayerCharacters = nonPlayerCharacters;
 	}
 	
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,
+	@OneToMany(cascade = CascadeType.PERSIST,
 			mappedBy = "campaign", fetch = FetchType.EAGER)
 	public Set<InviteToCampaignMessage> getPendingInvitations() {
 		return pendingInvitations;
@@ -125,7 +122,7 @@ public class Campaign {
 		this.pendingInvitations = pendingInvitations;
 	}
 
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,
+	@OneToMany(cascade = CascadeType.PERSIST,
 			mappedBy = "campaign", fetch = FetchType.EAGER)
 	public Set<RequestJoinToCampaignMessage> getPendingRequest() {
 		return pendingRequest;

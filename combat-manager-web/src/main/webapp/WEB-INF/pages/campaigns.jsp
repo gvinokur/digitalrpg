@@ -131,6 +131,32 @@
                 <div class="cleaner">&#160;</div>
             </div>
             
+            <c:if test="${campaign != null and message != null }"> 
+            <div id="campaign_join" class="content_section hidden">
+            	<div class="header_02">Join ${campaign.name} </div>
+            	<p id="campaign_description">${campaign.description }</p>
+            	<p>You have been invited to join ${campaign.gameMaster.name}'s campaign, select one of your player characters to add to the campaign.</p>
+            	<c:url var="joinCampaignUrl" value="/campaigns/${campaign.id }/join"/>
+            	<form:form action="${joinCampaignUrl }" modelAttribute="joinCampaign" method="POST">
+            		<input type="hidden" name="messageId" value="${message.id }"/>
+					<div class="campaign_label">
+						<label for="player_character">Player Character</label>
+					</div>
+					<select name="characterId" id="player_character">
+						<c:forEach items="${characters }" var="character">
+							<option value="${character.id }">${character.character.name }</option>
+						</c:forEach>
+					</select>
+					
+					<input type="submit" value="Join" class="small_button"/>
+					            		
+            	</form:form>            	
+            	
+            	<div class="margin_bottom_20">&#160;</div>
+                <div class="cleaner">&#160;</div>
+            </div>
+            </c:if>
+            
             <div class="margin_bottom_20 horizontal_divider">&#160;</div> 
             
             
@@ -224,7 +250,7 @@
 				for(i=0; i &lt; campaign.player_characters.length; i++) {
 					var newLine = $("<li/>")
 					newLine.attr("id", "campaign_pc_" + campaign.player_characters[i].id)
-					newLine.html("<span>" + campaign.player_characters[i].name + "</span> Owner: " + campaign.player_characters[i].owner.name)
+					newLine.html("<span>" + campaign.player_characters[i].character.name + "</span> Owner: " + campaign.player_characters[i].character.owner.name)
 					$("#campaign_active_players_list").append(newLine)
 				}
 				

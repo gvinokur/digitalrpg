@@ -6,6 +6,7 @@ import java.util.Set;
 import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.User;
 import com.digitalrpg.domain.model.characters.PlayerCharacter;
+import com.digitalrpg.domain.model.characters.SystemCharacter;
 import com.digitalrpg.domain.model.messages.InviteToCampaignMessage;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
@@ -20,7 +21,7 @@ public class CampaignVO {
 	
 	private User gameMaster;
 	
-	private Set<PlayerCharacter> playerCharacters;
+	private Set<SystemCharacter> playerCharacters;
 	
 	private Collection<InviteMessageVO>  pendingInvitations;
 	
@@ -56,7 +57,7 @@ public class CampaignVO {
 		return gameMaster;
 	}
 
-	public Set<PlayerCharacter> getPlayerCharacters() {
+	public Set<SystemCharacter> getPlayerCharacters() {
 		return playerCharacters;
 	}
 

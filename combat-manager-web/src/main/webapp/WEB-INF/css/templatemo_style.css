@@ -83,9 +83,18 @@ img {
 
 #templatemo_banner {
 	width: 980px;
-	height: 250px;
-	background: url(../img/templatemo_banner_bg.jpg) no-repeat;
+	height: 150px;
+	background: url(../img/digital_rpg_banner_nc.png) no-repeat;
 	position:relative;
+	background-color: #1e1e1e;
+}
+
+#templatemo_banner.blue {
+	width: 980px;
+	height: 150px;
+	background: url(../img/digital_rpg_banner.png) no-repeat;
+	position:relative;
+	background-color: #191f2b;
 }
 
 .banner_icon {
@@ -363,4 +372,37 @@ img {
 	padding: 20px 0 0 0;
 	text-align: center;
 	background: url(../img/templatemo_footer.jpg) no-repeat;
+}
+
+.delete_icon {
+	float: right;
+	width: 16px;
+	height: 16px;
+	background: url(../img/delete2.png) no-repeat;
+	background-size: 100%;
+	cursor: pointer;
+}
+
+.user_details {
+	float: right;
+	clear: both;
+	font-weight: bold;
+	margin-top: 10px;
+}
+
+.user_details span {
+	color: #fff;
+}
+
+.logout_button {
+	border-width: 0px;
+	color: #999999;
+	background-color: transparent;
+	display: inline-block;
+	cursor: pointer;
+	font-weight: bold;
+}
+
+.logout_button:hover {
+	color: #fff;
 }

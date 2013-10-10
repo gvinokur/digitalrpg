@@ -1,11 +1,11 @@
 package com.digitalrpg.domain.dao;
 
 import java.util.Collection;
-import java.util.Set;
-import java.util.SortedSet;
+import java.util.List;
 
 import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.User;
+import com.digitalrpg.domain.model.characters.SystemCharacter;
 
 public interface CampaignDao {
 
@@ -20,12 +20,12 @@ public interface CampaignDao {
 	public void createCampaign(String name, String description, User gm, Boolean isPublic);
 
 	/**
-	 * Returns a Set of campaigns in which the user is either a GM or has a player on it.
+	 * Returns a List of campaigns in which the user is either a GM or has a player on it.
 	 * 
 	 * @param user
 	 * @return
 	 */
-	public SortedSet<Campaign> getCampaignsForUser(String user);
+	public List<Campaign> getCampaignsForUser(String user);
 	
 	/**
 	 * Get Campaign by id
@@ -47,10 +47,8 @@ public interface CampaignDao {
 	 * Adds a player character to a campaign
 	 * 
 	 * @param campaignd
-	 * @param playerCharacterId
+	 * @param character
 	 */
-	public void addPlayerCharacter(Long campaignd, Long playerCharacterId);
-
-	public Boolean invite(Long id, User from, String to, User userTo);
+	public void addPlayerCharacter(Long campaignd, SystemCharacter character);
 	
 }

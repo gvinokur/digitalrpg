@@ -3,8 +3,8 @@ package com.digitalrpg.web.service;
 import java.net.URI;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.SortedSet;
 
 import javax.mail.internet.MimeMessage;
 
@@ -17,9 +17,12 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
 import com.digitalrpg.domain.dao.CampaignDao;
+import com.digitalrpg.domain.dao.CharacterDao;
+import com.digitalrpg.domain.dao.MessageDao;
 import com.digitalrpg.domain.dao.UserDao;
 import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.User;
+import com.digitalrpg.domain.model.characters.SystemCharacter;
 
 public class CampaignService {
 
@@ -28,6 +31,12 @@ public class CampaignService {
 	
 	@Autowired 
 	private UserDao userDao;
+	
+	@Autowired
+	private MessageDao messageDao;
+	
+	@Autowired
+	private CharacterDao characterDao;
 	
 	@Autowired
 	private JavaMailSender javaMailSender;
@@ -42,7 +51,7 @@ public class CampaignService {
 		if(campaign != null) {
 			User userTo = userDao.findByMail(emailTo);
 			sendMail(from.getName(), emailTo, contextPath, campaign);
-			return campaignDao.invite(id, from, emailTo, userTo);
+			return messageDao.invite(id, from, emailTo, userTo, campaign);
 		}
 		return false;
 	}
@@ -83,7 +92,7 @@ public class CampaignService {
 		campaignDao.createCampaign(name, description, gm, isPublic);
 	}
 
-	public SortedSet<Campaign> getCampaignsForUser(String user) {
+	public List<Campaign> getCampaignsForUser(String user) {
 		return campaignDao.getCampaignsForUser(user);
 	}
 
@@ -96,8 +105,9 @@ public class CampaignService {
 		return campaignDao.search(searchString, offset, limit);
 	}
 
-	public void addPlayerCharacter(Long campaignd, Long playerCharacterId) {
-		campaignDao.addPlayerCharacter(campaignd, playerCharacterId);
+	public void addPlayerCharacter(Long campaignd, Long characterId) {
+		SystemCharacter character = characterDao.get(characterId);
+		campaignDao.addPlayerCharacter(campaignd,character);
 	}
 	
 }
