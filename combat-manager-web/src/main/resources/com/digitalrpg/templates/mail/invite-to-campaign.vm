@@ -1,10 +1,15 @@
+
 <html>
 <body>
-<h3>Hello, ${username} has invited you to join his campaign ${campaign.name} at Digital RPG</h3>
+<h3>Welcome Hero!</h3>
 
-<div>
-	To join please follow this <a href="${contextPath}/campaigns?show_form=join_campaign&campaign_id=${campaign.id}">link</a>.
-</div>
+<p>
+	You have been invited to join ${username}'s campaign, <strong>${campaign.name}</strong> on DigitalRPG!
+</p>
+
+<p>
+    <a href="${contextPath}/campaigns/${campaign.id}/join?messageId=${message.id}" target="_blank">Claim your spot and let the battle begin!</a>
+</p>
 </body>
 
 </html>

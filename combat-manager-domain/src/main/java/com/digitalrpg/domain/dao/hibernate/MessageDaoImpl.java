@@ -18,7 +18,7 @@ public class MessageDaoImpl implements MessageDao {
 	private SessionFactory sessionFactory;
 
 	@Transactional
-	public Boolean invite(Long id, User from, String toMail, User toUser,
+	public Message invite(Long id, User from, String toMail, User toUser,
 			Campaign campaign) {
 		InviteToCampaignMessage message = new InviteToCampaignMessage();
 		message.setCampaign(campaign);
@@ -26,7 +26,7 @@ public class MessageDaoImpl implements MessageDao {
 		message.setToMail(toMail);
 		message.setTo(toUser);
 		this.sessionFactory.getCurrentSession().save(message);
-		return true;
+		return message;
 	}
 
 	@Transactional(isolation = Isolation.SERIALIZABLE)

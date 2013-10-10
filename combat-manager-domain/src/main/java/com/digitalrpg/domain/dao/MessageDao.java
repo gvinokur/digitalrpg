@@ -20,7 +20,7 @@ public interface MessageDao {
 	
 	public void deleteMessage(Long id);
 
-	public Boolean invite(Long id, User from, String to, User userTo, Campaign campaign);
+	public Message invite(Long id, User from, String to, User userTo, Campaign campaign);
 
 	public Message get(Long id);
 }

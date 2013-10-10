@@ -23,6 +23,7 @@ import com.digitalrpg.domain.dao.UserDao;
 import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.User;
 import com.digitalrpg.domain.model.characters.SystemCharacter;
+import com.digitalrpg.domain.model.messages.Message;
 
 public class CampaignService {
 
@@ -50,19 +51,20 @@ public class CampaignService {
 		Campaign campaign = campaignDao.get(id);
 		if(campaign != null) {
 			User userTo = userDao.findByMail(emailTo);
-			sendMail(from.getName(), emailTo, contextPath, campaign);
-			return messageDao.invite(id, from, emailTo, userTo, campaign);
+			Message message = messageDao.invite(id, from, emailTo, userTo, campaign);
+			sendMail(from.getName(), emailTo, contextPath, campaign, message);
+			return true;
 		}
 		return false;
 	}
 	
 	
 	
-	private void sendMail(final String user, final String email, final String contextPath, final Campaign campaign) {
+	private void sendMail(final String user, final String email, final String contextPath, final Campaign campaign, final Message inviteMessage) {
 		MimeMessagePreparator preparator = new MimeMessagePreparator() {
 	         public void prepare(MimeMessage mimeMessage) throws Exception {
 	            MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
-	            message.setSubject("Welcome to Digital RPG");
+	            message.setSubject("Join Campaign on DigitalRPG");
 	            message.setTo(email);
 	            message.setFrom(from); // could be parameterized...
 	            Map<String, Object> model = new HashMap<String, Object>();
@@ -70,6 +72,7 @@ public class CampaignService {
 	            model.put("username", user);
 	            model.put("contextPath", new URI(contextPath));
 	            model.put("campaign", campaign);
+	            model.put("message", inviteMessage);
 	            String text = VelocityEngineUtils.mergeTemplateIntoString(
 	               velocityEngine, "com/digitalrpg/templates/mail/invite-to-campaign.vm", model);
 	            message.setText(text, true);
