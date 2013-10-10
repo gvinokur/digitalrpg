@@ -137,14 +137,10 @@
                 <div class="cleaner">&#160;</div>
             </div>
             
-            
-            
-            <div class="margin_bottom_20 horizontal_divider">&#160;</div> 
-            
         	<div class="margin_bottom_40">&#160;</div>
         </div> <!-- end of content -->
         
-        <jsp:include page="messages.jsp"/>
+        <jsp:include page="ads.jsp"/>
    	
    
 <script type="text/javascript">

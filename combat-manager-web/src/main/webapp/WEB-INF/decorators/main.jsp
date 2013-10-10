@@ -36,35 +36,47 @@
 		<div id="templatemo_wrapper_inner">
 
 			<div id="templatemo_banner" class="${param['bannerClass'] }">
-				<c:if test="${pageContext.request.userPrincipal !=null }">
-					<c:url var="logoutUrl" value="/logout" />
-					<form:form class="user_details navbar-form pull-right"
-						action="${logoutUrl}" method="post">
-						Welcome <span>${ pageContext.request.userPrincipal.principal.name}</span>
-						<input type="submit" value="Log out" class="logout_button" />
-					</form:form>
-				</c:if>
+				<c:choose>
+					<c:when test="${pageContext.request.userPrincipal !=null }">
+						<c:url var="logoutUrl" value="/logout" />
+						<form:form class="user_details navbar-form pull-right"
+							action="${logoutUrl}" method="post">
+							Welcome <span>${ pageContext.request.userPrincipal.principal.name}</span>
+							<input type="submit" value="Log out" class="logout_button" />
+						</form:form>
+					</c:when>
+					<c:otherwise>
+						<div class="user_details">
+							<c:url var="loginBarUrl" value="/login" />
+							<c:url var="registerBarUrl" value="/register" />
+							<span>Welcome Hero!</span>&#160;
+							<span><a href="${loginBarUrl }">Login</a></span> or
+							<span><a href="${registerBarUrl }">Register</a></span> 
+						</div>
+					</c:otherwise>
+				</c:choose>
 			</div>
 			<!-- end of banner -->
 
 			<div id="templatemo_menu">
 				<ul>
 					<c:url var="homeUrl" value="/home" />
+					<c:url var="lobbyUrl" value="/lobby" />
 					<c:url var="campaignsUrl" value="/campaigns" />
 					<c:url var="pcsUrl" value="/player-characters" />
 					<c:url var="combatsUrl" value="/combats" />
-					<c:url var="homeUrl" value="/home" />
-
-					<li><a href="${homeUrl}"
-						class="${fn:startsWith(pageContext.request.servletPath,homeUrl)?'current':' '}">Home</a></li>
-					<li><a href="${campaignsUrl }"
-						class="${fn:startsWith(pageContext.request.servletPath,campaignsUrl)?'current':' '}">Campaigns</a></li>
-					<li><a href="${pcsUrl }"
-						class="${fn:startsWith(pageContext.request.servletPath,pcsUrl)?'current':''}">Player
-							Characters</a></li>
-					<li><a href="${combatsUrl }"
-						class="${fn:startsWith(pageContext.request.servletPath,combatsUrl)?'current':''}">Combats</a></li>
-					<li><a href="#">Contact</a></li>
+					<c:if test="${pageContext.request.userPrincipal !=null }">
+						<li><a href="${homeUrl}"
+							class="${fn:startsWith(pageContext.request.servletPath,homeUrl)?'current':' '}">Home</a></li>
+						<li><a href="${lobbyUrl }"
+							class="${fn:startsWith(pageContext.request.servletPath,lobbyUrl)?'current':' '}">My Lobby</a></li>
+						<li><a href="${campaignsUrl }"
+							class="${fn:startsWith(pageContext.request.servletPath,campaignsUrl)?'current':' '}">Campaigns</a></li>
+						<li><a href="${pcsUrl }"
+							class="${fn:startsWith(pageContext.request.servletPath,pcsUrl)?'current':''}">Characters</a></li>
+						<li><a href="${combatsUrl }"
+							class="${fn:startsWith(pageContext.request.servletPath,combatsUrl)?'current':''}">Combats</a></li>
+					</c:if>
 				</ul>
 			</div>
 			<!-- end of menu -->

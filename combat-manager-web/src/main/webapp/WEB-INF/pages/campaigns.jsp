@@ -57,7 +57,6 @@
                 <p><span>Search Campaigns.</span> Search for public campaigns and join them.</p>
                
                 <p><span>Create Campaign.</span> Create a new Campaign and invite you friends to play.</p>
-               <div class="margin_bottom_20">&#160;</div>
                 <div class="cleaner">&#160;</div>
             </div>
             
@@ -94,13 +93,11 @@
 					<input type="submit" value="Create" class="small_button"></input>
 						
             	</form:form>
-                <div class="margin_bottom_20">&#160;</div>
                 <div class="cleaner">&#160;</div>
             </div>
             
             <div id="campaign_search_result" class="content_section hidden">
             	<div class="header_02">Search Result for <span id="search_param"></span></div>
-            	<div class="margin_bottom_20">&#160;</div>
                 <div class="cleaner">&#160;</div>
             </div>
             
@@ -127,7 +124,6 @@
            		<input id="invite_player_button" type="button" value="Invite Player" class="small_button hidden">
            		</input>            		
             	
-            	<div class="margin_bottom_20">&#160;</div>
                 <div class="cleaner">&#160;</div>
             </div>
             
@@ -152,18 +148,14 @@
 					            		
             	</form:form>            	
             	
-            	<div class="margin_bottom_20">&#160;</div>
                 <div class="cleaner">&#160;</div>
             </div>
-            </c:if>
-            
-            <div class="margin_bottom_20 horizontal_divider">&#160;</div> 
-            
+            </c:if>           
             
         	<div class="margin_bottom_40">&#160;</div>
         </div> <!-- end of content -->
         
-        <jsp:include page="messages.jsp"/>
+        <jsp:include page="ads.jsp"/>
    		
    		<div id="invite_user_form" style="display:none; cursor: default"> 
    			<form:form id="invite_form">

@@ -29,7 +29,7 @@
 	function reloadNews() {
 		var url = "${newsUrl}"
 		$.ajax(url).done(function(result){
-			$("#messages > :not(.header_01)").remove();
+			$("#messages > :not(.header_02)").remove();
 			for(i=0; i &lt; result.length; i++) {
 				drawMessage(result[i]);
 			}
@@ -65,10 +65,12 @@
 	function drawMessageRequestJoin(message) {
 	}
 </script>
-	<div id="messages" class="templatemo_side_bar">
+	<div class="templatemo_content margin_top_15">
 
-		<div class="header_01">Messages</div>
+		<div id="messages" class="content_section">
+	        <div class="header_02">Messages</div>
 
+		</div>
 	</div>
 	<!-- end of right side bar -->
 

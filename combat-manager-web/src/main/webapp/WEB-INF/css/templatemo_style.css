@@ -39,6 +39,8 @@ img {
 .margin_right_10 { margin-right: 10px; }
 .margin_right_60 { margin-right: 60px; }
 
+.margin_top_15 { margin-top: 15px;}
+
 .horizontal_divider {
 	background: url(../img/templatemo_horizontal_divider.jpg) bottom repeat-x;
 }
@@ -148,6 +150,10 @@ img {
 	padding: 10px;
 }
 
+.templatemo_multi_content {
+	float: left;
+	width: 500px;
+}
 .templatemo_content {
 	float: left;
 	width: 460px;
@@ -388,9 +394,19 @@ img {
 	clear: both;
 	font-weight: bold;
 	margin-top: 10px;
+	margin-right: 10px;
 }
 
 .user_details span {
+	color: #fff;
+}
+
+.user_details span a{
+	color: #999999;
+	font-weight: bold;
+}
+
+.user_details span a:hover {
 	color: #fff;
 }
 

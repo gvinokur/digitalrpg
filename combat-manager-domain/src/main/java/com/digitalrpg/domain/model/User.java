@@ -2,8 +2,10 @@ package com.digitalrpg.domain.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -24,6 +26,8 @@ public class User {
 	private String activationToken;
 	
 	private String email;
+	
+	private SubscriptionType subscriptionType;
 	
 	@Id
 	@Type(type = "long")
@@ -76,6 +80,15 @@ public class User {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	public SubscriptionType getSubscriptionType() {
+		return subscriptionType;
+	}
+
+	public void setSubscriptionType(SubscriptionType subscriptionType) {
+		this.subscriptionType = subscriptionType;
 	}
 
 }
