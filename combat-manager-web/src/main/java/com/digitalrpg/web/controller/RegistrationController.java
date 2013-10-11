@@ -57,14 +57,14 @@ public class RegistrationController {
 				(request.getContextPath()!=null && !request.getContextPath().isEmpty()? "/" + request.getContextPath(): "");
 		registrationService.registerUser(user.getUsername(), user.getEmail(), user.getPassword(), contextPath);
 		//TODO: Send activationToken by email.
-		redirectAttributes.addFlashAttribute("message", "Registration was Successfull, an email was sent to " + user.getEmail() + " with activation details");
+		redirectAttributes.addFlashAttribute("form_message", "Registration was Successfull, an email was sent to " + user.getEmail() + " with activation details");
 		return new ModelAndView("redirect:/login");
 	}
 	
 	@RequestMapping(value= "/confirm", method = RequestMethod.GET)
 	public String activateUser(@RequestParam String username, @RequestParam String activationToken, final RedirectAttributes redirectAttributes) {
 		registrationService.activate(username, activationToken);
-		redirectAttributes.addFlashAttribute("message", "Account for " + username + " is now Active");
+		redirectAttributes.addFlashAttribute("form_message", "Account for " + username + " is now Active");
 		return "redirect:/login";
 	}
 	

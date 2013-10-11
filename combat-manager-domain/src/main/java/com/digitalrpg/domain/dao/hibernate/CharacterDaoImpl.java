@@ -7,6 +7,7 @@ import org.hibernate.SessionFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.digitalrpg.domain.dao.CharacterDao;
+import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.User;
 import com.digitalrpg.domain.model.characters.Character;
 import com.digitalrpg.domain.model.characters.NonPlayerCharacter;
@@ -49,10 +50,11 @@ public class CharacterDaoImpl implements CharacterDao {
 
 	@Transactional
 	public PathfinderCharacter createPathfinderCharacter(Character character,
-			PathfinderCharacterProperties properties) {
+			PathfinderCharacterProperties properties, Campaign campaign) {
 		PathfinderCharacter pathfinderCharacter = new PathfinderCharacter();
 		pathfinderCharacter.setCharacter(character);
 		pathfinderCharacter.fromProperties(properties);
+		pathfinderCharacter.setCampaign(campaign);
 		sessionFactory.getCurrentSession().save(pathfinderCharacter);
 		return pathfinderCharacter;
 	}

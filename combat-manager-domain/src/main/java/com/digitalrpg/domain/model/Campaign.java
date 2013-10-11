@@ -15,6 +15,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Where;
 
 import com.digitalrpg.domain.model.characters.SystemCharacter;
 import com.digitalrpg.domain.model.messages.InviteToCampaignMessage;
@@ -31,6 +32,8 @@ public class Campaign {
 	private String description;
 	
 	private User gameMaster;
+	
+	private SystemType system;
 	
 	private Set<SystemCharacter> playerCharacters;
 	
@@ -79,18 +82,14 @@ public class Campaign {
 		this.gameMaster = gameMaster;
 	}
 
-	@ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    @JoinTable(name="campaign_player_characters", 
-                joinColumns={@JoinColumn(name="campaign_id")}, 
-                inverseJoinColumns={@JoinColumn(name="character_id")})
+	@OneToMany(mappedBy = "campaign",fetch = FetchType.EAGER)
+	@Where(clause = "type = 'PlayerCharacter'")
 	public Set<SystemCharacter> getPlayerCharacters() {
 		return playerCharacters;
 	}
 	
-	@ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
-    @JoinTable(name="campaign_non_player_characters", 
-                joinColumns={@JoinColumn(name="campaign_id")}, 
-                inverseJoinColumns={@JoinColumn(name="character_id")})
+	@OneToMany(mappedBy = "campaign",fetch = FetchType.EAGER)
+	@Where(clause = "type = 'NonPlayerCharacter'")
 	public Set<SystemCharacter> getNonPlayerCharacters() {
 		return nonPlayerCharacters;
 	}
@@ -130,6 +129,14 @@ public class Campaign {
 
 	public void setPendingRequest(Set<RequestJoinToCampaignMessage> pendingRequest) {
 		this.pendingRequest = pendingRequest;
+	}
+
+	public SystemType getSystem() {
+		return system;
+	}
+
+	public void setSystem(SystemType system) {
+		this.system = system;
 	}
 	
 	

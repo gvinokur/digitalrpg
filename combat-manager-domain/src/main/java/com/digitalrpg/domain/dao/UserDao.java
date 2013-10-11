@@ -39,4 +39,6 @@ public interface UserDao {
 
 	public User findByMail(String emailTo);
 	
+	public void updateUser(User user);
+	
 }

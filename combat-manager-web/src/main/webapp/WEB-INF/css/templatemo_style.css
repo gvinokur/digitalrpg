@@ -10,6 +10,7 @@ body {
 	font-size: 12px;
 	color: #999;
 	background: #272525 url(../img/templatemo_top_bg.jpg) repeat-x;
+	background-position: 0 -100px;
 }
 
 a:link, a:visited { color: #FFFFFF; text-decoration: none; font-weight: normal; } 
@@ -40,6 +41,8 @@ img {
 .margin_right_60 { margin-right: 60px; }
 
 .margin_top_15 { margin-top: 15px;}
+
+.margin_bottom_15 { margin-bottom: 15px;}
 
 .horizontal_divider {
 	background: url(../img/templatemo_horizontal_divider.jpg) bottom repeat-x;
@@ -162,6 +165,16 @@ img {
 	border: 1px solid #363434;
 }
 
+.templatemo_content.form_message,
+.templatemo_content_centered.form_message {
+	border-color: green; 
+}
+
+.templatemo_content.error_message,
+.templatemo_content_centered.error_message {
+	border-color: red; 
+}
+
 .templatemo_content_centered {
 	width: 460px;
 	padding: 20px 19px 0 19px;
@@ -271,6 +284,87 @@ img {
 	width: 120px;
 	margin-left: 60px;
 	font-weight: bold;
+}
+
+.generic_label {
+	display:inline-block;
+	width: 120px;
+	margin-left: 10px;
+	font-weight: bold;
+}
+
+.generic_label.wide {
+	width: 160px;
+}
+
+.generic_label.wider {
+	width: 180px;
+}
+
+.generic_label.widest {
+	width: 200px;
+}
+
+.generic_label.narrow {
+	width: 80px;
+}
+
+.generic_label.narrower {
+	width: 60px;
+}
+
+.generic_label.narrowest {
+	width: 40px;
+}
+
+
+.generic_field {
+	padding: 5px 0 0 0;
+	height: 20px;
+	width: 175px;
+	margin-bottom: 10px;
+}
+
+.generic_field.narrow {
+	width: 150px; 
+}
+
+.generic_field.narrower {
+	width: 125px; 
+}
+
+.generic_field.narrowest {
+	width: 100px; 
+}
+
+.generic_field.tiny {
+	width: 75px; 
+}
+
+.generic_field.tinier {
+	width: 50px; 
+}
+
+input[type="checkbox"].generic_field {
+	width: 15px;
+	height: 15px;
+}
+
+.generic_field#description {
+	width: 300px;
+	height: auto;
+}
+
+select.generic_field {
+	padding-top: 0px;
+}
+
+.generic_field.error {
+	border-color: red;
+}
+
+.generic_field.valid {
+	border-color: green;
 }
 
 #reCaptcha {

@@ -18,6 +18,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import com.digitalrpg.web.service.CampaignService;
 import com.digitalrpg.web.service.MessageService;
 import com.digitalrpg.web.service.RegistrationService;
+import com.digitalrpg.web.service.UserService;
 
 @Configuration
 @ComponentScan(value = { "com.digitalrpg.web.config", "com.digitalrpg.web.security.config",
@@ -45,6 +46,11 @@ public class RootConfiguration {
 	@Bean
 	public MessageService getMessageService(){
 		return new MessageService();
+	}
+	
+	@Bean 
+	public UserService userService() {
+		return new UserService();
 	}
 	
 	@Bean 

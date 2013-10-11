@@ -21,7 +21,7 @@ public class MessageService {
 	@Autowired
 	private MessageDao messageDao;
 	
-	private static Function<Message, MessageVO> messageToVOFunction = new Function<Message, MessageVO>() {
+	public static Function<Message, MessageVO> messageToVOFunction = new Function<Message, MessageVO>() {
 		public MessageVO apply(Message message) {
 			MessageVO out = null;
 			if(message instanceof InviteToCampaignMessage) {

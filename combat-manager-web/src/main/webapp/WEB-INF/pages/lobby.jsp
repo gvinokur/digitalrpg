@@ -14,14 +14,13 @@
     	<div class="templatemo_side_bar margin_right_10">
         	<c:url var="lobbyUrl" value="/lobby" />
 			<c:url var="campaignsUrl" value="/campaigns/public" />
-            <div class="header_01">Recent Campaigns</div>
+            <div class="header_01">Recently Visited</div>
            	<ul>
-           		<c:forEach items="${campaigns }" var="campaign">
-               		<li><a href="${campaignsUrl + '/' + campaign.id }">${campaign.name }</a></li>
+           		<c:forEach items="${pageContext.request.userPrincipal.principal.recentItems }" var="recentItem">
+           			<c:url value="${recentItem.url }" var="recentItemUrl"></c:url>
+               		<li><a href="${recentItemUrl }">${recentItem.title }</a></li>
                 </c:forEach>
             </ul>
-           	<div class="margin_bottom_20">&#160;</div>
-           	<div class="header_01">Recent Characters</div>
            	<div class="margin_bottom_20">&#160;</div>
            	<div class="header_01">Friends</div>
            	<div class="margin_bottom_20">&#160;</div>

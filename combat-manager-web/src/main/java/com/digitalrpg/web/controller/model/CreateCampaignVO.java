@@ -2,12 +2,16 @@ package com.digitalrpg.web.controller.model;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.digitalrpg.domain.model.SystemType;
+
 public class CreateCampaignVO {
 
 	@NotEmpty
 	private String name;
 	
 	private String description;
+	
+	private SystemType systemType;
 	
 	private Boolean isPublic;
 
@@ -33,6 +37,14 @@ public class CreateCampaignVO {
 
 	public void setIsPublic(Boolean isPublic) {
 		this.isPublic = isPublic;
+	}
+
+	public SystemType getSystemType() {
+		return systemType;
+	}
+
+	public void setSystemType(SystemType systemType) {
+		this.systemType = systemType;
 	}
 
 

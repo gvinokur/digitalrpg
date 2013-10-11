@@ -2,6 +2,7 @@ package com.digitalrpg.domain.dao;
 
 import java.util.Collection;
 
+import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.User;
 import com.digitalrpg.domain.model.characters.NonPlayerCharacter;
 import com.digitalrpg.domain.model.characters.PlayerCharacter;
@@ -16,7 +17,7 @@ public interface CharacterDao {
 	
 	public NonPlayerCharacter createNonPlayerCharacter(String name, String pictureUrl, User createdBy, Boolean isPublic);
 	
-	public PathfinderCharacter createPathfinderCharacter(Character character, PathfinderCharacterProperties properties);
+	public PathfinderCharacter createPathfinderCharacter(Character character, PathfinderCharacterProperties properties, Campaign campaign);
 
 	public Collection<SystemCharacter> getUserPlayerCharacters(String user);
 	

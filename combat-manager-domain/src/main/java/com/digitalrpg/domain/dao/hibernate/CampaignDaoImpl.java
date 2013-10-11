@@ -1,7 +1,6 @@
 package com.digitalrpg.domain.dao.hibernate;
 
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.digitalrpg.domain.dao.CampaignDao;
 import com.digitalrpg.domain.model.Campaign;
+import com.digitalrpg.domain.model.SystemType;
 import com.digitalrpg.domain.model.User;
 import com.digitalrpg.domain.model.characters.SystemCharacter;
 
@@ -21,14 +21,16 @@ public class CampaignDaoImpl implements CampaignDao {
 	private SessionFactory sessionFactory;
 	
 	@Transactional(isolation = Isolation.REPEATABLE_READ)
-	public void createCampaign(String name, String description, User gm,
-			Boolean isPublic) {
+	public Campaign createCampaign(String name, String description, User gm,
+			Boolean isPublic, SystemType system) {
 		Campaign campaign = new Campaign();
 		campaign.setName(name);
 		campaign.setDescription(description);
 		campaign.setGameMaster(gm);
 		campaign.setIsPublic(isPublic);
+		campaign.setSystem(system);
 		sessionFactory.getCurrentSession().save(campaign);
+		return campaign;
 	}
 
 	@SuppressWarnings("unchecked")

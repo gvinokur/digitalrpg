@@ -1,14 +1,23 @@
 package com.digitalrpg.domain.model;
 
+import java.util.Arrays;
+import java.util.SortedSet;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Sort;
+import org.hibernate.annotations.SortType;
 import org.hibernate.annotations.Type;
 
 @Entity
@@ -28,6 +37,8 @@ public class User {
 	private String email;
 	
 	private SubscriptionType subscriptionType;
+	
+	private SortedSet<RecentItem> recentItems;
 	
 	@Id
 	@Type(type = "long")
@@ -91,4 +102,24 @@ public class User {
 		this.subscriptionType = subscriptionType;
 	}
 
+	@Override
+	public int hashCode() {
+		return HashCodeBuilder.reflectionHashCode(this, Arrays.asList("id"));
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return EqualsBuilder.reflectionEquals(this, obj, Arrays.asList("id"));
+	}
+
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,  fetch = FetchType.EAGER, mappedBy = "user")
+	@Sort(type = SortType.NATURAL)
+	public SortedSet<RecentItem> getRecentItems() {
+		return recentItems;
+	}
+
+	public void setRecentItems(SortedSet<RecentItem> recentItems) {
+		this.recentItems = recentItems;
+	}
+	
 }

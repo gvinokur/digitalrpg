@@ -2,6 +2,8 @@ package com.digitalrpg.web.controller.model;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.digitalrpg.domain.model.User;
+
 public class CharacterVO {
 
 	@NotEmpty
@@ -17,10 +19,16 @@ public class CharacterVO {
 	
 	private int hp;
 	
-	private String system;
-	
 	private PathfinderDataVO pathfinder;
 
+	private Long campaignId;
+	
+	private Long messageId;
+	
+	private User owner;
+	
+	private Long id;
+	
 	public String getName() {
 		return name;
 	}
@@ -61,14 +69,6 @@ public class CharacterVO {
 		this.hp = hp;
 	}
 
-	public String getSystem() {
-		return system;
-	}
-
-	public void setSystem(String system) {
-		this.system = system;
-	}
-
 	public PathfinderDataVO getPathfinder() {
 		return pathfinder;
 	}
@@ -83,6 +83,38 @@ public class CharacterVO {
 
 	public void setPictureUrl(String pictureUrl) {
 		this.pictureUrl = pictureUrl;
+	}
+
+	public Long getCampaignId() {
+		return campaignId;
+	}
+
+	public void setCampaignId(Long campaignId) {
+		this.campaignId = campaignId;
+	}
+
+	public User getOwner() {
+		return owner;
+	}
+
+	public void setOwner(User owner) {
+		this.owner = owner;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Long getMessageId() {
+		return messageId;
+	}
+
+	public void setMessageId(Long messageId) {
+		this.messageId = messageId;
 	}
 	
 }

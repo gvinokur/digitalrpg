@@ -23,6 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.digitalrpg.domain.dao.CharacterDao;
 import com.digitalrpg.domain.model.Campaign;
+import com.digitalrpg.domain.model.SystemType;
 import com.digitalrpg.domain.model.User;
 import com.digitalrpg.domain.model.characters.SystemCharacter;
 import com.digitalrpg.web.controller.model.CampaignVO;
@@ -31,6 +32,7 @@ import com.digitalrpg.web.controller.model.JoinCampaignVO;
 import com.digitalrpg.web.controller.model.MessageVO;
 import com.digitalrpg.web.service.CampaignService;
 import com.digitalrpg.web.service.MessageService;
+import com.digitalrpg.web.service.UserService;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 
@@ -38,6 +40,8 @@ import com.google.common.collect.Collections2;
 @RequestMapping("/campaigns")
 public class CampaignController {
 
+	private final static String SHOW_CAMPAIGN_URL = "/campaigns/%s/show";
+	
 	@Autowired
 	private CampaignService campaignService;
 
@@ -47,7 +51,10 @@ public class CampaignController {
 	@Autowired
 	private CharacterDao characterDao;
 	
-	private Function<Campaign, CampaignVO> campaignToVOFunction = new Function<Campaign, CampaignVO>() {
+	@Autowired
+	private UserService userService;
+	
+	public static Function<Campaign, CampaignVO> campaignToVOFunction = new Function<Campaign, CampaignVO>() {
 		public CampaignVO apply(Campaign in) {
 			CampaignVO out = new CampaignVO();
 			out.fromCampaign(in);
@@ -61,16 +68,23 @@ public class CampaignController {
 		return Collections2.transform(campaignService.getCampaignsForUser(user.getName()), campaignToVOFunction);
 	}
 	
+	@ModelAttribute("systems")
+	public SystemType[] getSystemTypes() {
+		return SystemType.values();
+	}
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView showCampaigns(@RequestParam(required = false, value="show_content") String showContent) {
 		return new ModelAndView("campaigns");
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView createCampaign(@Valid @ModelAttribute("campaign") CreateCampaignVO campaign, BindingResult result, Principal principal ) {
+	public ModelAndView createCampaign(@Valid @ModelAttribute("campaign") CreateCampaignVO createCampaignVO, BindingResult result, Principal principal, RedirectAttributes attributes ) {
 		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
 		if(!result.hasErrors()) {
-			campaignService.createCampaign(campaign.getName(), campaign.getDescription(), user, campaign.getIsPublic());
+			Campaign campaign = campaignService.createCampaign(createCampaignVO.getName(), createCampaignVO.getDescription(), user, createCampaignVO.getIsPublic(), createCampaignVO.getSystemType());
+			userService.trackItem(user, String.format(SHOW_CAMPAIGN_URL, campaign.getId()), campaign.getName());
+			attributes.addFlashAttribute("form_message", String.format("Campaign %s was created successfully", campaign.getName()));
 			return new ModelAndView("redirect:campaigns");
 		}
 		return new ModelAndView("campaigns", "show_content", "create_campaign");
@@ -84,10 +98,22 @@ public class CampaignController {
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	@ResponseBody
-	public CampaignVO getCampaign(@PathVariable Long id) {
-		CampaignVO vo = new CampaignVO();
-		vo.fromCampaign(campaignService.get(id));
+	public CampaignVO getCampaign(@PathVariable Long id, Principal principal) {
+		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+		CampaignVO vo = campaignToVOFunction.apply(campaignService.get(id));
+		userService.trackItem(user, String.format(SHOW_CAMPAIGN_URL, vo.getId()), vo.getName());
 		return vo;
+	}
+	
+	@RequestMapping(value = "/{id}/show", method = RequestMethod.GET)
+	public ModelAndView showCampaign(@PathVariable Long id, Principal principal) {
+		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+		CampaignVO vo = campaignToVOFunction.apply(campaignService.get(id));
+		userService.trackItem(user, String.format(SHOW_CAMPAIGN_URL, vo.getId()), vo.getName());
+		Map<String, Object> modelMap = new HashMap<String, Object>();
+		modelMap.put("show_content", "campaign_view");
+		modelMap.put("campaign", vo);
+		return new ModelAndView("/campaigns", modelMap);
 	}
 	
 	@RequestMapping(value = "/{id}/invite/{email:.*}")
@@ -104,26 +130,12 @@ public class CampaignController {
 	public ModelAndView showJoinCampaign(@PathVariable Long id, @RequestParam Long messageId, Principal principal) {
 		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
 		Map<String, Object> model = new HashMap<String, Object>();
-		Campaign campaign = campaignService.get(id);
+		CampaignVO campaign = campaignToVOFunction.apply(campaignService.get(id));
 		MessageVO message = messageService.getMessage(messageId);
-		Collection<SystemCharacter> characters = characterDao.getUserPlayerCharacters(user.getName());
 		model.put("campaign", campaign);
 		model.put("message", message);
-		model.put("characters", characters);
 		model.put("show_content", "campaign_join");
 		return new ModelAndView("/campaigns", model );
 	}
 	
-	@RequestMapping(value = "/{id}/join", method = RequestMethod.POST)
-	public ModelAndView joinCampaign(@PathVariable Long id, @ModelAttribute("joinCampaign") JoinCampaignVO joinCampaignVO, BindingResult result, Principal principal,
-			RedirectAttributes redirectAttributes) {
-		if(result.hasErrors()) {
-			return this.showJoinCampaign(id, joinCampaignVO.getMessageId(), principal);
-		} else {
-			campaignService.addPlayerCharacter(id, joinCampaignVO.getCharacterId());
-			messageService.deleteMessage(joinCampaignVO.getMessageId());
-			redirectAttributes.addFlashAttribute("message", "You are now part of the campaign");
-			return new ModelAndView("redirect:/campaigns");
-		}
-	}
 }

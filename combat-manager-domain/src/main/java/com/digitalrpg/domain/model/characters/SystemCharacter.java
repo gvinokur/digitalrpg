@@ -13,6 +13,8 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import com.digitalrpg.domain.model.Campaign;
+
 
 @Entity
 @Table(name = "system_character")
@@ -23,6 +25,10 @@ public class SystemCharacter {
 	
 	private Character character;
 
+	private Campaign campaign;
+	
+	private String type;
+	
 	@Id
 	@GeneratedValue(generator="increment")
 	@GenericGenerator(name="increment", strategy = "increment")
@@ -42,6 +48,26 @@ public class SystemCharacter {
 
 	public void setCharacter(Character character) {
 		this.character = character;
+		this.type = character.getClass().getSimpleName();
 	}
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name="campaign_id", referencedColumnName="id")
+	public Campaign getCampaign() {
+		return campaign;
+	}
+
+	public void setCampaign(Campaign campaign) {
+		this.campaign = campaign;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+	
 	
 }

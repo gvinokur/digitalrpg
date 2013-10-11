@@ -23,12 +23,6 @@
                    
                </ul>
             
-            <div class="margin_bottom_20">&#160;</div>
-            
-            
-           	<input type="button" value="New Character" id="create_character_button" class="small_button"/>
-            
-            <div class="margin_bottom_20 horizontal_divider">&#160;</div> 
 			<div class="margin_bottom_20">&#160;</div>
 
         </div> <!-- end of left side bar -->
@@ -38,96 +32,95 @@
         	<div id="character_info" class="content_section">
            	  <div class="header_02">Characters info</div>
                 <p><span>View and Manage Characters.</span> View your character info and the campaign and combats they are involved in.</p>
-               
-                <p><span>Create Character.</span> Create a new Character.</p>
+     
                <div class="margin_bottom_20">&#160;</div>
                 <div class="cleaner">&#160;</div>
             </div>
             
             <div id="create_character"  class="content_section hidden">
             	<div class="header_02">Create Campaign</div>
+            	<p>You are creating a character for ${campaign.gameMaster.name }'s campaign <span>${campaign.name}</span></p>
+            	
             	<c:url value="/player-characters" var="createCharacterUrl"></c:url>
             	<form:form action="${createCharacterUrl }" modelAttribute="character" id="character" method="POST">
             		
+            		<input type="hidden" name="campaignId" value="${campaign.id}"/>
+            		<input type="hidden" name="messageId" value="${message.id}"/>
+            		
             		<div class="margin_bottom_20">&#160;</div>
-					<div class="creat_character_label">
+					<div class="generic_label">
 						<label for="name">Name</label>
 					</div>
 					<input type="text" id="name" name="name" autocomplete="off"
-						class="field"  />
+						class="generic_field"  />
 					<form:errors element="div" path="name"/>
 					
 					<div class="margin_bottom_20">&#160;</div>
-					<div class="creat_character_label">
+					<div class="generic_label">
 						<label for="description">Description</label>
 					</div>
-					<textarea id="description" name="description"
-						class="field" rows="4" draggable="true">&#160;</textarea>
-					<form:errors element="div" path="description"/>
+					<div style="display: inline-flex;">
+						<textarea id="description" name="description"
+							class="generic_field" rows="4" draggable="true">&#160;</textarea>
+						<form:errors element="div" path="description"/>
+					</div>
 					
 					<div class="margin_bottom_20">&#160;</div>
-					<div class="creat_character_label race">
+					<div class="generic_label narrowest">
 						<label for="race">Race</label>
 					</div>
 					<input type="text" id="race" name="race" autocomplete="off"
-						class="field" />
+						class="generic_field narrowest" />
 					
-					<div class="creat_character_label class">
+					<div class="generic_label narrowest">
 						<label for="class">Class</label>
 					</div>
 					<input type="text" id="class" name="class" autocomplete="off"
-						class="field" />
+						class="generic_field narrowest" />
 					
-					<div class="creat_character_label hp">
-						<label for="hp">Hit Points</label>
+					<div class="generic_label narrowest">
+						<label for="hp">HP</label>
 					</div>
 					<input type="text" id="hp" name="hp" autocomplete="off"
-						class="field" />
-					
-					<div class="creat_character_label system">
-						<label for="system">System</label>
-					</div>
-					<select name="system" class="field">
-						<option value="PATHFINDER">Pathfinder</option> 
-					</select>
+						class="generic_field tinier" />
 					
 					<div class="character_main_attributes pathfinder">
 						<div class="header_02">Abilities</div>
-						<div class="creat_character_label_attribute ">
+						<div class="generic_label narrow">
 							<label for="pathfinder.strength">Strength</label>
 						</div>
 						<input type="text" id="pathfinder_strength" name="pathfinder.strength" autocomplete="off"
-							class="attribute_field" />
+							class="generic_field tinier" />
 							
-						<div class="creat_character_label_attribute ">
+						<div class="generic_label narrow">
 							<label for="pathfinder.dexterity">Dexterity</label>
 						</div>
 						<input type="text" id="pathfinder_dexterity" name="pathfinder.dexterity" autocomplete="off"
-							class="attribute_field" />
+							class="generic_field tinier" />
 								
-						<div class="creat_character_label_attribute ">
+						<div class="generic_label narrow">
 							<label for="pathfinder.constitution">Constitution</label>
 						</div>
 						<input type="text" id="pathfinder_constitution" name="pathfinder.constitution" autocomplete="off"
-							class="attribute_field" />
+							class="generic_field tinier" />
 								
-						<div class="creat_character_label_attribute ">
+						<div class="generic_label narrow">
 							<label for="pathfinder.intelligence">Intelligence</label>
 						</div>
 						<input type="text" id="pathfinder_intelligence" name="pathfinder.intelligence" autocomplete="off"
-							class="attribute_field" />
+							class="generic_field tinier" />
 								
-						<div class="creat_character_label_attribute ">
+						<div class="generic_label narrow">
 							<label for="pathfinder.wisdom">wisdom</label>
 						</div>
 						<input type="text" id="pathfinder_wisdom" name="pathfinder.wisdom" autocomplete="off"
-							class="attribute_field" />	
+							class="generic_field tinier" />	
 							
-						<div class="creat_character_label_attribute ">
+						<div class="generic_label narrow">
 							<label for="pathfinder.charisma">Charisma</label>
 						</div>
 						<input type="text" id="pathfinder_charisma" name="pathfinder.charisma" autocomplete="off"
-							class="attribute_field" />		
+							class="generic_field tinier" />		
 					</div>
 					
 					<input type="submit" value="Create" class="small_button"></input>

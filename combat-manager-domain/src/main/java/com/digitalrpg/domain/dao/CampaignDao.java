@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 
 import com.digitalrpg.domain.model.Campaign;
+import com.digitalrpg.domain.model.SystemType;
 import com.digitalrpg.domain.model.User;
 import com.digitalrpg.domain.model.characters.SystemCharacter;
 
@@ -16,8 +17,9 @@ public interface CampaignDao {
 	 * @param description
 	 * @param gm
 	 * @param isPublic
+	 * @param system 
 	 */
-	public void createCampaign(String name, String description, User gm, Boolean isPublic);
+	public Campaign createCampaign(String name, String description, User gm, Boolean isPublic, SystemType system);
 
 	/**
 	 * Returns a List of campaigns in which the user is either a GM or has a player on it.

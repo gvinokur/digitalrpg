@@ -21,6 +21,7 @@ import com.digitalrpg.domain.dao.CharacterDao;
 import com.digitalrpg.domain.dao.MessageDao;
 import com.digitalrpg.domain.dao.UserDao;
 import com.digitalrpg.domain.model.Campaign;
+import com.digitalrpg.domain.model.SystemType;
 import com.digitalrpg.domain.model.User;
 import com.digitalrpg.domain.model.characters.SystemCharacter;
 import com.digitalrpg.domain.model.messages.Message;
@@ -90,9 +91,9 @@ public class CampaignService {
 		this.from = from;
 	}
 
-	public void createCampaign(String name, String description, User gm,
-			Boolean isPublic) {
-		campaignDao.createCampaign(name, description, gm, isPublic);
+	public Campaign createCampaign(String name, String description, User gm,
+			Boolean isPublic, SystemType system) {
+		return campaignDao.createCampaign(name, description, gm, isPublic, system);
 	}
 
 	public List<Campaign> getCampaignsForUser(String user) {

@@ -48,113 +48,131 @@
             <div class="margin_bottom_20">&#160;</div>
         </div> <!-- end of left side bar -->
         
-        <div id="central_panel" class="templatemo_content margin_right_10">
-        
-        	<div id="campaign_info" class="content_section">
-           	  <div class="header_02">Campaign info</div>
-                <p><span>View and Manage Campaigns.</span> Green campaigns are the ones you are GM of, black ones are the ones you are participating in.</p>
-               
-                <p><span>Search Campaigns.</span> Search for public campaigns and join them.</p>
-               
-                <p><span>Create Campaign.</span> Create a new Campaign and invite you friends to play.</p>
-                <div class="cleaner">&#160;</div>
-            </div>
-            
-            <div id="create_campaign"  class="content_section hidden">
-            	<div class="header_02">Create Campaign</div>
-            	<c:url value="/campaigns" var="createCampaignUrl"></c:url>
-            	<form:form action="${createCampaignUrl }" modelAttribute="campaign" id="campaign" method="POST">
-            	
-            		
-            		
-            		<div class="margin_bottom_20">&#160;</div>
-					<div class="campaign_label">
-						<label for="name">Name</label>
-					</div>
-					<input type="text" id="name" name="name" autocomplete="off"
-						class="field"  />
-					<form:errors element="div" path="name"/>
-					
-					<div class="margin_bottom_20">&#160;</div>
-					<div class="campaign_label">
-						<label for="description">Description</label>
-					</div>
-					<textarea id="description" name="description"
-						class="field" rows="4" draggable="true">&#160;</textarea>
-					<form:errors element="div" path="description"/>
-					
-					<div class="margin_bottom_20">&#160;</div>
-					<div class="campaign_checkbox_label">
-						<label for="isPublic">Show campaign in search results</label>
-					</div>
-					<input type="checkbox" id="isPublic" name="isPublic"
-						class="field" checked="checked"/>
-					
-					<input type="submit" value="Create" class="small_button"></input>
+        <div class="templatemo_multi_content margin_right_10">
+        	<div id="form_message" class="templatemo_content form_message margin_bottom_15 ${form_message==null?'hidden':''}">
+        		${form_message }
+        		<div class="margin_bottom_20">&#160;</div>
+        	</div>
+        	<div id="error_message" class="templatemo_content error_message margin_bottom_15 ${error_message==null?'hidden':''}">
+        		${error_message }
+        		<div class="margin_bottom_20">&#160;</div>
+        	</div>
+	        <div id="central_panel" class="templatemo_content">
+	        
+	        	<div id="campaign_info" class="content_section">
+	           	  <div class="header_02">Campaign info</div>
+	                <p><span>View and Manage Campaigns.</span> Green campaigns are the ones you are GM of, black ones are the ones you are participating in.</p>
+	               
+	                <p><span>Search Campaigns.</span> Search for public campaigns and join them.</p>
+	               
+	                <p><span>Create Campaign.</span> Create a new Campaign and invite you friends to play.</p>
+	                <div class="cleaner">&#160;</div>
+	            </div>
+	            
+	            <div id="create_campaign"  class="content_section hidden">
+	            	<div class="header_02">Create Campaign</div>
+	            	<c:url value="/campaigns" var="createCampaignUrl"></c:url>
+	            	<form:form action="${createCampaignUrl }" modelAttribute="campaign" id="campaign" method="POST">
+	            		
+	            		<div class="margin_bottom_20">&#160;</div>
+						<div class="generic_label">
+							<label for="name">Name</label>
+						</div>
+						<input type="text" id="name" name="name" autocomplete="off"
+							class="generic_field"  />
+						<form:errors element="div" path="name"/>
 						
-            	</form:form>
-                <div class="cleaner">&#160;</div>
-            </div>
-            
-            <div id="campaign_search_result" class="content_section hidden">
-            	<div class="header_02">Search Result for <span id="search_param"></span></div>
-                <div class="cleaner">&#160;</div>
-            </div>
-            
-            <div id="campaign_view" class="content_section hidden">
-            	<div class="header_02"><span id="campaign_name"></span></div>
-            	<p id="campaign_description"></p>
-            	<p>Game Master: <span id="campaign_gm"></span></p>
-            	
-           		<div id="campaign_active_players">
-           			<span>Active Players:</span>
-           			<ul id="campaign_active_players_list">
-           			</ul>
-           		</div>
-           		<div id="campaign_pending_players" class="hidden">
-           			<span>Pending Invitations:</span>
-           			<ul id="campaign_pending_players_list">
-           			</ul>
-           		</div>
-           		<div id="campaign_requested_players" class="hidden">
-           			<span>Pending Requests:</span>
-           			<ul id="campaign_pending_requests_list">
-           			</ul>
-           		</div>
-           		<input id="invite_player_button" type="button" value="Invite Player" class="small_button hidden">
-           		</input>            		
-            	
-                <div class="cleaner">&#160;</div>
-            </div>
-            
-            <c:if test="${campaign != null and message != null }"> 
-            <div id="campaign_join" class="content_section hidden">
-            	<div class="header_02">Join ${campaign.name} </div>
-            	<p id="campaign_description">${campaign.description }</p>
-            	<p>You have been invited to join ${campaign.gameMaster.name}'s campaign, select one of your player characters to add to the campaign.</p>
-            	<c:url var="joinCampaignUrl" value="/campaigns/${campaign.id }/join"/>
-            	<form:form action="${joinCampaignUrl }" modelAttribute="joinCampaign" method="POST">
-            		<input type="hidden" name="messageId" value="${message.id }"/>
-					<div class="campaign_label">
-						<label for="player_character">Player Character</label>
-					</div>
-					<select name="characterId" id="player_character">
-						<c:forEach items="${characters }" var="character">
-							<option value="${character.id }">${character.character.name }</option>
-						</c:forEach>
-					</select>
-					
-					<input type="submit" value="Join" class="small_button"/>
-					            		
-            	</form:form>            	
-            	
-                <div class="cleaner">&#160;</div>
-            </div>
-            </c:if>           
-            
-        	<div class="margin_bottom_40">&#160;</div>
-        </div> <!-- end of content -->
-        
+						<div class="margin_bottom_10">&#160;</div>
+						<div class="generic_label">
+							<label for="description">Description</label>
+						</div>
+						<div style="display: inline-flex;">
+							<textarea id="description" name="description"
+								class="generic_field" rows="4" draggable="true">&#160;</textarea>
+							<form:errors element="div" path="description"/>
+						</div>
+						
+						<div class="margin_bottom_10">&#160;</div>
+						
+						<div class="generic_label">
+							<label for="system">System</label>
+						</div>
+						<select name="systemType" class="generic_field">
+							<c:forEach items="${systems }" var="system">
+								<option value="${system }">${system }</option>
+							</c:forEach>
+						</select>
+						
+						<div class="margin_bottom_10">&#160;</div>
+						<div class="generic_label widest">
+							<label for="isPublic">Show campaign in search results</label>
+						</div>
+						<input type="checkbox" id="isPublic" name="isPublic"
+							class="generic_field" checked="checked"/>
+						
+						<div class="margin_bottom_10">&#160;</div>
+						<input type="submit" value="Create" class="small_button"></input>
+							
+	            	</form:form>
+	                <div class="cleaner">&#160;</div>
+	            </div>
+	            
+	            <div id="campaign_search_result" class="content_section hidden">
+	            	<div class="header_02">Search Result for <span id="search_param"></span></div>
+	                <div class="cleaner">&#160;</div>
+	            </div>
+	            
+	            <div id="campaign_view" class="content_section hidden">
+	            	<div class="header_02"><span id="campaign_name">${campaign.name }</span></div>
+	            	<p id="campaign_description">${campaign.description }</p>
+	            	<p>Game Master: <span id="campaign_gm">${campaign.gameMaster.name }</span></p>
+	            	
+	           		<div id="campaign_active_players">
+	           			<span>Active Players:</span>
+	           			<ul id="campaign_active_players_list">
+	           				<c:forEach items="${campaign.playerCharacters }" var="pc">
+	           					<li id="campaign_pc_${pc.id}"><span>${pc.name }</span> Owner ${pc.owner.name } </li>
+	           				</c:forEach>
+	           			</ul>
+	           		</div>
+	           		<div id="campaign_pending_players" class="${(campaign.gameMaster.name == pageContext.request.userPrincipal.principal.name)? '':'hidden'}">
+	           			<span>Pending Invitations:</span>
+	           			<ul id="campaign_pending_players_list">
+	           			</ul>
+	           		</div>
+	           		<div id="campaign_requested_players" class="${(campaign.gameMaster.name == pageContext.request.userPrincipal.principal.name)? '':'hidden'}">
+	           			<span>Pending Requests:</span>
+	           			<ul id="campaign_pending_requests_list">
+	           			</ul>
+	           		</div>
+	           		<input id="invite_player_button" type="button" value="Invite Player" class="small_button ${(campaign.gameMaster.name == pageContext.request.userPrincipal.principal.name)? '':'hidden'}">
+	           		</input>            		
+	            	
+	                <div class="cleaner">&#160;</div>
+	            </div>
+	            
+	            <c:if test="${campaign != null and message != null }"> 
+	            <div id="campaign_join" class="content_section hidden">
+	            	<div class="header_02">Join ${campaign.name} </div>
+	            	<p id="campaign_description">${campaign.description }</p>
+	            	<div class="margin_bottom_10">&#160;</div>
+	            	<p>You have been invited to join ${campaign.gameMaster.name}'s campaign, create a player character for this campaign.</p>
+	            	<c:url var="joinCampaignUrl" value="/player-characters/create"/>
+	            	<form action="${joinCampaignUrl }" method="GET">
+	            		<input type="hidden" name="messageId" value="${message.id }"/>
+	            		<input type="hidden" name="campaignId" value="${campaign.id }"/>
+						
+						<input type="submit" value="Join" class="small_button"/>
+						            		
+	            	</form>            	
+	            	
+	                <div class="cleaner">&#160;</div>
+	            </div>
+	            </c:if>           
+	            
+	        	<div class="margin_bottom_40">&#160;</div>
+	        </div> <!-- end of content -->
+        </div>
         <jsp:include page="ads.jsp"/>
    		
    		<div id="invite_user_form" style="display:none; cursor: default"> 
@@ -242,7 +260,7 @@
 				for(i=0; i &lt; campaign.player_characters.length; i++) {
 					var newLine = $("<li/>")
 					newLine.attr("id", "campaign_pc_" + campaign.player_characters[i].id)
-					newLine.html("<span>" + campaign.player_characters[i].character.name + "</span> Owner: " + campaign.player_characters[i].character.owner.name)
+					newLine.html("<span>" + campaign.player_characters[i].name + "</span> Owner: " + campaign.player_characters[i].owner.name)
 					$("#campaign_active_players_list").append(newLine)
 				}
 				

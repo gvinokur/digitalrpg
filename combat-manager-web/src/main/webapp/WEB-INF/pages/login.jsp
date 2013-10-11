@@ -13,51 +13,59 @@
 </head>
 <body>
     
-    	
-        <div class="templatemo_content_centered">
-            
-            <div class="content_section">
-           	  <div class="header_02">Login</div>
-           	  <c:url value="/login" var="loginUrl"/>
-              <form:form name="f" action="${loginUrl}" method="post">
-		        <fieldset>
-		            <c:if test="${param.error != null}">
-		                <div class="alert alert-error">
-		                    Invalid username and password.
-		                </div>
-		            </c:if>
-		            <c:if test="${param.logout != null}">
-		                <div class="alert alert-success">
-		                    You have been logged out.
-		                </div>
-		            </c:if>
-		            
-		            <div class="margin_bottom_20">&#160;</div>
-		            <div class="login_label">
-		            	<label for="username" >Username</label>
-		            </div>
-		            <input type="text" id="username" name="username" class="field"/>
-		            
-		            <div class="margin_bottom_20">&#160;</div>
-		            <div class="login_label">
-		            	<label for="password">Password</label>
-		            </div>
-		            <input type="password" id="password" name="password" class="field"/>
-		            <input type="submit" value="Log In" class="small_button"></input>
-		            
-		            <c:url value="/reset-password" var="resetPasswordUrl"/>
-		            <c:url value="/register" var="registerUrl"/>
-		            <div class="reset_link"><a href="${resetPasswordUrl}">Reset Password</a></div>
-		            <div class="register_link"><a href="${registerUrl}">Register</a></div>
-		        </fieldset>
-		    	</form:form>
-               
-                <div class="cleaner">&#160;</div>              
-            </div>
-            
-        	<div class="margin_bottom_40">&#160;</div>
-        </div> <!-- end of content -->
-        
+    	<div class="templatemo_multi_content margin_right_10" style="width:100%">
+        	<div id="form_message" class="templatemo_content_centered form_message margin_bottom_15 ${form_message==null?'hidden':''}">
+        		${form_message }
+        		<div class="margin_bottom_20">&#160;</div>
+        	</div>
+        	<div id="error_message" class="templatemo_content_centered error_message margin_bottom_15 ${error_message==null?'hidden':''}">
+        		${error_message }
+        		<div class="margin_bottom_20">&#160;</div>
+        	</div>
+	        <div class="templatemo_content_centered">
+	            
+	            <div class="content_section">
+	           	  <div class="header_02">Login</div>
+	           	  <c:url value="/login" var="loginUrl"/>
+	              <form:form name="f" action="${loginUrl}" method="post">
+			        <fieldset>
+			            <c:if test="${param.error != null}">
+			                <div class="alert alert-error">
+			                    Invalid username and password.
+			                </div>
+			            </c:if>
+			            <c:if test="${param.logout != null}">
+			                <div class="alert alert-success">
+			                    You have been logged out.
+			                </div>
+			            </c:if>
+			            
+			            <div class="margin_bottom_20">&#160;</div>
+			            <div class="login_label">
+			            	<label for="username" >Username</label>
+			            </div>
+			            <input type="text" id="username" name="username" class="field"/>
+			            
+			            <div class="margin_bottom_20">&#160;</div>
+			            <div class="login_label">
+			            	<label for="password">Password</label>
+			            </div>
+			            <input type="password" id="password" name="password" class="field"/>
+			            <input type="submit" value="Log In" class="small_button"></input>
+			            
+			            <c:url value="/reset-password" var="resetPasswordUrl"/>
+			            <c:url value="/register" var="registerUrl"/>
+			            <div class="reset_link"><a href="${resetPasswordUrl}">Reset Password</a></div>
+			            <div class="register_link"><a href="${registerUrl}">Register</a></div>
+			        </fieldset>
+			    	</form:form>
+	               
+	                <div class="cleaner">&#160;</div>              
+	            </div>
+	            
+	        	<div class="margin_bottom_40">&#160;</div>
+	        </div> <!-- end of content -->
+        </div>
         
     	
 </body>

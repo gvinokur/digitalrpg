@@ -102,6 +102,11 @@ public class UserDaoImpl implements UserDao {
 		return null;
 	}
 
+	@Transactional(isolation = Isolation.READ_COMMITTED)
+	public void updateUser(User user) {
+		this.sessionFactory.getCurrentSession().update(user);
+	}
+
 
 
 }
