@@ -23,4 +23,8 @@ public interface MessageDao {
 	public Message invite(Long id, User from, String to, User userTo, Campaign campaign);
 
 	public Message get(Long id);
+
+	public Message requestJoin(User user, User gameMaster, Campaign campaign);
+
+	public void acceptRequest(User user, User from, Campaign campaign);
 }

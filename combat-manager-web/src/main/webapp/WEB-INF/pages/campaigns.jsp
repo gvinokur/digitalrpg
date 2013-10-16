@@ -15,20 +15,30 @@
     
     	<div class="templatemo_side_bar margin_right_10">
         	
-            <div class="header_01">My Campaigns</div>
-           	<ul class="campaigns">
+            <div class="header_02">My Campaigns</div>
+            <div class="header_01 toggle_header" toggle_id="player">I'm a Player in</div>
+           	<div class="scroll_list_150 toggle_child" toggle_id="player">
+           		<ul class="campaigns">
            		<c:forEach items="${campaigns}" var="campaign">
-           			<c:choose>
-           				<c:when test="${campaign.gameMaster.name == pageContext.request.userPrincipal.principal.name }">
-           					<li class="gm"><a class="campaign_list_item" id="campaign_${campaign.id }">${campaign.name }</a></li>
-           				</c:when>
-           				<c:otherwise>
-           					<li class="player"><a class="campaign_list_item" id="campaign_${campaign.id }">${campaign.name }</a></li>
-           				</c:otherwise>
-           			</c:choose>
+           			<c:if test="${campaign.gameMaster.name != pageContext.request.userPrincipal.principal.name }">
+         				<li><a class="campaign_list_item" id="campaign_${campaign.id }">${campaign.name }</a></li>
+         			</c:if>
            		</c:forEach>
                    
                </ul>
+            </div>
+            <div class="margin_bottom_10">&#160;</div>
+            <div class="header_01 toggle_header" toggle_id="gm">I'm a GM of</div>
+            <div class="scroll_list_150 toggle_child" toggle_id="gm">
+           	<ul class="campaigns">
+           		<c:forEach items="${campaigns}" var="campaign">
+         			<c:if test="${campaign.gameMaster.name == pageContext.request.userPrincipal.principal.name }">
+         				<li><a class="campaign_list_item" id="campaign_${campaign.id }">${campaign.name }</a></li>
+         			</c:if>
+           		</c:forEach>
+                   
+               </ul>
+            </div>
             
             <div class="margin_bottom_20">&#160;</div>
             
@@ -48,7 +58,7 @@
             <div class="margin_bottom_20">&#160;</div>
         </div> <!-- end of left side bar -->
         
-        <div class="templatemo_multi_content margin_right_10">
+        <div id="central_panel" class="templatemo_multi_content margin_right_10">
         	<div id="form_message" class="templatemo_content form_message margin_bottom_15 ${form_message==null?'hidden':''}">
         		${form_message }
         		<div class="margin_bottom_20">&#160;</div>
@@ -57,9 +67,9 @@
         		${error_message }
         		<div class="margin_bottom_20">&#160;</div>
         	</div>
-	        <div id="central_panel" class="templatemo_content">
+	        <div id="campaign_info" class="templatemo_content dynamic">
 	        
-	        	<div id="campaign_info" class="content_section">
+	        	<div  class="content_section">
 	           	  <div class="header_02">Campaign info</div>
 	                <p><span>View and Manage Campaigns.</span> Green campaigns are the ones you are GM of, black ones are the ones you are participating in.</p>
 	               
@@ -68,8 +78,11 @@
 	                <p><span>Create Campaign.</span> Create a new Campaign and invite you friends to play.</p>
 	                <div class="cleaner">&#160;</div>
 	            </div>
+	            <div class="margin_bottom_40">&#160;</div>
+	        </div>
+	        <div id="create_campaign" class="templatemo_content dynamic hidden">
 	            
-	            <div id="create_campaign"  class="content_section hidden">
+	            <div class="content_section">
 	            	<div class="header_02">Create Campaign</div>
 	            	<c:url value="/campaigns" var="createCampaignUrl"></c:url>
 	            	<form:form action="${createCampaignUrl }" modelAttribute="campaign" id="campaign" method="POST">
@@ -116,63 +129,108 @@
 	            	</form:form>
 	                <div class="cleaner">&#160;</div>
 	            </div>
-	            
-	            <div id="campaign_search_result" class="content_section hidden">
+	            <div class="margin_bottom_40">&#160;</div>
+	        </div>
+	        <div id="campaign_search_result" class="templatemo_content dynamic hidden">
+	            <div id="search_result_holder" class="content_section">
 	            	<div class="header_02">Search Result for <span id="search_param"></span></div>
 	                <div class="cleaner">&#160;</div>
 	            </div>
-	            
-	            <div id="campaign_view" class="content_section hidden">
-	            	<div class="header_02"><span id="campaign_name">${campaign.name }</span></div>
-	            	<p id="campaign_description">${campaign.description }</p>
-	            	<p>Game Master: <span id="campaign_gm">${campaign.gameMaster.name }</span></p>
-	            	
-	           		<div id="campaign_active_players">
-	           			<span>Active Players:</span>
+	            <div class="margin_bottom_40">&#160;</div>
+	        </div>
+	        <div id="campaign_view" campaign_id="${campaign.id }" class="templatemo_multi_content dynamic hidden">
+	            <div class="templatemo_content width_70_p margin_right_10">
+	            	<div class="content_section">
+		            	<div class="header_02 campaign_header"><span id="campaign_name">${campaign.name }</span></div>
+		            	<div id="request_join" class="campaign_request_join ${(campaign.gameMaster.name == pageContext.request.userPrincipal.principal.name)? 'hidden':''}">
+		            		<input id="request_join_button" type="button" value="Join Campaign" class="small_button">
+           					</input>
+		            	</div>
+		            	<div id="campaign_description" class="scroll_description">
+		            		${campaign.description }
+		            	</div>
+		            	<p class="border_top">Game Master: <span id="campaign_gm">${campaign.gameMaster.name }</span></p>
+		            </div>
+		            <div class="margin_bottom_20">&#160;</div>
+		        </div>
+		        <div class="templatemo_content width_25_p">
+		        	<div class="header_03">Active Players:</div>
+	           		<div class="margin_bottom_10">&#160;</div>
+	           		<div class="content_section nice_list scroll_list_219" id="campaign_active_players">
+	           			
 	           			<ul id="campaign_active_players_list">
 	           				<c:forEach items="${campaign.playerCharacters }" var="pc">
-	           					<li id="campaign_pc_${pc.id}"><span>${pc.name }</span> Owner ${pc.owner.name } </li>
+	           					<li id="campaign_pc_${pc.id}"><a title="Owner ${pc.owner.name }">${pc.name }</a></li>
 	           				</c:forEach>
 	           			</ul>
 	           		</div>
-	           		<div id="campaign_pending_players" class="${(campaign.gameMaster.name == pageContext.request.userPrincipal.principal.name)? '':'hidden'}">
-	           			<span>Pending Invitations:</span>
+	           		<div class="margin_bottom_20">&#160;</div>
+	           	</div>
+	           	<div id="campaign_pending_players" class="templatemo_content margin_top_15 margin_right_10 width_30_p ${(campaign.gameMaster.name == pageContext.request.userPrincipal.principal.name)? '':'hidden'}">	
+	           		<span>Pending Invitations:</span>
+					<div class="margin_bottom_10">&#160;</div>
+	           		<div class="nice_list">
 	           			<ul id="campaign_pending_players_list">
+	           				<c:forEach items="${campaign.pendingInvitations }" var="invite">
+	           					<c:choose>
+	           					<c:when test="${invite.to != null }">
+	           						<li><a title="${invite.to.email }">${invite.to.name }</a></li>
+	           					</c:when>
+	           					<c:otherwise>
+	           						<li><a>${invite.toMail }</a></li>
+	           					</c:otherwise>
+	           					</c:choose>
+	           					
+	           				</c:forEach>
 	           			</ul>
 	           		</div>
-	           		<div id="campaign_requested_players" class="${(campaign.gameMaster.name == pageContext.request.userPrincipal.principal.name)? '':'hidden'}">
-	           			<span>Pending Requests:</span>
-	           			<ul id="campaign_pending_requests_list">
-	           			</ul>
-	           		</div>
+	           		<div class="margin_bottom_10">&#160;</div>
 	           		<input id="invite_player_button" type="button" value="Invite Player" class="small_button ${(campaign.gameMaster.name == pageContext.request.userPrincipal.principal.name)? '':'hidden'}">
-	           		</input>            		
+	           		</input>
+	           		<div class="margin_bottom_20">&#160;</div>
+
+	           	</div>
+	           	<div id="campaign_requested_players" class="templatemo_content margin_top_15 width_30_p ${(campaign.gameMaster.name == pageContext.request.userPrincipal.principal.name)? '':'hidden'}">
+	           		<span>Pending Requests:</span>
+	           		<div class="margin_bottom_10">&#160;</div>
+	           		<div class="nice_list">
+	           			<ul id="campaign_pending_requests_list">
+	           				<c:forEach items="${campaign.pendingRequests }" var="request">
+	           					<c:url var="acceptUrl" value="/campaigns/${campaign.id }/accept/${request.id }"/>
+	           					<li ><a title="Accept Request" class="accept_request" href="${acceptUrl }">${request.from.name }</a></li>
+	           				</c:forEach>
+	           			</ul>
+	           		</div>
+	           		<div class="margin_bottom_20">&#160;</div>
+	           	</div>
 	            	
 	                <div class="cleaner">&#160;</div>
-	            </div>
-	            
-	            <c:if test="${campaign != null and message != null }"> 
-	            <div id="campaign_join" class="content_section hidden">
-	            	<div class="header_02">Join ${campaign.name} </div>
-	            	<p id="campaign_description">${campaign.description }</p>
-	            	<div class="margin_bottom_10">&#160;</div>
-	            	<p>You have been invited to join ${campaign.gameMaster.name}'s campaign, create a player character for this campaign.</p>
-	            	<c:url var="joinCampaignUrl" value="/player-characters/create"/>
-	            	<form action="${joinCampaignUrl }" method="GET">
-	            		<input type="hidden" name="messageId" value="${message.id }"/>
-	            		<input type="hidden" name="campaignId" value="${campaign.id }"/>
-						
-						<input type="submit" value="Join" class="small_button"/>
-						            		
-	            	</form>            	
-	            	
-	                <div class="cleaner">&#160;</div>
+	    			<div class="margin_bottom_40">&#160;</div>
+	          </div>  
+	            <c:if test="${campaign != null and message != null }">
+	            <div id="campaign_join" class="templatemo_content dynamic hidden"> 
+		            <div class="content_section">
+		            	<div class="header_02">Join ${campaign.name} </div>
+		            	<p id="campaign_description">${campaign.description }</p>
+		            	<div class="margin_bottom_10">&#160;</div>
+		            	<p>You have been invited to join ${campaign.gameMaster.name}'s campaign, create a player character for this campaign.</p>
+		            	<c:url var="joinCampaignUrl" value="/player-characters/create"/>
+		            	<form action="${joinCampaignUrl }" method="GET">
+		            		<input type="hidden" name="messageId" value="${message.id }"/>
+		            		<input type="hidden" name="campaignId" value="${campaign.id }"/>
+							
+							<input type="submit" value="Join" class="small_button"/>
+							            		
+		            	</form>            	
+		            	
+		                <div class="cleaner">&#160;</div>
+		            </div>
+		            <div class="margin_bottom_40">&#160;</div>
 	            </div>
 	            </c:if>           
 	            
-	        	<div class="margin_bottom_40">&#160;</div>
+	        	
 	        </div> <!-- end of content -->
-        </div>
         <jsp:include page="ads.jsp"/>
    		
    		<div id="invite_user_form" style="display:none; cursor: default"> 
@@ -196,12 +254,12 @@
 <script type="text/javascript">
 	$(document).ready(function(){
 		<c:if test="${not empty show_content}">
-	   		$("#central_panel > .content_section").addClass("hidden");
+	   		$("#central_panel > .dynamic").addClass("hidden");
 			$("#${show_content}").removeClass("hidden");
 	   	</c:if>
 	
 		$("#create_campaign_button").click(function() {
-			$("#central_panel > .content_section").addClass("hidden");
+			$("#central_panel > .dynamic").addClass("hidden");
 			$("#create_campaign").removeClass("hidden");
 		})
 		<c:url var="searchUrl" value="/campaigns/search/"/>
@@ -215,8 +273,8 @@
 					url: url
 				}).done(function(result) {
 					$("#search_param").text(searchValue + "(" + result.length +")")
-					$("#campaign_search_result > p").remove();
-					var lastItem = $("#campaign_search_result > .header_02")
+					$("#search_result_holder > p").remove();
+					var lastItem = $("#search_result_holder > .header_02")
 					for(i= 0; i &lt; result.length; i++) {
 						var newItem = $("<p/>")
 						newItem.append($("<span/>").append(result[i].name))
@@ -231,6 +289,15 @@
 						lastItem.after(newItem);
 						lastItem = newItem;
 						var newItem = $("<p/>")
+						var link = $("<a/>")
+						link.addClass("campaign_list_item")
+						link.addClass("search_result")
+						link.attr("id", "campaign_" + result[i].id)
+						link.append("Show More")
+						newItem.append(link)
+						lastItem.after(newItem);
+						lastItem = newItem;
+						var newItem = $("<p/>")
 						newItem.append($("<span/>").append("Game Master: " + result[i].game_master.name))
 						lastItem.after(newItem);
 						lastItem = newItem;
@@ -239,7 +306,7 @@
 						lastItem.after(newItem);
 						lastItem = newItem;
 					}
-					$("#central_panel > .content_section").addClass("hidden");
+					$("#central_panel > .dynamic").addClass("hidden");
 					$("#campaign_search_result").removeClass("hidden");
 				}).always(function() {
 					$('#search_form').unblock()
@@ -248,7 +315,7 @@
 		})
 		
 		<c:url var="getUrl" value="/campaigns/"/>
-		$(".campaign_list_item").click(function(){
+		$(document).on("click", ".campaign_list_item", function(){
 			var url = "${getUrl}" + $(this).attr("id").split("_")[1];
 			$.ajax(url).done(function(campaign) {
 				$("#campaign_view").attr("campaign_id", campaign.id)
@@ -260,17 +327,24 @@
 				for(i=0; i &lt; campaign.player_characters.length; i++) {
 					var newLine = $("<li/>")
 					newLine.attr("id", "campaign_pc_" + campaign.player_characters[i].id)
-					newLine.html("<span>" + campaign.player_characters[i].name + "</span> Owner: " + campaign.player_characters[i].owner.name)
+					var link = $("<a/>")
+					link.attr("title", "Owner: " + campaign.player_characters[i].owner.name)
+					link.append(campaign.player_characters[i].name)
+					newLine.append(link)
 					$("#campaign_active_players_list").append(newLine)
 				}
 				
 				$("#campaign_pending_players_list li").remove()
 				for(i=0; i &lt; campaign.pending_invitations.length; i++) {
 					var newLine = $("<li/>")
+					var link = $("<a/>")
 					if(campaign.pending_invitations[i].to) {
-						newLine.html("<span>" + campaign.pending_invitations[i].to.name + "</span> Email: " + campaign.pending_invitations[i].to.email)
-					}else {
-						newLine.html("<span>" + campaign.pending_invitations[i].mail_to + "</span>")
+						link.attr("title", "Email: " + campaign.pending_invitations[i].to.email)
+						link.append(campaign.pending_invitations[i].to.name)
+						newLine.append(link)
+					} else {
+						link.append(campaign.pending_invitations[i].mail_to)
+						newLine.append(link)
 					}
 					$("#campaign_pending_players_list").append(newLine)
 					
@@ -285,7 +359,7 @@
 					$("#campaign_requested_players").addClass("hidden");
 					$("#invite_player_button").addClass("hidden");
 				}
-				$("#central_panel > .content_section").addClass("hidden");
+				$("#central_panel > .dynamic").addClass("hidden");
 				$("#campaign_view").removeClass("hidden");
 			})
 		})
@@ -329,6 +403,30 @@
 			    }
 			}
 	    })
+	    
+	    $(".toggle_header").click(function(){
+	    	var toggle_id = $(this).attr("toggle_id")
+	    	$(this).toggleClass("closed")
+	    	$(".toggle_child[toggle_id=" + toggle_id + "]").slideToggle("slow")
+	    })
+	    
+	    <c:url var="requestJoinUrl" value="/campaigns/[id]/join/request"/>
+	    $("#request_join_button").click(function(){
+	    	var campaignId = $("#campaign_view").attr("campaign_id")
+	    	var url = "${requestJoinUrl}".replace("[id]", campaignId)
+	    	$.blockUI({ message: "<h1>Sending Request...</h1>" })
+	    	$.ajax(url).done(function() {
+	    		setTimeout(unblock,3000)
+	    		$.blockUI({ message: "<h1>Message Sent, check your Lobby later for the response.</h1>" })
+	    	}).error(function(){
+	    		setTimeout(unblock,3000)
+	    		$.blockUI({ message: "<h1>There was an error sending the request, please try again later.</h1>" })
+	    	}) 
+	    })
+	    
+	    function unblock() {
+	    	$.unblockUI();
+	    }
 	})
 </script> 	
    

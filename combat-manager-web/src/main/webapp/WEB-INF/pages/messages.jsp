@@ -41,8 +41,10 @@
 	function drawMessage(message) {
 		if(message.type == "InviteMessageVO") {
 			drawMessageInvite(message)
-		} else if (message.type == "RequestJoinVO") {
+		} else if (message.type == "RequestJoinMessageVO") {
 			drawMessageRequestJoin(message)
+		} else if (message.type == "AcceptRequestJoinMessageVO") {
+			drawMessageAcceptRequestJoin(message)
 		}
 	}
 	<c:url var="inviteUrl" value="/campaigns/[id]/join?messageId=[message_id]"/>
@@ -57,13 +59,43 @@
 		var deleteIcon = $("<span/>").attr("deleteUrl",deleteUrl).attr("title", "Delete Message").addClass("delete_message").addClass("delete_icon")
 		newDiv.append($("<div/>").addClass("header_03").append(title).append(deleteIcon))
 		$("<p/>")
-			.append("Join one of your characters to the campaign " +  message.campaign_name + " ")
+			.append("Create a characte for the campaign " +  message.campaign_name + " ")
 			.appendTo(newDiv)
 		newDiv.appendTo($("#messages"))
 	}
 	
+	<c:url var="showCampaignUrl" value="/campaigns/[id]/show"/>
 	function drawMessageRequestJoin(message) {
+		var newDiv = $("<div/>")
+		newDiv.addClass("latest_news")
+		newDiv.addClass("border_bottom")
+		var url = "${showCampaignUrl}".replace("[id]",message.campaign_id)
+		var deleteUrl = "${deleteUrl}".replace("[id]", message.id)
+		var title = $("<a/>").attr("href",url).append( message.from.name + " request")
+		var deleteIcon = $("<span/>").attr("deleteUrl",deleteUrl).attr("title", "Delete Message").addClass("delete_message").addClass("delete_icon")
+		newDiv.append($("<div/>").addClass("header_03").append(title).append(deleteIcon))
+		$("<p/>")
+			.append(message.from.name + " has requested access to join your campaign " +  message.campaign_name)
+			.appendTo(newDiv)
+		newDiv.appendTo($("#messages"))
 	}
+	
+	
+	function drawMessageAcceptRequestJoin(message) {
+		var newDiv = $("<div/>")
+		var url = "${inviteUrl}".replace("[id]",message.campaign_id).replace("[message_id]", message.id)
+		var deleteUrl = "${deleteUrl}".replace("[id]", message.id)
+		newDiv.addClass("latest_news")
+		newDiv.addClass("border_bottom")
+		var title = $("<a/>").attr("href",url).append("Join " + message.from.name + "'s campaign")
+		var deleteIcon = $("<span/>").attr("deleteUrl",deleteUrl).attr("title", "Delete Message").addClass("delete_message").addClass("delete_icon")
+		newDiv.append($("<div/>").addClass("header_03").append(title).append(deleteIcon))
+		$("<p/>")
+			.append(message.from.name + " has granted you access to the campaign " +  message.campaign_name + " ")
+			.appendTo(newDiv)
+		newDiv.appendTo($("#messages"))
+	}
+	
 </script>
 	<div class="templatemo_content margin_top_15">
 

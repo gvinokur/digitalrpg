@@ -118,12 +118,19 @@ public class CampaignController {
 	
 	@RequestMapping(value = "/{id}/invite/{email:.*}")
 	@ResponseBody
-	public Boolean requestJoin(@PathVariable Long id, @PathVariable String email, Principal principal, HttpServletRequest request) {
+	public Boolean invite(@PathVariable Long id, @PathVariable String email, Principal principal, HttpServletRequest request) {
 		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
 		String contextPath = "http://" + request.getServerName() + 
 				(request.getContextPath()!=null && !request.getContextPath().isEmpty()? "/" + request.getContextPath(): "");
 		
 		return campaignService.invite(id, user, email, contextPath);
+	}
+	
+	@RequestMapping(value = "/{id}/join/request")
+	@ResponseBody
+	public MessageVO requestJoin(@PathVariable Long id, Principal principal) {
+		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+		return campaignService.requestInvite(id, user);
 	}
 	
 	@RequestMapping(value = "/{id}/join", method = RequestMethod.GET)
@@ -136,6 +143,13 @@ public class CampaignController {
 		model.put("message", message);
 		model.put("show_content", "campaign_join");
 		return new ModelAndView("/campaigns", model );
+	}
+	
+	@RequestMapping(value = "/{id}/accept/{requestId}")
+	public String acceptRequest(@PathVariable Long id, @PathVariable Long requestId, Principal principal) {
+		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+		this.campaignService.acceptRequest(id, requestId, user);
+		return "redirect:/campaigns/" + id + "/show";
 	}
 	
 }

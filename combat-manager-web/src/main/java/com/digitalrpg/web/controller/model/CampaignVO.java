@@ -37,6 +37,7 @@ public class CampaignVO {
 		this.gameMaster = campaign.getGameMaster();
 		this.playerCharacters = Collections2.transform(campaign.getPlayerCharacters(), CharacterService.systemCharacterToVOFunction);
 		this.pendingInvitations = Collections2.transform(campaign.getPendingInvitations(), MessageService.messageToVOFunction);
+		this.pendingRequests = Collections2.transform(campaign.getPendingRequest(), MessageService.messageToVOFunction);
 	}
 
 	public String getName() {

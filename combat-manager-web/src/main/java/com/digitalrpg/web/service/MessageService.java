@@ -3,12 +3,16 @@ package com.digitalrpg.web.service;
 import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.digitalrpg.domain.dao.MessageDao;
+import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.User;
+import com.digitalrpg.domain.model.messages.AcceptRequestMessage;
 import com.digitalrpg.domain.model.messages.InviteToCampaignMessage;
 import com.digitalrpg.domain.model.messages.Message;
 import com.digitalrpg.domain.model.messages.RequestJoinToCampaignMessage;
+import com.digitalrpg.web.controller.model.AcceptRequestJoinMessageVO;
 import com.digitalrpg.web.controller.model.InviteMessageVO;
 import com.digitalrpg.web.controller.model.MessageVO;
 import com.digitalrpg.web.controller.model.RequestJoinMessageVO;
@@ -28,14 +32,24 @@ public class MessageService {
 				out = translateInviteMessage((InviteToCampaignMessage) message);
 			} else if (message instanceof RequestJoinToCampaignMessage) {
 				out = translateRequestJoinMessage((RequestJoinToCampaignMessage)message);
+			} else if (message instanceof AcceptRequestMessage) {
+				out = translateAcceptRequestJoinMessage((AcceptRequestMessage)message);
 			}
 			return out;
 		}
 		
+		private MessageVO translateAcceptRequestJoinMessage(
+				AcceptRequestMessage message) {
+			AcceptRequestJoinMessageVO messageVO = new AcceptRequestJoinMessageVO();
+			setBaseProperties(messageVO, message);
+			messageVO.setCampaignId(message.getCampaign().getId());
+			messageVO.setCampaignName(message.getCampaign().getName());
+			return messageVO;
+		}
+
 		private MessageVO translateRequestJoinMessage(RequestJoinToCampaignMessage message) {
 			RequestJoinMessageVO messageVO = new RequestJoinMessageVO();
 			setBaseProperties(messageVO, message);
-			messageVO.setCharacter(message.getCharacter());
 			messageVO.setCampaignId(message.getCampaign().getId());
 			messageVO.setCampaignName(message.getCampaign().getName());
 			return messageVO;
@@ -68,6 +82,30 @@ public class MessageService {
 	
 	public MessageVO getMessage(Long id) {
 		return messageToVOFunction.apply(messageDao.get(id));
+	}
+	
+	public MessageVO requestJoin(User user, Campaign campaign) {
+		return messageToVOFunction.apply(messageDao.requestJoin(user, campaign.getGameMaster(), campaign));
+	}
+
+	public MessageVO invite(Long id, User from,
+			String emailTo, User userTo, Campaign campaign) {
+		return messageToVOFunction.apply(messageDao.invite(id, from, emailTo, userTo, campaign));
+	}
+
+	/**
+	 * Creates a new message for the accepted part, deletes the request message
+	 * @param requestId
+	 * @param campaign
+	 * @param user
+	 * @return
+	 */
+	@Transactional
+	public Boolean acceptRequest(Long requestId, Campaign campaign, User user) {
+		Message message = messageDao.get(requestId);
+		messageDao.acceptRequest(user, message.getFrom(), campaign);
+		messageDao.deleteMessage(requestId);
+		return true;
 	}
 	
 }

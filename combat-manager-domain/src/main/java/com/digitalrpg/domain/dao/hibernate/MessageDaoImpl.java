@@ -10,8 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.digitalrpg.domain.dao.MessageDao;
 import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.User;
+import com.digitalrpg.domain.model.messages.AcceptRequestMessage;
 import com.digitalrpg.domain.model.messages.InviteToCampaignMessage;
 import com.digitalrpg.domain.model.messages.Message;
+import com.digitalrpg.domain.model.messages.RequestJoinToCampaignMessage;
 
 public class MessageDaoImpl implements MessageDao {
 
@@ -29,6 +31,16 @@ public class MessageDaoImpl implements MessageDao {
 		return message;
 	}
 
+	@Transactional
+	public Message requestJoin(User from, User to, Campaign campaign) {
+		RequestJoinToCampaignMessage message = new RequestJoinToCampaignMessage();
+		message.setCampaign(campaign);
+		message.setFrom(from);
+		message.setTo(to);
+		this.sessionFactory.getCurrentSession().save(message);
+		return message;
+	}
+	
 	@Transactional(isolation = Isolation.SERIALIZABLE)
 	public void assignOrphanMessages(User user) {
 		List<Message> list = sessionFactory
@@ -77,5 +89,15 @@ public class MessageDaoImpl implements MessageDao {
 		
 		return null;
 	}
+
+	@Transactional
+	public void acceptRequest(User from, User to, Campaign campaign) {
+		AcceptRequestMessage message = new AcceptRequestMessage();
+		message.setFrom(from);
+		message.setTo(to);
+		message.setCampaign(campaign);
+		sessionFactory.getCurrentSession().save(message);
+	}
+
 
 }

@@ -1,7 +1,7 @@
 package com.digitalrpg.web.controller.model;
 
 
-public class RequestJoinMessageVO extends MessageVO{
+public class AcceptRequestJoinMessageVO extends MessageVO{
 
 	private Long campaignId;
 	

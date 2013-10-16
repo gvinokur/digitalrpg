@@ -68,7 +68,7 @@
 					<c:if test="${pageContext.request.userPrincipal !=null }">
 						<li><a href="${homeUrl}"
 							class="${fn:startsWith(pageContext.request.servletPath,homeUrl)?'current':' '}">Home</a></li>
-						<li><a href="${lobbyUrl }"
+						<li id="lobby"><a href="${lobbyUrl }"
 							class="${fn:startsWith(pageContext.request.servletPath,lobbyUrl)?'current':' '}">My Lobby</a></li>
 						<li><a href="${campaignsUrl }"
 							class="${fn:startsWith(pageContext.request.servletPath,campaignsUrl)?'current':' '}">Campaigns</a></li>
@@ -118,6 +118,17 @@
 	</div>
 
 
+<script>
+	<c:url var="allMessagesUrl" value="/messages"/>
+	$(document).ready(function(){
+		$.ajax("${allMessagesUrl}").done(function(result) {
+			if(result.length > 0 ) {
+			 	$("#lobby a").addClass("unread_messages")
+			 	$("#lobby a").attr("title", "You have " + result.length + " unread messages")
+			}
+		})
+	});
+</script>
 
 </body>
 	</html>

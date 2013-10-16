@@ -1,7 +1,6 @@
 /*
 CSS Credit: http://www.templatemo.com
 */
-
 body {
 	margin: 0;
 	padding: 0;
@@ -13,8 +12,16 @@ body {
 	background-position: 0 -100px;
 }
 
-a:link, a:visited { color: #FFFFFF; text-decoration: none; font-weight: normal; } 
-a:active, a:hover { color: #999999; text-decoration: underline; }
+a:link,a:visited {
+	color: #FFFFFF;
+	text-decoration: none;
+	font-weight: normal;
+}
+
+a:active,a:hover {
+	color: #999999;
+	text-decoration: underline;
+}
 
 p {
 	margin: 0px;
@@ -28,28 +35,82 @@ img {
 	border: none;
 }
 
-.cleaner { clear: both; width: 100%; height: 0px; font-size: 0px;  }
+.cleaner {
+	clear: both;
+	width: 100%;
+	height: 0px;
+	font-size: 0px;
+}
 
-.margin_bottom_10 { clear: both; width: 100%; height: 10px; font-size: 1px;	}
-.margin_bottom_20 { clear: both; width: 100%; height: 20px; font-size: 1px;	}
-.margin_bottom_30 { clear: both; width: 100%; height: 30px; font-size: 1px;	}
-.margin_bottom_40 { clear: both; width: 100%; height: 40px; font-size: 1px;	}
-.margin_bottom_50 { clear: both; width: 100%; height: 50px; font-size: 1px;	}
-.margin_bottom_60 { clear: both; width: 100%; height: 60px; font-size: 1px;	}
+.margin_bottom_10 {
+	clear: both;
+	width: 100%;
+	height: 10px;
+	font-size: 1px;
+}
 
-.margin_right_10 { margin-right: 10px; }
-.margin_right_60 { margin-right: 60px; }
+.margin_bottom_20 {
+	clear: both;
+	width: 100%;
+	height: 20px;
+	font-size: 1px;
+}
 
-.margin_top_15 { margin-top: 15px;}
+.margin_bottom_30 {
+	clear: both;
+	width: 100%;
+	height: 30px;
+	font-size: 1px;
+}
 
-.margin_bottom_15 { margin-bottom: 15px;}
+.margin_bottom_40 {
+	clear: both;
+	width: 100%;
+	height: 40px;
+	font-size: 1px;
+}
+
+.margin_bottom_50 {
+	clear: both;
+	width: 100%;
+	height: 50px;
+	font-size: 1px;
+}
+
+.margin_bottom_60 {
+	clear: both;
+	width: 100%;
+	height: 60px;
+	font-size: 1px;
+}
+
+.margin_right_10 {
+	margin-right: 10px;
+}
+
+.margin_right_60 {
+	margin-right: 60px;
+}
+
+.margin_top_15 {
+	margin-top: 15px;
+}
+
+.margin_bottom_15 {
+	margin-bottom: 15px;
+}
 
 .horizontal_divider {
-	background: url(../img/templatemo_horizontal_divider.jpg) bottom repeat-x;
+	background: url(../img/templatemo_horizontal_divider.jpg) bottom
+		repeat-x;
 }
 
 .border_bottom {
 	border-bottom: 1px dashed #000;
+}
+
+.border_top {
+	border-top: 1px dashed #000;
 }
 
 .fl {
@@ -70,7 +131,7 @@ img {
 	text-align: center;
 	color: #000000;
 	text-decoration: none;
-	border: none; 
+	border: none;
 	background: url(../img/templatemo_button_01.png) no-repeat;
 }
 
@@ -90,7 +151,7 @@ img {
 	width: 980px;
 	height: 150px;
 	background: url(../img/digital_rpg_banner_nc.png) no-repeat;
-	position:relative;
+	position: relative;
 	background-color: #1e1e1e;
 }
 
@@ -98,20 +159,19 @@ img {
 	width: 980px;
 	height: 150px;
 	background: url(../img/digital_rpg_banner.png) no-repeat;
-	position:relative;
+	position: relative;
 	background-color: #191f2b;
 }
 
 .banner_icon {
-	position:absolute;
-	display:block;
-	cursor:default;
-	right:21px;
-	top:16px;
+	position: absolute;
+	display: block;
+	cursor: default;
+	right: 21px;
+	top: 16px;
 }
 
 /* menu */
-
 #templatemo_menu {
 	clear: both;
 	width: 600px;
@@ -138,15 +198,14 @@ img {
 	font-size: 12px;
 	text-align: center;
 	text-decoration: none;
-	color: #999999;	
+	color: #999999;
 	font-weight: bold;
 }
 
-#templatemo_menu li a:hover, #templatemo_menu li .current {
+#templatemo_menu li a:hover,#templatemo_menu li .current {
 	color: #ffffff;
 }
 /* end of menu*/
-
 #templatemo_content_wrapper {
 	clear: both;
 	width: 960px;
@@ -157,6 +216,7 @@ img {
 	float: left;
 	width: 500px;
 }
+
 .templatemo_content {
 	float: left;
 	width: 460px;
@@ -165,14 +225,26 @@ img {
 	border: 1px solid #363434;
 }
 
-.templatemo_content.form_message,
-.templatemo_content_centered.form_message {
-	border-color: green; 
+.templatemo_content.width_70_p {
+	width: 292px;
 }
 
-.templatemo_content.error_message,
-.templatemo_content_centered.error_message {
-	border-color: red; 
+.templatemo_content.width_25_p {
+	width: 118px;
+}
+
+.templatemo_content.width_30_p {
+	width: 138px;
+}
+
+.templatemo_content.form_message,.templatemo_content_centered.form_message
+	{
+	border-color: green;
+}
+
+.templatemo_content.error_message,.templatemo_content_centered.error_message
+	{
+	border-color: red;
 }
 
 .templatemo_content_centered {
@@ -193,7 +265,6 @@ img {
 	/*color: #e40b0b;*/
 }
 
-
 .header_02 {
 	padding: 0 0 5px 0;
 	margin: 0 0 10px 0;
@@ -208,26 +279,32 @@ img {
 	font-size: 12px;
 	font-weight: bold;
 	color: #ffffff;
-	/*color: #99be29;*/	
+	/*color: #99be29;*/
 }
 
-.header_03 a { color: #ffffff; text-decoration: none; }
-.header_03 a:hover { color: #99FF00; }
+.header_03 a {
+	color: #ffffff;
+	text-decoration: none;
+}
+
+.header_03 a:hover {
+	color: #99FF00;
+}
 
 .templatemo_side_bar {
 	float: left;
 	width: 180px;
 	padding: 20px 19px 0 19px;
 	background: #1b1919;
-	border: 1px solid #363434;	
+	border: 1px solid #363434;
 }
 
-.templatemo_side_bar ul {
+.templatemo_side_bar ul,.nice_list ul {
 	margin: 0px;
 	padding: 0px;
 }
 
-.templatemo_side_bar ul li {
+.templatemo_side_bar ul li,.nice_list ul li {
 	margin: 0px;
 	padding: 0 0 0 0;
 	margin-bottom: 5px;
@@ -239,7 +316,7 @@ img {
 	border-color: green;
 }
 
-.templatemo_side_bar ul li a {
+.templatemo_side_bar ul li a,.nice_list ul li a {
 	display: block;
 	background: #242224;
 	padding: 5px 0 5px 10px;
@@ -247,7 +324,7 @@ img {
 	text-decoration: none;
 }
 
-.templatemo_side_bar ul li a:hover {
+.templatemo_side_bar ul li a:hover,.nice_list ul li a:hover {
 	color: #ffffff;
 	background: #000;
 }
@@ -273,21 +350,21 @@ img {
 }
 
 .login_label {
-	display:inline-block;
+	display: inline-block;
 	width: 70px;
 	margin-left: 40px;
 	font-weight: bold;
 }
 
 .register_label {
-	display:inline-block;
+	display: inline-block;
 	width: 120px;
 	margin-left: 60px;
 	font-weight: bold;
 }
 
 .generic_label {
-	display:inline-block;
+	display: inline-block;
 	width: 120px;
 	margin-left: 10px;
 	font-weight: bold;
@@ -317,7 +394,6 @@ img {
 	width: 40px;
 }
 
-
 .generic_field {
 	padding: 5px 0 0 0;
 	height: 20px;
@@ -326,23 +402,23 @@ img {
 }
 
 .generic_field.narrow {
-	width: 150px; 
+	width: 150px;
 }
 
 .generic_field.narrower {
-	width: 125px; 
+	width: 125px;
 }
 
 .generic_field.narrowest {
-	width: 100px; 
+	width: 100px;
 }
 
 .generic_field.tiny {
-	width: 75px; 
+	width: 75px;
 }
 
 .generic_field.tinier {
-	width: 50px; 
+	width: 50px;
 }
 
 input[type="checkbox"].generic_field {
@@ -377,26 +453,30 @@ select.generic_field {
 	margin-left: 110px;
 }
 
-.reset_link a,
-.register_link a {
+.reset_link a,.register_link a,a.search_result {
+	cursor: pointer;
 	font-weight: bold;
+}
+
+a.search_result:hover {
+	color: #fff;
 }
 
 .register_link {
 	display: inline-block;
 }
 
-.small_button{
+.small_button {
 	float: right;
 	width: 120px;
- 	height: 30px;
+	height: 30px;
 	padding: 0;
 	margin: 0;
 	cursor: pointer;
 	font-size: 12px;
 	text-align: center;
 	white-space: pre;
-	background: url(../img/templatemo_button_01.png) no-repeat; 
+	background: url(../img/templatemo_button_01.png) no-repeat;
 	color: #000000;
 	border: none;
 	font-weight: bold;
@@ -495,7 +575,7 @@ select.generic_field {
 	color: #fff;
 }
 
-.user_details span a{
+.user_details span a {
 	color: #999999;
 	font-weight: bold;
 }
@@ -515,4 +595,55 @@ select.generic_field {
 
 .logout_button:hover {
 	color: #fff;
+}
+
+.scroll_list_219 {
+	max-height: 219px;
+	min-height: 219px;
+	overflow-x: overlay;
+}
+
+.scroll_list_150 {
+	max-height: 150px;
+	overflow-x: overlay;
+}
+
+.scroll_description {
+	max-height: 200px;
+	min-height: 200px;
+	overflow-x: overlay;
+}
+
+.toggle_header {
+	background: url("../img/arrow_down.png") no-repeat;
+	background-size: 16px;
+	background-position-x: 165px;
+	cursor: pointer;
+}
+
+.toggle_header.closed {
+	background-image: url("../img/arrow_up.png");
+}
+
+.campaign_request_join {
+	display: inline-block;
+	float: right;
+}
+
+.header_02.campaign_header {
+	display: inline-block;
+}
+
+.unread_messages {
+	background: url("../img/alert.png") no-repeat;
+	background-size: 16px;
+}
+
+.nice_list ul li a.accept_request,
+.nice_list ul li a.accept_request:hover {
+	background-image: url("../img/ok.png");
+	background-size: 16px;
+	background-repeat: no-repeat;
+	background-position-x: 110px;
+	background-position-y: 4px;
 }

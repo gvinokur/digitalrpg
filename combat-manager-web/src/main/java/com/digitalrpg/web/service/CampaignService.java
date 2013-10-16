@@ -25,6 +25,7 @@ import com.digitalrpg.domain.model.SystemType;
 import com.digitalrpg.domain.model.User;
 import com.digitalrpg.domain.model.characters.SystemCharacter;
 import com.digitalrpg.domain.model.messages.Message;
+import com.digitalrpg.web.controller.model.MessageVO;
 
 public class CampaignService {
 
@@ -35,7 +36,7 @@ public class CampaignService {
 	private UserDao userDao;
 	
 	@Autowired
-	private MessageDao messageDao;
+	private MessageService messageService;
 	
 	@Autowired
 	private CharacterDao characterDao;
@@ -52,7 +53,7 @@ public class CampaignService {
 		Campaign campaign = campaignDao.get(id);
 		if(campaign != null) {
 			User userTo = userDao.findByMail(emailTo);
-			Message message = messageDao.invite(id, from, emailTo, userTo, campaign);
+			MessageVO message = messageService.invite(id, from, emailTo, userTo, campaign);
 			sendMail(from.getName(), emailTo, contextPath, campaign, message);
 			return true;
 		}
@@ -61,7 +62,7 @@ public class CampaignService {
 	
 	
 	
-	private void sendMail(final String user, final String email, final String contextPath, final Campaign campaign, final Message inviteMessage) {
+	private void sendMail(final String user, final String email, final String contextPath, final Campaign campaign, final MessageVO inviteMessage) {
 		MimeMessagePreparator preparator = new MimeMessagePreparator() {
 	         public void prepare(MimeMessage mimeMessage) throws Exception {
 	            MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
@@ -112,6 +113,22 @@ public class CampaignService {
 	public void addPlayerCharacter(Long campaignd, Long characterId) {
 		SystemCharacter character = characterDao.get(characterId);
 		campaignDao.addPlayerCharacter(campaignd,character);
+	}
+
+
+
+	public MessageVO requestInvite(Long id, User user) {
+		Campaign campaign = campaignDao.get(id);
+		MessageVO message =  messageService.requestJoin(user, campaign);
+		return message;
+	}
+
+
+
+	public Boolean acceptRequest(Long id, Long requestId, User user) {
+		Campaign campaign = campaignDao.get(id);
+		
+		return messageService.acceptRequest(requestId, campaign, user);
 	}
 	
 }
