@@ -30,6 +30,11 @@
 	src='http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js'>&#160;</script>
 <c:url var="jQueryBlockUIUrl" value="/js/jquery.blockUI.js" />
 <script src='${jQueryBlockUIUrl}'>&#160;</script>
+<script>
+	$(document).ready(function(){
+		$.blockUI.defaults.css = {}; 
+	});
+</script>
 </head>
 <body>
 	<div id="templatemo_wrapper_outer">

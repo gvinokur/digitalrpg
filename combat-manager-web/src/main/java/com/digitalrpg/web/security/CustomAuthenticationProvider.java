@@ -19,7 +19,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 	@Autowired
 	private UserDao userDao;
 	
-	@Override
 	public Authentication authenticate(Authentication authentication)
 			throws AuthenticationException {
 		String name = authentication.getName();
@@ -33,7 +32,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		return null;
 	}
 
-	@Override
 	public boolean supports(Class<?> authentication) {
 		return authentication.equals(UsernamePasswordAuthenticationToken.class);
 	}

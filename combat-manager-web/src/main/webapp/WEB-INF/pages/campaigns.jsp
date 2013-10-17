@@ -149,10 +149,12 @@
 		            	<div id="campaign_description" class="scroll_description">
 		            		${campaign.description }
 		            	</div>
+		            	<p class="border_top">Current Combat: </p>
 		            	<p class="border_top">Game Master: <span id="campaign_gm">${campaign.gameMaster.name }</span></p>
 		            </div>
 		            <div class="margin_bottom_20">&#160;</div>
 		        </div>
+		        
 		        <div class="templatemo_content width_25_p">
 		        	<div class="header_03">Active Players:</div>
 	           		<div class="margin_bottom_10">&#160;</div>
@@ -166,6 +168,52 @@
 	           		</div>
 	           		<div class="margin_bottom_20">&#160;</div>
 	           	</div>
+	           	
+	           	<div id="campaign_combats" class="templatemo_content margin_top_15 margin_right_10 width_30_p ${(campaign.gameMaster.name == pageContext.request.userPrincipal.principal.name)? '':'hidden'}">
+	           		<span>Coming Combats:</span>
+					<div class="margin_bottom_10">&#160;</div>
+	           		<div class="nice_list">
+	           			<ul id="coming_combats_list">
+	           			</ul>
+	           		</div>
+	           		<input id="create_combat_button" type="button" value="Create Combat" class="small_button">
+	           		</input>
+	           		
+	           		<div class="margin_bottom_10">&#160;</div>
+	           		<span>Historic Combats:</span>
+					<div class="margin_bottom_10">&#160;</div>
+	           		<div class="nice_list">
+	           			<ul id="historic_combats">
+	           			</ul>
+	           		</div>
+	           		
+	           		<div class="margin_bottom_20">&#160;</div>
+	           	</div>
+	           	
+	           	<div id="campaign_historic_combats" class="templatemo_content margin_top_15 margin_right_10 width_30_p ${(campaign.gameMaster.name == pageContext.request.userPrincipal.principal.name)? '':'hidden'}">
+	           		<span>Historic Combats:</span>
+					<div class="margin_bottom_10">&#160;</div>
+	           		<div class="nice_list">
+	           			<ul id="historic_combats">
+	           			</ul>
+	           		</div>
+	           		
+	           		<div class="margin_bottom_20">&#160;</div>
+	           	</div>
+	           	
+	           	<div id="campaign_monsters" class="templatemo_content margin_top_15 width_30_p ${(campaign.gameMaster.name == pageContext.request.userPrincipal.principal.name)? '':'hidden'}">
+	           		<span>Monsters:</span>
+					<div class="margin_bottom_10">&#160;</div>
+	           		<div class="nice_list">
+	           			<ul id="coming_monsters_list">
+	           			</ul>
+	           		</div>
+	           		<input id="create_monster_button" type="button" value="Create Monster" class="small_button">
+	           		</input>
+	           		
+	           		<div class="margin_bottom_20">&#160;</div>
+	           	</div>
+	           	
 	           	<div id="campaign_pending_players" class="templatemo_content margin_top_15 margin_right_10 width_30_p ${(campaign.gameMaster.name == pageContext.request.userPrincipal.principal.name)? '':'hidden'}">	
 	           		<span>Pending Invitations:</span>
 					<div class="margin_bottom_10">&#160;</div>
@@ -197,7 +245,7 @@
 	           			<ul id="campaign_pending_requests_list">
 	           				<c:forEach items="${campaign.pendingRequests }" var="request">
 	           					<c:url var="acceptUrl" value="/campaigns/${campaign.id }/accept/${request.id }"/>
-	           					<li ><a title="Accept Request" class="accept_request" href="${acceptUrl }">${request.from.name }</a></li>
+	           					<li ><a title="Accept Request" class="accept_request" url="${acceptUrl }">${request.from.name }</a></li>
 	           				</c:forEach>
 	           			</ul>
 	           		</div>
@@ -235,7 +283,7 @@
    		
    		<div id="invite_user_form" style="display:none; cursor: default"> 
    			<form:form id="invite_form">
-   				<h1>Invite To Campaign</h1>
+   				<h2>Invite To Campaign</h2>
    				<p>Send an Invitation to another user and ask him to join your campaign</p>
    				<div class="margin_bottom_20">&#160;</div>
 				<div class="to_email">
@@ -349,14 +397,34 @@
 					$("#campaign_pending_players_list").append(newLine)
 					
 				}
+				
+				<c:url var="acceptUrl" value="/campaigns/[id]/accept/[messageId]"/>
+				$("#campaign_pending_requests_list li").remove()
+				for(i=0; i &lt; campaign.pending_requests.length; i++) {
+					var newLine = $("<li/>")
+					var link = $("<a/>")
+					link.attr("title", "Accept Request")
+					link.addClass("accept_request")
+					link.attr("url", "${acceptUrl}".replace("[id]",campaign.id).replace("[messageId]",campaign.pending_requests[i].id))
+					link.append(campaign.pending_requests[i].from.name)
+					newLine.append(link)
+					$("#campaign_pending_requests_list").append(newLine)
+				}
+				
 				var principalName = "${pageContext.request.userPrincipal.principal.name}"
 				if(principalName == campaign.game_master.name) {
 					$("#campaign_pending_players").removeClass("hidden");
 					$("#campaign_requested_players").removeClass("hidden");
+					$("#campaign_combats").removeClass("hidden");
+					$("#campaign_historic_combats").removeClass("hidden");
+					$("#campaign_monsters").removeClass("hidden");
 					$("#invite_player_button").removeClass("hidden");	
 				} else {
 					$("#campaign_pending_players").addClass("hidden");
 					$("#campaign_requested_players").addClass("hidden");
+					$("#campaign_combats").removeClass("hidden");
+					$("#campaign_historic_combats").addClass("hidden");
+					$("#campaign_monsters").addClass("hidden");
 					$("#invite_player_button").addClass("hidden");
 				}
 				$("#central_panel > .dynamic").addClass("hidden");
@@ -417,7 +485,7 @@
 	    	$.blockUI({ message: "<h1>Sending Request...</h1>" })
 	    	$.ajax(url).done(function() {
 	    		setTimeout(unblock,3000)
-	    		$.blockUI({ message: "<h1>Message Sent, check your Lobby later for the response.</h1>" })
+	    		$.blockUI({ message: "<h1>Message Sent</h1><p>check your Lobby later for the response.</p>" })
 	    	}).error(function(){
 	    		setTimeout(unblock,3000)
 	    		$.blockUI({ message: "<h1>There was an error sending the request, please try again later.</h1>" })
@@ -427,6 +495,15 @@
 	    function unblock() {
 	    	$.unblockUI();
 	    }
+	    
+	    $("#campaign_pending_requests_list").on("click",".accept_request",function() {
+	    	var url = $(this).attr("url")
+	    	var parent = $(this).parent()
+	    	$.ajax(url).done(function() {
+	    		parent.remove();
+	    	})
+	    	
+	    })
 	})
 </script> 	
    

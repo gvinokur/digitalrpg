@@ -10,20 +10,21 @@
 
 <script>
 	$(document).ready(function(){
+		
 		reloadNews();
+		
 		$("#messages").on("click", ".delete_message", function() {
 			var url = $(this).attr("deleteUrl")
+			
 			$.ajax({
 				url : url,
 				type : "DELETE",
 				headers: {
 					"X-CSRF-TOKEN": "${_csrf.token}"
 				}
-			})
+			}).done(reloadNews)
 		});
 	})
-	
-	var timeout
 	
 	<c:url var="newsUrl" value="/messages"/>
 	function reloadNews() {
@@ -33,9 +34,7 @@
 			for(i=0; i &lt; result.length; i++) {
 				drawMessage(result[i]);
 			}
-		}).always(function(){
-			timeout = setTimeout(reloadNews,5000)
-		}) 
+		})
 	}
 	
 	function drawMessage(message) {
@@ -101,8 +100,9 @@
 
 		<div id="messages" class="content_section">
 	        <div class="header_02">Messages</div>
-
+			
 		</div>
+		<div class="margin_bottom_40">&#160;</div>
 	</div>
 	<!-- end of right side bar -->
 

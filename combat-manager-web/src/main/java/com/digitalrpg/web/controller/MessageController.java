@@ -22,6 +22,7 @@ import com.digitalrpg.web.controller.model.RequestJoinMessageVO;
 import com.digitalrpg.web.service.MessageService;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
 
 @Controller
 @RequestMapping("/messages")
@@ -33,6 +34,7 @@ public class MessageController {
 	@RequestMapping(method = RequestMethod.GET)
 	@ResponseBody
 	public Collection<MessageVO> getUserMessages(Principal principal) {
+		if(principal== null) return ImmutableList.of();
 		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
 		
 		return messageService.getUserMessages(user);

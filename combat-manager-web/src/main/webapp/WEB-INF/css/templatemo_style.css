@@ -234,7 +234,7 @@ img {
 }
 
 .templatemo_content.width_30_p {
-	width: 138px;
+	width: 120px;
 }
 
 .templatemo_content.form_message,.templatemo_content_centered.form_message
@@ -542,6 +542,7 @@ a.search_result:hover {
 .latest_news {
 	clear: both;
 	padding-bottom: 10px;
+	margin-bottom: 10px;
 }
 
 #templatemo_footer {
@@ -639,11 +640,53 @@ a.search_result:hover {
 	background-size: 16px;
 }
 
-.nice_list ul li a.accept_request,
-.nice_list ul li a.accept_request:hover {
+.nice_list ul li a.accept_request,.nice_list ul li a.accept_request:hover
+	{
 	background-image: url("../img/ok.png");
 	background-size: 16px;
 	background-repeat: no-repeat;
-	background-position-x: 110px;
+	background-position-x: 93px;
 	background-position-y: 4px;
+}
+
+.blockUI {
+	background-color: #272525;
+	color: #999;
+	line-height: 1.5em;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	padding: 20px 19px 0 19px;
+	margin: 0;
+	width: 30%;
+	top: 40%;
+	left: 35%;
+	textAlign: center;
+	border: 3px solid #aaa;
+	cursor: wait;
+}
+
+.blockUI h1 {
+	padding: 0 0 5px 0;
+	margin: 0 0 10px 0;
+	font-size: 14px;
+	font-weight: bold;
+	color: #ffffff;
+	/*color: #e40b0b;*/
+}
+
+.blockUI h2 {
+	padding: 0 0 5px 0;
+	margin: 0 0 10px 0;
+	font-size: 18px;
+	font-weight: bold;
+	color: #ffffff;
+	/*color: #e40b0b;*/
+}
+
+.blockUI h3 {
+	padding: 0 0 5px 0;
+	font-size: 12px;
+	font-weight: bold;
+	color: #ffffff;
+	/*color: #99be29;*/
 }
