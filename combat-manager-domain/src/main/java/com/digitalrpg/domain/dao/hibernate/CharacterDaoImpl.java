@@ -22,15 +22,11 @@ public class CharacterDaoImpl implements CharacterDao {
 
 	@Transactional
 	public PlayerCharacter createPlayerCharacter(String name,
-			String pictureUrl, String description, String characterClass,
-			String race, Integer hp, User owner) {
+			String pictureUrl, String description, User owner) {
 		PlayerCharacter playerCharacter = new PlayerCharacter();
 		playerCharacter.setName(name);
 		playerCharacter.setPictureUrl(pictureUrl);
-		playerCharacter.setCharacterClass(characterClass);
-		playerCharacter.setRace(race);
 		playerCharacter.setDescription(description);
-		playerCharacter.setHp(hp);
 		playerCharacter.setOwner(owner);
 		sessionFactory.getCurrentSession().save(playerCharacter);
 		return playerCharacter;

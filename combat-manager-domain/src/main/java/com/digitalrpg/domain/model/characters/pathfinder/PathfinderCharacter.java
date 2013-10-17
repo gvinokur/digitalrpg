@@ -9,9 +9,13 @@ import com.digitalrpg.domain.model.characters.SystemCharacter;
 @Table(name = "pathfinder_character")
 public class PathfinderCharacter extends SystemCharacter {
 
+	
 	/*
 	 *  All pathfinder specific information
 	 */
+	private String characterClass;
+	private String race;
+	private int hp;
 	private int strength;
 	private int dexterity;
 	private int constitution;
@@ -20,6 +24,9 @@ public class PathfinderCharacter extends SystemCharacter {
 	private int charisma;
 	
 	public void fromProperties(PathfinderCharacterProperties properties) {
+		this.characterClass = properties.getCharacterClass();
+		this.race = properties.getRace();
+		this.hp = properties.getHp();
 		this.strength = properties.getStrength();
 		this.constitution = properties.getConstitution();
 		this.dexterity = properties.getDexterity();
@@ -74,5 +81,29 @@ public class PathfinderCharacter extends SystemCharacter {
 
 	public void setCharisma(int charisma) {
 		this.charisma = charisma;
+	}
+
+	public String getCharacterClass() {
+		return characterClass;
+	}
+
+	public void setCharacterClass(String characterClass) {
+		this.characterClass = characterClass;
+	}
+
+	public String getRace() {
+		return race;
+	}
+
+	public void setRace(String race) {
+		this.race = race;
+	}
+
+	public int getHp() {
+		return hp;
+	}
+
+	public void setHp(int hp) {
+		this.hp = hp;
 	}
 }

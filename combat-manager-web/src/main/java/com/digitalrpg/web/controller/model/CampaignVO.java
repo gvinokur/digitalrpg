@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Set;
 
 import com.digitalrpg.domain.model.Campaign;
+import com.digitalrpg.domain.model.SystemType;
 import com.digitalrpg.domain.model.User;
 import com.digitalrpg.domain.model.characters.PlayerCharacter;
 import com.digitalrpg.domain.model.characters.SystemCharacter;
@@ -24,11 +25,13 @@ public class CampaignVO {
 	
 	private User gameMaster;
 	
-	private Collection<CharacterVO> playerCharacters;
+	private Collection<CreateCharacterVO> playerCharacters;
 	
 	private Collection<MessageVO>  pendingInvitations;
 	
 	private Collection<MessageVO> pendingRequests;
+	
+	private SystemType system;
 	
 	public void fromCampaign(Campaign campaign) {
 		this.id = campaign.getId();
@@ -38,6 +41,7 @@ public class CampaignVO {
 		this.playerCharacters = Collections2.transform(campaign.getPlayerCharacters(), CharacterService.systemCharacterToVOFunction);
 		this.pendingInvitations = Collections2.transform(campaign.getPendingInvitations(), MessageService.messageToVOFunction);
 		this.pendingRequests = Collections2.transform(campaign.getPendingRequest(), MessageService.messageToVOFunction);
+		this.system = campaign.getSystem();
 	}
 
 	public String getName() {
@@ -52,7 +56,7 @@ public class CampaignVO {
 		return gameMaster;
 	}
 
-	public Collection<CharacterVO> getPlayerCharacters() {
+	public Collection<CreateCharacterVO> getPlayerCharacters() {
 		return playerCharacters;
 	}
 
@@ -66,6 +70,10 @@ public class CampaignVO {
 
 	public Long getId() {
 		return id;
+	}
+
+	public SystemType getSystem() {
+		return system;
 	}
 	
 	

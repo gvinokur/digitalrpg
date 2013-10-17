@@ -3,14 +3,14 @@ package com.digitalrpg.web.service;
 import com.digitalrpg.domain.model.characters.PlayerCharacter;
 import com.digitalrpg.domain.model.characters.SystemCharacter;
 import com.digitalrpg.domain.model.characters.pathfinder.PathfinderCharacter;
-import com.digitalrpg.web.controller.model.CharacterVO;
+import com.digitalrpg.web.controller.model.CreateCharacterVO;
 import com.google.common.base.Function;
 
 public class CharacterService {
 
-	public static Function<SystemCharacter, CharacterVO> systemCharacterToVOFunction =  new Function<SystemCharacter, CharacterVO>() {
-		public CharacterVO apply(SystemCharacter character) {
-			CharacterVO out = new CharacterVO();
+	public static Function<SystemCharacter, CreateCharacterVO> systemCharacterToVOFunction =  new Function<SystemCharacter, CreateCharacterVO>() {
+		public CreateCharacterVO apply(SystemCharacter character) {
+			CreateCharacterVO out = new CreateCharacterVO();
 			out.setId(character.getId());
 			out.setName(character.getCharacter().getName());
 			out.setDescription(character.getCharacter().getDescription());

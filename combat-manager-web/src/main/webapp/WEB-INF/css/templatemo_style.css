@@ -42,6 +42,13 @@ img {
 	font-size: 0px;
 }
 
+.margin_bottom_5 {
+	clear: both;
+	width: 100%;
+	height: 5px;
+	font-size: 1px;
+}
+
 .margin_bottom_10 {
 	clear: both;
 	width: 100%;
@@ -370,6 +377,10 @@ img {
 	font-weight: bold;
 }
 
+.generic_label.no_margin {
+	margin-left: 0px;
+}
+
 .generic_label.wide {
 	width: 160px;
 }
@@ -443,6 +454,10 @@ select.generic_field {
 	border-color: green;
 }
 
+.generic_value {
+	display: inline;
+}
+
 #reCaptcha {
 	margin-left: 60px;
 }
@@ -509,6 +524,16 @@ a.search_result:hover {
 
 .image_wrapper_01 img {
 	border: 1px solid #363434;
+}
+
+div.templatemo_content.character_image {
+	padding: 10px;
+	width: 136px;
+}
+
+.character_image img{
+	width: 134px;
+	border: 1px solid #999;
 }
 
 .image_wrapper_02 {

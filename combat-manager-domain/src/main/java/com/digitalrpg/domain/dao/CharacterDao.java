@@ -13,7 +13,7 @@ import com.digitalrpg.domain.model.characters.Character;
 
 public interface CharacterDao {
 
-	public PlayerCharacter createPlayerCharacter(String name, String pictureUrl, String description, String characterClass, String race, Integer hp, User owner);
+	public PlayerCharacter createPlayerCharacter(String name, String pictureUrl, String description, User owner);
 	
 	public NonPlayerCharacter createNonPlayerCharacter(String name, String pictureUrl, User createdBy, Boolean isPublic);
 	

@@ -23,16 +23,11 @@ public class Character {
 	private Long id;
 	
 	private String name;
-	
-	private String characterClass;
-	
-	private String race;
-	
-	private int level;
+		
+	private int level = 1;
 	
 	private String pictureUrl;
-	
-	private int hp;
+
 	
 	private String description;
 	
@@ -69,21 +64,6 @@ public class Character {
 		return this.getClass().getSimpleName();
 	}
 
-	public String getCharacterClass() {
-		return characterClass;
-	}
-
-	public void setCharacterClass(String characterClass) {
-		this.characterClass = characterClass;
-	}
-
-	public String getRace() {
-		return race;
-	}
-
-	public void setRace(String race) {
-		this.race = race;
-	}
 
 	public int getLevel() {
 		return level;
@@ -91,14 +71,6 @@ public class Character {
 
 	public void setLevel(int level) {
 		this.level = level;
-	}
-
-	public int getHp() {
-		return hp;
-	}
-
-	public void setHp(int hp) {
-		this.hp = hp;
 	}
 
 	public String getDescription() {

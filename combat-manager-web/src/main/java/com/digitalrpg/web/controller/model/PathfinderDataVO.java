@@ -4,6 +4,12 @@ import com.digitalrpg.domain.model.characters.pathfinder.PathfinderCharacterProp
 
 public class PathfinderDataVO {
 
+	private String race;
+	
+	private String characterClass;
+	
+	private int hp;
+	
 	private int strength;
 	private int dexterity;
 	private int constitution;
@@ -49,6 +55,9 @@ public class PathfinderDataVO {
 	}
 	public PathfinderCharacterProperties toPathfinderProperties() {
 		PathfinderCharacterProperties properties = new PathfinderCharacterProperties();
+		properties.setCharacterClass(characterClass);
+		properties.setRace(race);
+		properties.setHp(hp);
 		properties.setCharisma(charisma);
 		properties.setConstitution(constitution);
 		properties.setDexterity(dexterity);
@@ -56,6 +65,24 @@ public class PathfinderDataVO {
 		properties.setStrength(strength);
 		properties.setWisdom(wisdom);
 		return properties;
+	}
+	public String getRace() {
+		return race;
+	}
+	public void setRace(String race) {
+		this.race = race;
+	}
+	public String getCharacterClass() {
+		return characterClass;
+	}
+	public void setCharacterClass(String characterClass) {
+		this.characterClass = characterClass;
+	}
+	public int getHp() {
+		return hp;
+	}
+	public void setHp(int hp) {
+		this.hp = hp;
 	}
 	
 	
