@@ -40,8 +40,8 @@
 	            </div>
             </div>
             
-            <div id="create_character"  class="templatemo_content dynamic">
-            	<div class="content_section hidden">
+            <div id="create_character"  class="templatemo_content dynamic hidden">
+            	<div class="content_section">
 	            	<div class="header_02">Create Campaign</div>
 	            	<p>You are creating a character for ${campaign.gameMaster.name }'s campaign <span>${campaign.name}</span></p>
 	            	
