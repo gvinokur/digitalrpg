@@ -225,7 +225,7 @@
 	           						<li><a title="${invite.to.email }">${invite.to.name }</a></li>
 	           					</c:when>
 	           					<c:otherwise>
-	           						<li><a>${invite.toMail }</a></li>
+	           						<li><a>${invite.mailTo }</a></li>
 	           					</c:otherwise>
 	           					</c:choose>
 	           					
