@@ -22,6 +22,8 @@
 
 <c:url var="mainCssUrl" value="/css/templatemo_style.css" />
 <link href="${mainCssUrl}" rel="stylesheet" type="text/css" />
+<c:url var="multiSelectCssUrl" value="/css/multi_select.css" />
+<link href="${multiSelectCssUrl}" rel="stylesheet" type="text/css" />
 <link rel="stylesheet"
 	href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 <script src='http://code.jquery.com/jquery-1.10.2.js'>&#160;</script>
@@ -30,6 +32,10 @@
 	src='http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js'>&#160;</script>
 <c:url var="jQueryBlockUIUrl" value="/js/jquery.blockUI.js" />
 <script src='${jQueryBlockUIUrl}'>&#160;</script>
+<c:url var="jQueryMultiSelectUrl" value="/js/jquery.multiSelect.js" />
+<script src='${jQueryMultiSelectUrl}'>&#160;</script>
+
+
 <script>
 	$(document).ready(function(){
 		$.blockUI.defaults.css = {}; 

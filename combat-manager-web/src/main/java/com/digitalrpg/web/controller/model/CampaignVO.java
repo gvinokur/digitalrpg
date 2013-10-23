@@ -25,7 +25,9 @@ public class CampaignVO {
 	
 	private User gameMaster;
 	
-	private Collection<CreateCharacterVO> playerCharacters;
+	private Collection<CharacterVO> playerCharacters;
+	
+	private Collection<CharacterVO> monsters;
 	
 	private Collection<MessageVO>  pendingInvitations;
 	
@@ -38,7 +40,8 @@ public class CampaignVO {
 		this.name = campaign.getName();
 		this.description = campaign.getDescription();
 		this.gameMaster = campaign.getGameMaster();
-		this.playerCharacters = Collections2.transform(campaign.getPlayerCharacters(), CharacterService.systemCharacterToVOFunction);
+		this.playerCharacters = Collections2.transform(campaign.getPlayerCharacters(), CharacterService.characterToVOfunction);
+		this.monsters = Collections2.transform(campaign.getNonPlayerCharacters(), CharacterService.characterToVOfunction);
 		this.pendingInvitations = Collections2.transform(campaign.getPendingInvitations(), MessageService.messageToVOFunction);
 		this.pendingRequests = Collections2.transform(campaign.getPendingRequest(), MessageService.messageToVOFunction);
 		this.system = campaign.getSystem();
@@ -56,7 +59,7 @@ public class CampaignVO {
 		return gameMaster;
 	}
 
-	public Collection<CreateCharacterVO> getPlayerCharacters() {
+	public Collection<CharacterVO> getPlayerCharacters() {
 		return playerCharacters;
 	}
 
@@ -74,6 +77,10 @@ public class CampaignVO {
 
 	public SystemType getSystem() {
 		return system;
+	}
+
+	public Collection<CharacterVO> getMonsters() {
+		return monsters;
 	}
 	
 	

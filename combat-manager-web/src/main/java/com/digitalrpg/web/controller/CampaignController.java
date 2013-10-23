@@ -33,7 +33,6 @@ import com.digitalrpg.web.controller.model.MessageVO;
 import com.digitalrpg.web.service.CampaignService;
 import com.digitalrpg.web.service.MessageService;
 import com.digitalrpg.web.service.UserService;
-import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 
 @Controller
@@ -54,18 +53,10 @@ public class CampaignController {
 	@Autowired
 	private UserService userService;
 	
-	public static Function<Campaign, CampaignVO> campaignToVOFunction = new Function<Campaign, CampaignVO>() {
-		public CampaignVO apply(Campaign in) {
-			CampaignVO out = new CampaignVO();
-			out.fromCampaign(in);
-			return out;
-		}
-	};
-	
 	@ModelAttribute("campaigns")
 	public Collection<CampaignVO> getUserCampaigns(Principal principal) {
 		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
-		return Collections2.transform(campaignService.getCampaignsForUser(user.getName()), campaignToVOFunction);
+		return Collections2.transform(campaignService.getCampaignsForUser(user.getName()), CampaignService.campaignToVOFunction);
 	}
 	
 	@ModelAttribute("systems")
@@ -93,14 +84,14 @@ public class CampaignController {
 	@RequestMapping(value = "/search/{searchString}", method = RequestMethod.GET)
 	@ResponseBody
 	public Collection<CampaignVO> searchCampaigns(@PathVariable String searchString) {
-		return Collections2.transform(campaignService.search(searchString, 0, Integer.MAX_VALUE), campaignToVOFunction);
+		return Collections2.transform(campaignService.search(searchString, 0, Integer.MAX_VALUE), CampaignService.campaignToVOFunction);
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	@ResponseBody
 	public CampaignVO getCampaign(@PathVariable Long id, Principal principal) {
 		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
-		CampaignVO vo = campaignToVOFunction.apply(campaignService.get(id));
+		CampaignVO vo = CampaignService.campaignToVOFunction.apply(campaignService.get(id));
 		userService.trackItem(user, String.format(SHOW_CAMPAIGN_URL, vo.getId()), vo.getName());
 		return vo;
 	}
@@ -108,7 +99,7 @@ public class CampaignController {
 	@RequestMapping(value = "/{id}/show", method = RequestMethod.GET)
 	public ModelAndView showCampaign(@PathVariable Long id, Principal principal) {
 		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
-		CampaignVO vo = campaignToVOFunction.apply(campaignService.get(id));
+		CampaignVO vo = CampaignService.campaignToVOFunction.apply(campaignService.get(id));
 		userService.trackItem(user, String.format(SHOW_CAMPAIGN_URL, vo.getId()), vo.getName());
 		Map<String, Object> modelMap = new HashMap<String, Object>();
 		modelMap.put("show_content", "campaign_view");
@@ -137,7 +128,7 @@ public class CampaignController {
 	public ModelAndView showJoinCampaign(@PathVariable Long id, @RequestParam Long messageId, Principal principal) {
 		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
 		Map<String, Object> model = new HashMap<String, Object>();
-		CampaignVO campaign = campaignToVOFunction.apply(campaignService.get(id));
+		CampaignVO campaign = CampaignService.campaignToVOFunction.apply(campaignService.get(id));
 		MessageVO message = messageService.getMessage(messageId);
 		model.put("campaign", campaign);
 		model.put("message", message);

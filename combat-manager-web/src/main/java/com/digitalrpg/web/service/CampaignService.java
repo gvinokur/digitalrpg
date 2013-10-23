@@ -25,7 +25,9 @@ import com.digitalrpg.domain.model.SystemType;
 import com.digitalrpg.domain.model.User;
 import com.digitalrpg.domain.model.characters.SystemCharacter;
 import com.digitalrpg.domain.model.messages.Message;
+import com.digitalrpg.web.controller.model.CampaignVO;
 import com.digitalrpg.web.controller.model.MessageVO;
+import com.google.common.base.Function;
 
 public class CampaignService {
 
@@ -48,6 +50,14 @@ public class CampaignService {
 	private VelocityEngine velocityEngine;
 	
 	private String from;
+
+	public static Function<Campaign, CampaignVO> campaignToVOFunction = new Function<Campaign, CampaignVO>() {
+		public CampaignVO apply(Campaign in) {
+			CampaignVO out = new CampaignVO();
+			out.fromCampaign(in);
+			return out;
+		}
+	};
 	
 	public boolean invite(Long id, User from, String emailTo, String contextPath) {
 		Campaign campaign = campaignDao.get(id);

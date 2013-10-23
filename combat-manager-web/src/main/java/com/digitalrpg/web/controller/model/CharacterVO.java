@@ -1,5 +1,7 @@
 package com.digitalrpg.web.controller.model;
 
+import com.digitalrpg.domain.model.User;
+
 public class CharacterVO {
 
 	private Long id;
@@ -11,6 +13,8 @@ public class CharacterVO {
 	private String pictureUrl;
 	
 	private CampaignVO campaign;
+	
+	private User owner;
 
 	public Long getId() {
 		return id;
@@ -50,6 +54,14 @@ public class CharacterVO {
 
 	public void setCampaign(CampaignVO campaign) {
 		this.campaign = campaign;
+	}
+
+	public User getOwner() {
+		return owner;
+	}
+
+	public void setOwner(User owner) {
+		this.owner = owner;
 	}
 	
 }

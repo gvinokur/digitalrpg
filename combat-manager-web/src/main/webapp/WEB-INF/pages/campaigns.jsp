@@ -71,7 +71,7 @@
 	        
 	        	<div  class="content_section">
 	           	  <div class="header_02">Campaign info</div>
-	                <p><span>View and Manage Campaigns.</span> Green campaigns are the ones you are GM of, black ones are the ones you are participating in.</p>
+	                <p><span>View and Manage Campaigns.</span> View and manage the campaigns you are GM of, check new combats of the campaigns you are playing.</p>
 	               
 	                <p><span>Search Campaigns.</span> Search for public campaigns and join them.</p>
 	               
@@ -162,7 +162,7 @@
 	           			
 	           			<ul id="campaign_active_players_list">
 	           				<c:forEach items="${campaign.playerCharacters }" var="pc">
-	           					<li id="campaign_pc_${pc.id}"><a title="Owner ${pc.owner.name }">${pc.name }</a></li>
+	           					<li pc_id="${pc.id}"><a title="Owner ${pc.owner.name }">${pc.name }</a></li>
 	           				</c:forEach>
 	           			</ul>
 	           		</div>
@@ -176,16 +176,8 @@
 	           			<ul id="coming_combats_list">
 	           			</ul>
 	           		</div>
-	           		<input id="create_combat_button" type="button" value="Create Combat" class="small_button">
+	           		<input id="create_combat_button" campaign_id="${campaign.id }" type="button" value="Create Combat" class="small_button">
 	           		</input>
-	           		
-	           		<div class="margin_bottom_10">&#160;</div>
-	           		<span>Historic Combats:</span>
-					<div class="margin_bottom_10">&#160;</div>
-	           		<div class="nice_list">
-	           			<ul id="historic_combats">
-	           			</ul>
-	           		</div>
 	           		
 	           		<div class="margin_bottom_20">&#160;</div>
 	           	</div>
@@ -205,10 +197,13 @@
 	           		<span>Monsters:</span>
 					<div class="margin_bottom_10">&#160;</div>
 	           		<div class="nice_list">
-	           			<ul id="coming_monsters_list">
+	           			<ul id="campaign_monsters_list">
+	           				<c:forEach items="${campaign.monsters }" var="npc">
+	           					<li npc_id="${npc.id}"><a>${npc.name }</a></li>
+	           				</c:forEach>
 	           			</ul>
 	           		</div>
-	           		<input id="create_monster_button" type="button" value="Create Monster" class="small_button">
+	           		<input id="create_monster_button" type="button" campaign_id="${campaign.id }" value="Create Monster" class="small_button">
 	           		</input>
 	           		
 	           		<div class="margin_bottom_20">&#160;</div>
@@ -362,74 +357,10 @@
 			} 
 		})
 		
-		<c:url var="getUrl" value="/campaigns/"/>
+		<c:url var="getUrl" value="/campaigns/[id]/show"/>
 		$(document).on("click", ".campaign_list_item", function(){
-			var url = "${getUrl}" + $(this).attr("id").split("_")[1];
-			$.ajax(url).done(function(campaign) {
-				$("#campaign_view").attr("campaign_id", campaign.id)
-				$("#campaign_name").text(campaign.name)
-				$("#campaign_description").text(campaign.description)
-				$("#campaign_gm").text(campaign.game_master.name)
-				
-				$("#campaign_active_players_list li").remove()
-				for(i=0; i &lt; campaign.player_characters.length; i++) {
-					var newLine = $("<li/>")
-					newLine.attr("id", "campaign_pc_" + campaign.player_characters[i].id)
-					var link = $("<a/>")
-					link.attr("title", "Owner: " + campaign.player_characters[i].owner.name)
-					link.append(campaign.player_characters[i].name)
-					newLine.append(link)
-					$("#campaign_active_players_list").append(newLine)
-				}
-				
-				$("#campaign_pending_players_list li").remove()
-				for(i=0; i &lt; campaign.pending_invitations.length; i++) {
-					var newLine = $("<li/>")
-					var link = $("<a/>")
-					if(campaign.pending_invitations[i].to) {
-						link.attr("title", "Email: " + campaign.pending_invitations[i].to.email)
-						link.append(campaign.pending_invitations[i].to.name)
-						newLine.append(link)
-					} else {
-						link.append(campaign.pending_invitations[i].mail_to)
-						newLine.append(link)
-					}
-					$("#campaign_pending_players_list").append(newLine)
-					
-				}
-				
-				<c:url var="acceptUrl" value="/campaigns/[id]/accept/[messageId]"/>
-				$("#campaign_pending_requests_list li").remove()
-				for(i=0; i &lt; campaign.pending_requests.length; i++) {
-					var newLine = $("<li/>")
-					var link = $("<a/>")
-					link.attr("title", "Accept Request")
-					link.addClass("accept_request")
-					link.attr("url", "${acceptUrl}".replace("[id]",campaign.id).replace("[messageId]",campaign.pending_requests[i].id))
-					link.append(campaign.pending_requests[i].from.name)
-					newLine.append(link)
-					$("#campaign_pending_requests_list").append(newLine)
-				}
-				
-				var principalName = "${pageContext.request.userPrincipal.principal.name}"
-				if(principalName == campaign.game_master.name) {
-					$("#campaign_pending_players").removeClass("hidden");
-					$("#campaign_requested_players").removeClass("hidden");
-					$("#campaign_combats").removeClass("hidden");
-					$("#campaign_historic_combats").removeClass("hidden");
-					$("#campaign_monsters").removeClass("hidden");
-					$("#invite_player_button").removeClass("hidden");	
-				} else {
-					$("#campaign_pending_players").addClass("hidden");
-					$("#campaign_requested_players").addClass("hidden");
-					$("#campaign_combats").removeClass("hidden");
-					$("#campaign_historic_combats").addClass("hidden");
-					$("#campaign_monsters").addClass("hidden");
-					$("#invite_player_button").addClass("hidden");
-				}
-				$("#central_panel > .dynamic").addClass("hidden");
-				$("#campaign_view").removeClass("hidden");
-			})
+			var url = "${getUrl}".replace("[id]", $(this).attr("id").split("_")[1]);
+			window.location = url;
 		})
 		
 		$('#invite_player_button').click(function() { 
@@ -504,6 +435,30 @@
 	    	})
 	    	
 	    })
+	    
+	    $("#create_monster_button").click(function(){
+	    	<c:url var="createMonsterUrl" value="/monsters/create?campaignId=[id]"/>
+	    	window.location = "${createMonsterUrl}".replace("[id]", $(this).attr("campaign_id"))
+	    })
+	    
+	    $("#campaign_active_players_list li").click(function() {
+	    	<c:url var="showCharacterUrl" value="/player-characters/[id]/show"/>
+	    	var url = "${showCharacterUrl}".replace("[id]", $(this).attr("pc_id"))
+	    	window.location = url;
+	    })
+	    
+	    $("#campaign_monsters_list li").click(function() {
+	    	<c:url var="showMonsterUrl" value="/monsters/[id]/show"/>
+	    	var url = "${showMonsterUrl}".replace("[id]", $(this).attr("npc_id"))
+	    	window.location = url;
+	    })
+	    
+	    $("#create_combat_button").click(function() {
+	    	<c:url var="createCombatUrl" value="/combats/create?campaignId=[id]"/>
+	    	var url = "${createCombatUrl}".replace("[id]", $(this).attr("campaign_id"))
+	    	window.location = url;
+	    })
+	    
 	})
 </script> 	
    

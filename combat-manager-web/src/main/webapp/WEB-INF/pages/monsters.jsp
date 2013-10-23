@@ -9,17 +9,17 @@
 	              doctype-system="about:legacy-compat" />
 <html>
 <head>
-<title>Player Characters</title>
+<title>Monsters</title>
 </head>
 <body>
     
     	<div class="templatemo_side_bar margin_right_10">
         	
-            <div class="header_01">My Characters</div>
+            <div class="header_01">My Monsters</div>
            	<ul class="campaigns">
            		<c:forEach items="${characters}" var="character">
-           			<c:url var="characterUrl" value="/player-characters/${character.id }/show"/>
-           			<li class="player"><a id="pc_${character.id }" href="${characterUrl }">${character.character.name }</a></li>
+           			<c:url var="characterUrl" value="/monsters/${character.id }/show"/>
+           			<li class="player"><a id="npc_${character.id }" href="${characterUrl }">${character.character.name }</a></li>
            		</c:forEach>
                    
                </ul>
@@ -32,8 +32,8 @@
         
         	<div id="character_info" class="templatemo_content dynamic">
 	        	<div class="content_section">
-	           	  <div class="header_02">Characters info</div>
-	                <p><span>View and Manage Characters.</span> View your character info and the campaign and combats they are involved in.</p>
+	           	  <div class="header_02">Monsters info</div>
+	                <p><span>View and Manage Monsters.</span> View and Edit your campaign monsters.</p>
 	     
 	               <div class="margin_bottom_40">&#160;</div>
 	                <div class="cleaner">&#160;</div>
@@ -42,14 +42,13 @@
             
             <div id="create_character"  class="templatemo_content dynamic hidden">
             	<div class="content_section">
-	            	<div class="header_02">Create Character</div>
-	            	<p>You are creating a character for ${campaign.gameMaster.name }'s campaign <span>${campaign.name}</span></p>
+	            	<div class="header_02">Create Monster</div>
+	            	<p>You are creating a monster for your campaign <span>${campaign.name}</span></p>
 	            	
-	            	<c:url value="/player-characters" var="createCharacterUrl"></c:url>
+	            	<c:url value="/monsters" var="createCharacterUrl"></c:url>
 	            	<form:form action="${createCharacterUrl }" modelAttribute="character" id="character" method="POST">
 	            		
 	            		<input type="hidden" name="campaignId" value="${campaign.id}"/>
-	            		<input type="hidden" name="messageId" value="${message.id}"/>
 	            		
 	            		<div class="margin_bottom_20">&#160;</div>
 						<div class="generic_label">

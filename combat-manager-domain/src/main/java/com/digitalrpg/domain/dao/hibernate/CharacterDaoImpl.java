@@ -34,9 +34,10 @@ public class CharacterDaoImpl implements CharacterDao {
 
 	@Transactional
 	public NonPlayerCharacter createNonPlayerCharacter(String name,
-			String pictureUrl, User createdBy, Boolean isPublic) {
+			String pictureUrl, String description, Boolean isPublic, User createdBy) {
 		NonPlayerCharacter nonPlayerCharacter = new NonPlayerCharacter();
 		nonPlayerCharacter.setName(name);
+		nonPlayerCharacter.setDescription(description);
 		nonPlayerCharacter.setPictureUrl(pictureUrl);
 		nonPlayerCharacter.setIsPublic(isPublic);
 		nonPlayerCharacter.setCreatedBy(createdBy);
@@ -80,6 +81,16 @@ public class CharacterDaoImpl implements CharacterDao {
 
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
+	}
+
+	@Transactional(readOnly = true)
+	public Collection<SystemCharacter> getUserMonsters(String user) {
+		List<SystemCharacter> characters = sessionFactory
+				.getCurrentSession()
+				.createQuery(
+						"select sc from SystemCharacter sc, NonPlayerCharacter npc where sc.character = npc and npc.createdBy.name = :user")
+				.setParameter("user", user).list();
+		return characters;
 	}
 
 }

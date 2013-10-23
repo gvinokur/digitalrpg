@@ -15,12 +15,14 @@ public interface CharacterDao {
 
 	public PlayerCharacter createPlayerCharacter(String name, String pictureUrl, String description, User owner);
 	
-	public NonPlayerCharacter createNonPlayerCharacter(String name, String pictureUrl, User createdBy, Boolean isPublic);
+	public NonPlayerCharacter createNonPlayerCharacter(String name, String pictureUrl, String description, Boolean isPublic, User user);
 	
 	public PathfinderCharacter createPathfinderCharacter(Character character, PathfinderCharacterProperties properties, Campaign campaign);
 
 	public Collection<SystemCharacter> getUserPlayerCharacters(String user);
 	
 	public SystemCharacter get(Long id);
+
+	public Collection<SystemCharacter> getUserMonsters(String name);
 	
 }
