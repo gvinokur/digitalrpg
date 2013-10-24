@@ -55,7 +55,7 @@ public class Combat {
 		this.campaign = campaign;
 	}
 
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy="campaign", orphanRemoval = true)
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy="combat", orphanRemoval = true)
 	public List<CombatCharacter> getCombatCharacters() {
 		return combatCharacters;
 	}
