@@ -43,6 +43,8 @@ public class Campaign {
 	
 	private Set<RequestJoinToCampaignMessage> pendingRequest;
 	
+	private Set<Combat> combats;
+	
 	private Boolean isPublic;
 
 	@Id
@@ -137,6 +139,16 @@ public class Campaign {
 
 	public void setSystem(SystemType system) {
 		this.system = system;
+	}
+
+	@OneToMany(cascade = CascadeType.PERSIST,
+			mappedBy = "campaign", fetch = FetchType.EAGER)
+	public Set<Combat> getCombats() {
+		return combats;
+	}
+
+	public void setCombats(Set<Combat> combats) {
+		this.combats = combats;
 	}
 	
 	

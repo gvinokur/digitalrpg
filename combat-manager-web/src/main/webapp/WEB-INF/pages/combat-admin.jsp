@@ -72,14 +72,7 @@
 					</div>
 					<input type="text" id="name" name="name" autocomplete="off"
 						class="generic_field"  />
-					<form:errors element="div" path="name"/>
-					
-					<div class="margin_bottom_20">&#160;</div>
-					<div class="generic_label">
-						<label for="pictureUrl">Picture URL</label>
-					</div>
-					<input type="text" id="pictureUrl" name="pictureUrl" autocomplete="off"
-						class="generic_field"  />					
+					<form:errors element="div" path="name"/>				
 					
 					<div class="margin_bottom_20">&#160;</div>
 					<div class="generic_label">
@@ -92,7 +85,7 @@
 					</div>
 					
 					<div class="header_02">Select Characters And Monsters</div>
-					<select id='players' multiple='multiple'>
+					<select name='players' id='players' multiple='multiple'>
 					  <optgroup label='Characters'>
 					    <c:forEach items="${campaign.playerCharacters }" var="character">
 						    <option value='${character.id }'>${character.name }</option>
@@ -104,8 +97,10 @@
 					    </c:forEach>
 					  </optgroup>
 					</select>
-					
+					<input type="submit" value="Create" class="small_button"></input>
 	        	</form:form>
+	        	<div class="margin_bottom_40">&#160;</div>
+	                <div class="cleaner">&#160;</div>
 	        </div>
 	   </div>
 		<script type="text/javascript">
@@ -133,7 +128,7 @@
 					$(this).before($("<input />")
 						.attr("id", id + "-initiative")
 						.attr("type","text")
-						.attr("name", "monsterData["+id+"].initative")
+						.attr("name", "extraInfo["+id+"].initative")
 						.css("display","none")
 						.css("float","right")
 						.css("width","60px")
@@ -142,7 +137,7 @@
 					$(this).before($("<input />")
 						.attr("id", id + "-hiddencheck")
 						.attr("type","checkbox")
-						.attr("name", "monsterData["+id+"].hidden")
+						.attr("name", "extraInfo["+id+"].hidden")
 						.css("display","none")
 						.css("float","right")
 						.css("margin-right","5px")
@@ -155,7 +150,7 @@
 					$(this).before($("<input />")
 						.attr("id", id + "-initiative")
 						.attr("type","text")
-						.attr("name", "characterData["+id+"].initative")
+						.attr("name", "extraInfo["+id+"].initative")
 						.css("display","none")
 						.css("float","right")
 						.css("width","60px")

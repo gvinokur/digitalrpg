@@ -174,6 +174,9 @@
 					<div class="margin_bottom_10">&#160;</div>
 	           		<div class="nice_list">
 	           			<ul id="coming_combats_list">
+	           				<c:forEach items="${campaign.combats }" var="combat">
+	           					<li combat_id="${combat.id}"><a>${combat.name }</a></li>
+	           				</c:forEach>
 	           			</ul>
 	           		</div>
 	           		<input id="create_combat_button" campaign_id="${campaign.id }" type="button" value="Create Combat" class="small_button">

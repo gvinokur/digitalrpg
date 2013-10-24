@@ -1,5 +1,8 @@
 package com.digitalrpg.web.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.digitalrpg.domain.dao.CharacterDao;
 import com.digitalrpg.domain.model.characters.NonPlayerCharacter;
 import com.digitalrpg.domain.model.characters.PlayerCharacter;
 import com.digitalrpg.domain.model.characters.SystemCharacter;
@@ -10,6 +13,9 @@ import com.google.common.base.Function;
 
 public class CharacterService {
 
+	@Autowired 
+	private CharacterDao characterDao;
+	
 	public static final Function<SystemCharacter, CharacterVO> characterToVOfunction = new Function<SystemCharacter, CharacterVO>() {
 	
 		public CharacterVO apply(SystemCharacter character) {
@@ -47,5 +53,9 @@ public class CharacterService {
 			return vo;
 		}
 	};
+
+	public SystemCharacter get(Long playerId) {
+		return characterDao.get(playerId);
+	}
 	
 }

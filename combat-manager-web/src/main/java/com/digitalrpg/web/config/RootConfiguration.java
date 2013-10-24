@@ -16,6 +16,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import com.digitalrpg.web.service.CampaignService;
+import com.digitalrpg.web.service.CharacterService;
+import com.digitalrpg.web.service.CombatService;
 import com.digitalrpg.web.service.MessageService;
 import com.digitalrpg.web.service.RegistrationService;
 import com.digitalrpg.web.service.UserService;
@@ -46,6 +48,16 @@ public class RootConfiguration {
 	@Bean
 	public MessageService getMessageService(){
 		return new MessageService();
+	}
+	
+	@Bean
+	public CharacterService getCharacterService() {
+		return new CharacterService();
+	}
+	
+	@Bean
+	public CombatService getCombatService() {
+		return new CombatService();
 	}
 	
 	@Bean 
