@@ -146,6 +146,10 @@
 		            		<input id="request_join_button" type="button" value="Join Campaign" class="small_button">
            					</input>
 		            	</div>
+		            	<div id="invite_user" class="campaign_request_join ${(campaign.gameMaster.name != pageContext.request.userPrincipal.principal.name)? 'hidden':''}">
+		            		<input id="invite_player_button" type="button" value="Invite Friend" class="small_button">
+           					</input>
+		            	</div>
 		            	<div id="campaign_description" class="scroll_description">
 		            		${campaign.description }
 		            	</div>
@@ -230,9 +234,6 @@
 	           				</c:forEach>
 	           			</ul>
 	           		</div>
-	           		<div class="margin_bottom_10">&#160;</div>
-	           		<input id="invite_player_button" type="button" value="Invite Player" class="small_button ${(campaign.gameMaster.name == pageContext.request.userPrincipal.principal.name)? '':'hidden'}">
-	           		</input>
 	           		<div class="margin_bottom_20">&#160;</div>
 
 	           	</div>
