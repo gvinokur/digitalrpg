@@ -1,6 +1,7 @@
 package com.digitalrpg.web.service;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,63 +18,47 @@ import org.springframework.ui.velocity.VelocityEngineUtils;
 import com.digitalrpg.domain.dao.MessageDao;
 import com.digitalrpg.domain.dao.UserDao;
 import com.digitalrpg.domain.model.User;
+import com.digitalrpg.web.service.MailService.MailType;
+import com.google.common.collect.ImmutableList;
 
 public class RegistrationService {
 
-	@Autowired 
+	@Autowired
 	private UserDao userDao;
-	
-	@Autowired
-	private MessageDao messageDao;
-	
-	@Autowired
-	private JavaMailSender javaMailSender;
 
 	@Autowired
-	private VelocityEngine velocityEngine;
-	
-	private String from;
-	
+	private MessageDao messageDao;
+
+	@Autowired
+	private MailService mailService;
+
 	/**
 	 * Register user and send email, assume everything is validated;
+	 * 
 	 * @param user
 	 * @param email
 	 * @param password
 	 * @return
 	 */
-	public void registerUser(String username, String email, String password, String contextPath) {
+	public void registerUser(String username, String email, String password,
+			String contextPath) {
 		User user = userDao.createUser(username, password, email);
 		sendMail(username, email, user.getActivationToken(), contextPath);
 		messageDao.assignOrphanMessages(user);
 	}
 
-	private void sendMail(final String user, final String email, final String activationToken, final String contextPath) {
-		MimeMessagePreparator preparator = new MimeMessagePreparator() {
-	         public void prepare(MimeMessage mimeMessage) throws Exception {
-	            MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
-	            message.setSubject("Welcome to Digital RPG");
-	            message.setTo(email);
-	            message.setFrom(from); // could be parameterized...
-	            Map<String, Object> model = new HashMap<String, Object>();
-	            model.put("activationToken", activationToken);
-	            model.put("email", email);
-	            model.put("username", user);
-	            model.put("contextPath", new URI(contextPath));
-	            String text = VelocityEngineUtils.mergeTemplateIntoString(
-	               velocityEngine, "com/digitalrpg/templates/mail/registration-confirmation.vm", model);
-	            message.setText(text, true);
-	         }
-	      };
-	    try {
-	    	javaMailSender.send(preparator);
-	    } catch (MailException ex) {
-            // simply log it and go on...
-            System.err.println(ex.getMessage());
-        }
-	}
-
-	public void setFrom(String from) {
-		this.from = from;
+	private void sendMail(String user, String email, String activationToken,
+			String contextPath) {
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("activationToken", activationToken);
+		model.put("email", email);
+		model.put("username", user);
+		try {
+			model.put("contextPath", new URI(contextPath));
+		} catch (URISyntaxException ignore) {
+		}
+		mailService.sendMail("Welcome to Digital RPG", ImmutableList.of(email),
+				model, MailType.CONFIRM_REGISTRATION);
 	}
 
 	public void activate(String username, String activationToken) {
@@ -83,5 +68,5 @@ public class RegistrationService {
 	public Boolean validateUsernameAvailability(String username) {
 		return userDao.checkUsername(username);
 	}
-	
+
 }

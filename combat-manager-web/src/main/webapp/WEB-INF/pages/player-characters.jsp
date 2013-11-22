@@ -91,11 +91,23 @@
                 </div>
             </div>
             
-        	<div id="view_character" class="templatemo_multi_content hidden dynamic">
+        	<div id="view_character" character_id="${character.id }" class="templatemo_multi_content hidden dynamic">
 	        	<div class="templatemo_content width_70_p margin_right_10">
 	        		<div class="content_section">
 		        		<div class="header_02" id="character_name">${character.name }</div>
-		        		<div class="scroll_description long" id="character_description">${character.description }</div>
+		        		
+		        		<div class="scroll_description long" id="character_description">
+		        			<div id="invite_user" 
+			        			class="campaign_request_join ${(character.campaign.gameMaster == character.owner and character.campaign.gameMaster.name == pageContext.request.userPrincipal.principal.name)? '':'hidden'}">
+			            		<input id="invite_player_button" type="button" value="Send to Friend" class="small_button">
+	           					</input>
+			            	</div>
+			            	<div id="claim_character" class="campaign_request_join ${message != null ? '': 'hidden' }">
+			            		<input message_id="${message.id }" id="claim_character_button" type="button" value="Claim Character" class="small_button">
+	           					</input>
+			            	</div>
+		            		${character.description }
+		            	</div>
 		        		<div class="border_top" id="character_campaign">Campaign ${character.campaign.name }</div>
 		        	</div>
 		        	<div class="margin_bottom_40">&#160;</div>
@@ -125,7 +137,23 @@
         
         <jsp:include page="ads.jsp"/>
    	
-   
+   		<div id="invite_user_form" style="display:none; cursor: default"> 
+   			<form:form id="invite_form">
+   				<h2>Send to Friend</h2>
+   				<p>Send an Invitation to another user and ask him to claim this character</p>
+   				<div class="margin_bottom_20">&#160;</div>
+				<div class="to_email">
+					<label for="email">Email</label>
+				</div>
+				<input type="text" id="invite_email" name="email"
+					class="field" email="true"/>
+					
+				<input id="send_invite_button" type="button" value="Invite" class="small_button">
+           		</input>
+           		<input id="cancel_invite_button" type="button" value="Cancel" class="small_button">
+           		</input>  
+   			</form:form>
+   		</div>
 <script type="text/javascript">
 	$(document).ready(function(){
 		<c:if test="${not empty show_content}">
@@ -133,6 +161,41 @@
 			$("#${show_content}").removeClass("hidden");
 	   	</c:if>
 		
+	   	$('#invite_player_button').click(function() { 
+            $.blockUI({ message: $('#invite_user_form'), css: { width: '325px' } }); 
+        });
+	   	
+	   	<c:url var="inviteUrl" value="/characters/[id]/invite/[email]"/>
+        $('#send_invite_button').click(function() {
+        	var isValid = $("#invite_form").valid();
+	          if(isValid) {
+	            var campaignId = $("#view_character").attr("character_id")
+	            var email = $("#invite_email").val();
+	          	var url = "${inviteUrl}".replace("[id]",campaignId).replace("[email]", email)
+	          	$.blockUI({ message: "<h1>Sending invitation...</h1>" });
+	          	$.ajax(url).done(function(result) {
+	          		if(result == true) {
+	          			$.blockUI({ message: "<h1>Invitation Sent.</h1>" });
+	          			setTimeout($.unblockUI(), 1500);
+	          		} else {
+	          			alert("Could not send mail, please try again.");
+	          			$.blockUI({ message: $('#invite_user_form'), css: { width: '275px' } }); 
+	          		}
+	          	});
+	          }
+        }) 
+        
+        $('#cancel_invite_button').click(function(){
+        	$.unblockUI();
+        })
+        
+        <c:url var="claimUrl" value="/characters/[id]/claim/[messageId]"/>
+        $('#claim_character_button').click(function(){
+        	var characterId = $("#view_character").attr("character_id")
+        	var messageId = $(this).attr("message_id")
+        	var url = "${claimUrl}".replace("[id]",characterId).replace("[messageId]", messageId)
+        	window.location = url;
+        })
 	})
 </script> 	
    

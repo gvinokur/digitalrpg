@@ -4,20 +4,20 @@ import java.util.Properties;
 
 import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScan.Filter;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.integration.channel.interceptor.MessageSelectingInterceptor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import com.digitalrpg.web.service.CampaignService;
 import com.digitalrpg.web.service.CharacterService;
 import com.digitalrpg.web.service.CombatService;
+import com.digitalrpg.web.service.MailService;
 import com.digitalrpg.web.service.MessageService;
 import com.digitalrpg.web.service.RegistrationService;
 import com.digitalrpg.web.service.UserService;
@@ -33,16 +33,12 @@ public class RootConfiguration {
 	
 	@Bean
 	public RegistrationService getRegistrationService() {
-		RegistrationService registrationService = new RegistrationService();
-		registrationService.setFrom(env.getProperty("mail.from"));
-		return registrationService;
+		return new RegistrationService();
 	}
 	
 	@Bean 
 	public CampaignService getCampaignService() {
-		CampaignService campaignService = new CampaignService();
-		campaignService.setFrom(env.getProperty("mail.from"));
-		return campaignService;
+		return new CampaignService();
 	}
 	
 	@Bean
@@ -63,6 +59,13 @@ public class RootConfiguration {
 	@Bean 
 	public UserService userService() {
 		return new UserService();
+	}
+	
+	@Bean 
+	public MailService getMailService() {
+		MailService mailService = new MailService();
+		mailService.setFrom(env.getProperty("mail.from"));
+		return mailService;
 	}
 	
 	@Bean 

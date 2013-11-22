@@ -5,17 +5,20 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -28,19 +31,29 @@ import com.digitalrpg.domain.model.characters.SystemCharacter;
 import com.digitalrpg.domain.model.characters.pathfinder.PathfinderCharacter;
 import com.digitalrpg.web.controller.model.CharacterVO;
 import com.digitalrpg.web.controller.model.CreateCharacterVO;
+import com.digitalrpg.web.controller.model.InviteClaimCharacterMessageVO;
+import com.digitalrpg.web.controller.model.MessageVO;
 import com.digitalrpg.web.controller.model.PathfinderCharacterVO;
 import com.digitalrpg.web.service.CampaignService;
+import com.digitalrpg.web.service.CharacterService;
+import com.digitalrpg.web.service.MessageService;
 import com.google.common.base.Function;
 
 @Controller
-@RequestMapping("/monsters")
+@RequestMapping("/characters")
 public class MonsterController {
 
 	@Autowired
 	private CharacterDao characterDao;
 	
 	@Autowired
+	private CharacterService characterService;
+	
+	@Autowired
 	private CampaignService campaignService;
+	
+	@Autowired
+	private MessageService messageService;
 	
 	public static final Function<SystemCharacter, CharacterVO> characterToVOfunction = new Function<SystemCharacter, CharacterVO>() {
 	
@@ -106,7 +119,7 @@ public class MonsterController {
 		if(SystemType.Pathfinder == campaign.getSystem()) {
 			characterDao.createPathfinderCharacter(playerCharacter, character.getPathfinder().toPathfinderProperties(), campaign);
 		}
-		attributes.addFlashAttribute("form_message", "Monster " + character.getName() + " created!");
+		attributes.addFlashAttribute("form_message", "Character " + character.getName() + " created!");
 		return new ModelAndView("redirect:/campaigns/"+campaign.getId()+"/show");
 	}
 	
@@ -117,6 +130,33 @@ public class MonsterController {
 		modelMap.put("character", characterToVOfunction.apply(systemCharacter));
 		modelMap.put("show_content", "view_character");
 		return new ModelAndView("/monsters", modelMap );
+	}
+	
+	@RequestMapping(value = "/{id}/invite/{email:.*}")
+	@ResponseBody
+	public Boolean invite(@PathVariable Long id, @PathVariable String email, Principal principal, HttpServletRequest request) {
+		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+		String contextPath = "http://" + request.getServerName() + 
+				(request.getContextPath()!=null && !request.getContextPath().isEmpty()? "/" + request.getContextPath(): "");
+		
+		return characterService.invite(id, user, email, contextPath);
+	}
+	
+	@RequestMapping(value = "/{id}/claim/{messageId}", method = RequestMethod.GET)
+	@Transactional(rollbackFor = Exception.class)
+	public String claimCharacter(@PathVariable Long id, @PathVariable Long messageId, Principal principal, RedirectAttributes attributes) {
+		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+		SystemCharacter character = characterService.get(id);
+		MessageVO message = messageService.getMessage(messageId);
+		if(message instanceof InviteClaimCharacterMessageVO && message.getTo().equals(user)) {
+			characterService.transfer(character, user);
+			messageService.deleteMessage(messageId);
+			attributes.addFlashAttribute("form_message", "You own this character now!");
+		} else {
+			attributes.addFlashAttribute("form_error", "You cannot claim this character, either this is an invalid message or it was not sent to you.");
+		}
+		
+		return "redirect:/player-characters/" + id + "/show"; 
 	}
 	
 

@@ -44,6 +44,8 @@
 			drawMessageRequestJoin(message)
 		} else if (message.type == "AcceptRequestJoinMessageVO") {
 			drawMessageAcceptRequestJoin(message)
+		} else if (message.type == "InviteClaimCharacterMessageVO") {
+			drawMessageInviteCharacter(message)
 		}
 	}
 	<c:url var="inviteUrl" value="/campaigns/[id]/join?messageId=[message_id]"/>
@@ -91,6 +93,22 @@
 		newDiv.append($("<div/>").addClass("header_03").append(title).append(deleteIcon))
 		$("<p/>")
 			.append(message.from.name + " has granted you access to the campaign " +  message.campaign_name + " ")
+			.appendTo(newDiv)
+		newDiv.appendTo($("#messages"))
+	}
+	
+	<c:url var="inviteUrl" value="/player-characters/[id]/show?messageId=[message_id]"/>
+	function drawMessageInviteCharacter(message) {
+		var newDiv = $("<div/>")
+		var url = "${inviteUrl}".replace("[id]",message.character_id).replace("[message_id]", message.id)
+		var deleteUrl = "${deleteUrl}".replace("[id]", message.id)
+		newDiv.addClass("latest_news")
+		newDiv.addClass("border_bottom")
+		var title = $("<a/>").attr("href",url).append("Claim your character and join " + message.from.name + "'s campaign")
+		var deleteIcon = $("<span/>").attr("deleteUrl",deleteUrl).attr("title", "Delete Message").addClass("delete_message").addClass("delete_icon")
+		newDiv.append($("<div/>").addClass("header_03").append(title).append(deleteIcon))
+		$("<p/>")
+			.append("Claim the character " + message.characterName + " on the " +  message.campaign_name + " campaign ")
 			.appendTo(newDiv)
 		newDiv.appendTo($("#messages"))
 	}

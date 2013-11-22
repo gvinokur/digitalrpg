@@ -26,6 +26,7 @@ import com.digitalrpg.domain.model.User;
 import com.digitalrpg.domain.model.characters.PlayerCharacter;
 import com.digitalrpg.domain.model.characters.SystemCharacter;
 import com.digitalrpg.web.controller.model.CreateCharacterVO;
+import com.digitalrpg.web.controller.model.InviteClaimCharacterMessageVO;
 import com.digitalrpg.web.controller.model.MessageVO;
 import com.digitalrpg.web.service.CampaignService;
 import com.digitalrpg.web.service.CharacterService;
@@ -91,11 +92,18 @@ public class PlayerCharacterController {
 	}
 	
 	@RequestMapping(value = "/{id}/show", method = RequestMethod.GET)
-	public ModelAndView showCharacter(@PathVariable Long id, Principal principal) {
+	public ModelAndView showCharacter(@PathVariable Long id, @RequestParam(value="messageId", required=false) Long messageId, Principal principal) {
+		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
 		Map<String, Object> modelMap = new HashMap<String, Object>();
 		SystemCharacter systemCharacter = characterDao.get(id);
 		modelMap.put("character", CharacterService.characterToVOfunction.apply(systemCharacter));
 		modelMap.put("show_content", "view_character");
+		if(messageId != null) {
+			MessageVO message = messageService.getMessage(messageId);
+			if(message instanceof InviteClaimCharacterMessageVO && message.getTo().equals(user)) {
+				modelMap.put("message", message);
+			}
+		}
 		return new ModelAndView("/player-characters", modelMap );
 	}
 	

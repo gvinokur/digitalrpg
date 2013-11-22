@@ -1,0 +1,18 @@
+
+<html>
+<body>
+<h3>Welcome Hero!</h3>
+
+<p>
+	You have been invited to join ${username}'s campaign, <strong>${character.campaign.name}</strong> on DigitalRPG!
+</p>
+<p>
+	${username} created the character ${character.character.name} for you, so go ahead and claim it now!
+</p>
+
+<p>
+    <a href="${contextPath}/player-characters/${character.id}/show?messageId=${message.id}" target="_blank">Claim your spot and let the battle begin!</a>
+</p>
+</body>
+
+</html>

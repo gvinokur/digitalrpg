@@ -24,5 +24,9 @@ public interface CharacterDao {
 	public SystemCharacter get(Long id);
 
 	public Collection<SystemCharacter> getUserMonsters(String name);
+
+	public void save(SystemCharacter systemCharacter);
+
+	public void delete(Character oldCharacter);
 	
 }

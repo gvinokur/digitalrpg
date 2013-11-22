@@ -93,4 +93,14 @@ public class CharacterDaoImpl implements CharacterDao {
 		return characters;
 	}
 
+	@Transactional
+	public void save(SystemCharacter systemCharacter) {
+		sessionFactory.getCurrentSession().update(systemCharacter);
+	}
+
+	@Transactional
+	public void delete(Character oldCharacter) {
+		sessionFactory.getCurrentSession().delete(oldCharacter);
+	}
+
 }

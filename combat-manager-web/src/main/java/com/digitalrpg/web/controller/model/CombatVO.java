@@ -1,6 +1,6 @@
 package com.digitalrpg.web.controller.model;
 
-import java.util.List;
+import java.util.SortedSet;
 
 public class CombatVO {
 
@@ -10,7 +10,17 @@ public class CombatVO {
 	
 	private String description;
 	
-	private List<CombatCharacterVO> combatCharacters;
+	private SortedSet<CombatCharacterVO> combatCharacters;
+	
+	private CampaignVO campaign;
+
+	public CampaignVO getCampaign() {
+		return campaign;
+	}
+
+	public void setCampaign(CampaignVO campaign) {
+		this.campaign = campaign;
+	}
 
 	public String getName() {
 		return name;
@@ -28,11 +38,11 @@ public class CombatVO {
 		this.description = description;
 	}
 
-	public List<CombatCharacterVO> getCombatCharacters() {
+	public SortedSet<CombatCharacterVO> getCombatCharacters() {
 		return combatCharacters;
 	}
 
-	public void setCombatCharacters(List<CombatCharacterVO> combatCharacters) {
+	public void setCombatCharacters(SortedSet<CombatCharacterVO> combatCharacters) {
 		this.combatCharacters = combatCharacters;
 	}
 

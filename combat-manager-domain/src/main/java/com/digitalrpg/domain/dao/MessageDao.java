@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.User;
+import com.digitalrpg.domain.model.characters.SystemCharacter;
 import com.digitalrpg.domain.model.messages.Message;
 
 public interface MessageDao {
@@ -27,4 +28,7 @@ public interface MessageDao {
 	public Message requestJoin(User user, User gameMaster, Campaign campaign);
 
 	public void acceptRequest(User user, User from, Campaign campaign);
+
+	public Message invite(Long id, User from, String emailTo, User userTo,
+			SystemCharacter character);
 }

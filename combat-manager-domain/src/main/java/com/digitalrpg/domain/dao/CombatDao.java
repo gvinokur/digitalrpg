@@ -9,5 +9,7 @@ public interface CombatDao {
 	public Combat createCombat(String name, String description, Campaign campaign);
 	
 	public void createCharacter(Combat combat, SystemCharacter character, Boolean hidden, Long initiative);
+
+	public Combat get(Long id);
 	
 }

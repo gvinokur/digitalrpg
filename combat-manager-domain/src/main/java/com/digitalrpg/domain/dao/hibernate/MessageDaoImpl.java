@@ -10,8 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.digitalrpg.domain.dao.MessageDao;
 import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.User;
+import com.digitalrpg.domain.model.characters.SystemCharacter;
 import com.digitalrpg.domain.model.messages.AcceptRequestMessage;
 import com.digitalrpg.domain.model.messages.InviteToCampaignMessage;
+import com.digitalrpg.domain.model.messages.InviteToClaimCharacterMessage;
 import com.digitalrpg.domain.model.messages.Message;
 import com.digitalrpg.domain.model.messages.RequestJoinToCampaignMessage;
 
@@ -97,6 +99,18 @@ public class MessageDaoImpl implements MessageDao {
 		message.setTo(to);
 		message.setCampaign(campaign);
 		sessionFactory.getCurrentSession().save(message);
+	}
+
+	@Transactional
+	public Message invite(Long id, User from, String toMail, User toUser,
+			SystemCharacter character) {
+		InviteToClaimCharacterMessage message = new InviteToClaimCharacterMessage();
+		message.setCharacter(character);
+		message.setFrom(from);
+		message.setToMail(toMail);
+		message.setTo(toUser);
+		this.sessionFactory.getCurrentSession().save(message);
+		return message;
 	}
 
 

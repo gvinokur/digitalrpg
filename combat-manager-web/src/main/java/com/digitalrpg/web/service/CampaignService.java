@@ -1,6 +1,7 @@
 package com.digitalrpg.web.service;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +28,9 @@ import com.digitalrpg.domain.model.characters.SystemCharacter;
 import com.digitalrpg.domain.model.messages.Message;
 import com.digitalrpg.web.controller.model.CampaignVO;
 import com.digitalrpg.web.controller.model.MessageVO;
+import com.digitalrpg.web.service.MailService.MailType;
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
 
 public class CampaignService {
 
@@ -44,12 +47,7 @@ public class CampaignService {
 	private CharacterDao characterDao;
 	
 	@Autowired
-	private JavaMailSender javaMailSender;
-	
-	@Autowired 
-	private VelocityEngine velocityEngine;
-	
-	private String from;
+	private MailService mailService;
 
 	public static Function<Campaign, CampaignVO> campaignToVOFunction = new Function<Campaign, CampaignVO>() {
 		public CampaignVO apply(Campaign in) {
@@ -73,33 +71,16 @@ public class CampaignService {
 	
 	
 	private void sendMail(final String user, final String email, final String contextPath, final Campaign campaign, final MessageVO inviteMessage) {
-		MimeMessagePreparator preparator = new MimeMessagePreparator() {
-	         public void prepare(MimeMessage mimeMessage) throws Exception {
-	            MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
-	            message.setSubject("Join Campaign on DigitalRPG");
-	            message.setTo(email);
-	            message.setFrom(from); // could be parameterized...
-	            Map<String, Object> model = new HashMap<String, Object>();
-	            model.put("email", email);
-	            model.put("username", user);
-	            model.put("contextPath", new URI(contextPath));
-	            model.put("campaign", campaign);
-	            model.put("message", inviteMessage);
-	            String text = VelocityEngineUtils.mergeTemplateIntoString(
-	               velocityEngine, "com/digitalrpg/templates/mail/invite-to-campaign.vm", model);
-	            message.setText(text, true);
-	         }
-	      };
-	    try {
-	    	javaMailSender.send(preparator);
-	    } catch (MailException ex) {
-            // simply log it and go on...
-            System.err.println(ex.getMessage());
-        }
-	}
-
-	public void setFrom(String from) {
-		this.from = from;
+		Map<String, Object> model = new HashMap<String, Object>();
+        model.put("email", email);
+        model.put("username", user);
+        try {
+			model.put("contextPath", new URI(contextPath));
+		} catch (URISyntaxException ignore) { }
+        model.put("campaign", campaign);
+        model.put("message", inviteMessage);
+        
+        mailService.sendMail("Join Campaign on DigitalRPG", ImmutableList.of(email), model, MailType.INVITE_TO_CAMPAIGN);
 	}
 
 	public Campaign createCampaign(String name, String description, User gm,

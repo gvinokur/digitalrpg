@@ -9,16 +9,16 @@
 	              doctype-system="about:legacy-compat" />
 <html>
 <head>
-<title>Monsters</title>
+<title>Characters</title>
 </head>
 <body>
     
     	<div class="templatemo_side_bar margin_right_10">
         	
-            <div class="header_01">My Monsters</div>
+            <div class="header_01">My Characters</div>
            	<ul class="campaigns">
            		<c:forEach items="${characters}" var="character">
-           			<c:url var="characterUrl" value="/monsters/${character.id }/show"/>
+           			<c:url var="characterUrl" value="/characters/${character.id }/show"/>
            			<li class="player"><a id="npc_${character.id }" href="${characterUrl }">${character.character.name }</a></li>
            		</c:forEach>
                    
@@ -32,8 +32,8 @@
         
         	<div id="character_info" class="templatemo_content dynamic">
 	        	<div class="content_section">
-	           	  <div class="header_02">Monsters info</div>
-	                <p><span>View and Manage Monsters.</span> View and Edit your campaign monsters.</p>
+	           	  <div class="header_02">Character info</div>
+	                <p><span>View and Manage Characters.</span> View and Edit your campaign characters.</p>
 	     
 	               <div class="margin_bottom_40">&#160;</div>
 	                <div class="cleaner">&#160;</div>
@@ -42,10 +42,10 @@
             
             <div id="create_character"  class="templatemo_content dynamic hidden">
             	<div class="content_section">
-	            	<div class="header_02">Create Monster</div>
-	            	<p>You are creating a monster for your campaign <span>${campaign.name}</span></p>
+	            	<div class="header_02">Create Character</div>
+	            	<p>You are creating a character for your campaign <span>${campaign.name}</span></p>
 	            	
-	            	<c:url value="/monsters" var="createCharacterUrl"></c:url>
+	            	<c:url value="/characters" var="createCharacterUrl"></c:url>
 	            	<form:form action="${createCharacterUrl }" modelAttribute="character" id="character" method="POST">
 	            		
 	            		<input type="hidden" name="campaignId" value="${campaign.id}"/>

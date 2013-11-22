@@ -1,5 +1,7 @@
 package com.digitalrpg.domain.dao.hibernate;
 
+import java.util.List;
+
 import org.hibernate.SessionFactory;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,11 +33,24 @@ public class CombatDaoImpl implements CombatDao{
 		combatCharacter.setCharacter(character);
 		combatCharacter.setHidden(hidden);
 		combatCharacter.setInitiative(initiative);
-		sessionFactory.getCurrentSession().update(combat);
+		combatCharacter.setCombat(combat);
+		sessionFactory.getCurrentSession().save(combatCharacter);
 	}
 
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
+	public Combat get(Long id) {
+		List<Combat> list = this.sessionFactory.getCurrentSession().createQuery("from Combat where id = ?")
+			.setParameter(0, id)
+			.list();
+		if(list.size() == 1) {
+			return list.get(0);
+		}
+		return null;
 	}
 	
 }

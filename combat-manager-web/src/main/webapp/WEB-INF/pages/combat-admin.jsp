@@ -84,14 +84,14 @@
 						<form:errors element="div" path="description"/>
 					</div>
 					
-					<div class="header_02">Select Characters And Monsters</div>
+					<div class="header_02">Select Combatants</div>
 					<select name='players' id='players' multiple='multiple'>
-					  <optgroup label='Characters'>
+					  <optgroup label='Player Managed'>
 					    <c:forEach items="${campaign.playerCharacters }" var="character">
 						    <option value='${character.id }'>${character.name }</option>
 					    </c:forEach>
 					  </optgroup>
-					  <optgroup label='Monsters'>
+					  <optgroup label='GM Managed'>
 					    <c:forEach items="${campaign.monsters }" var="monster">
 						    <option value='${monster.id }'>${monster.name }</option>
 					    </c:forEach>
@@ -102,6 +102,20 @@
 	        	<div class="margin_bottom_40">&#160;</div>
 	                <div class="cleaner">&#160;</div>
 	        </div>
+	        <div id="combat_view" class="templatemo_content dynamic">
+	        	<div class="header_02" id="character_name">${combat.name }</div>
+		        <div class="scroll_description long" id="character_description">${combat.description }</div>
+		        <div class="border_top" id="character_campaign">Campaign ${combat.campaign.name }</div>
+		        <div class="header_03">Combatants</div>
+		        <div class="nice_list scroll_list_219">
+		        	<ul>
+		        		<c:forEach items="${combat.combatCharacters}" var="combatCharacter">
+		        			<li><a>${combatCharacter.characterVO.name}</a></li>
+		        		</c:forEach>
+		        	</ul>
+		        </div>
+	        </div>
+	        
 	   </div>
 		<script type="text/javascript">
 			$(document).ready(function() {
@@ -123,7 +137,7 @@
 					
 				});
 				
-				$("#optgroup-selection-Monsters li.ms-elem-selection").each(function() {
+				$("#optgroup-selection-GM_Managed li.ms-elem-selection").each(function() {
 					var id = $(this).attr("id").split("-")[0]
 					$(this).before($("<input />")
 						.attr("id", id + "-initiative")
@@ -145,7 +159,7 @@
 					
 				})
 				
-				$("#optgroup-selection-Characters li.ms-elem-selection").each(function() {
+				$("#optgroup-selection-Player_Managed li.ms-elem-selection").each(function() {
 					var id = $(this).attr("id").split("-")[0]
 					$(this).before($("<input />")
 						.attr("id", id + "-initiative")

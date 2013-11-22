@@ -8,11 +8,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.digitalrpg.domain.dao.MessageDao;
 import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.User;
+import com.digitalrpg.domain.model.characters.SystemCharacter;
 import com.digitalrpg.domain.model.messages.AcceptRequestMessage;
 import com.digitalrpg.domain.model.messages.InviteToCampaignMessage;
+import com.digitalrpg.domain.model.messages.InviteToClaimCharacterMessage;
 import com.digitalrpg.domain.model.messages.Message;
 import com.digitalrpg.domain.model.messages.RequestJoinToCampaignMessage;
 import com.digitalrpg.web.controller.model.AcceptRequestJoinMessageVO;
+import com.digitalrpg.web.controller.model.InviteClaimCharacterMessageVO;
 import com.digitalrpg.web.controller.model.InviteMessageVO;
 import com.digitalrpg.web.controller.model.MessageVO;
 import com.digitalrpg.web.controller.model.RequestJoinMessageVO;
@@ -34,10 +37,21 @@ public class MessageService {
 				out = translateRequestJoinMessage((RequestJoinToCampaignMessage)message);
 			} else if (message instanceof AcceptRequestMessage) {
 				out = translateAcceptRequestJoinMessage((AcceptRequestMessage)message);
+			} else if (message instanceof InviteToClaimCharacterMessage) {
+				out = translateInviteToClaimCharacterMessage((InviteToClaimCharacterMessage)message);
 			}
 			return out;
 		}
 		
+		private MessageVO translateInviteToClaimCharacterMessage(
+				InviteToClaimCharacterMessage message) {
+			InviteClaimCharacterMessageVO messageVO = new InviteClaimCharacterMessageVO();
+			setBaseProperties(messageVO, message);
+			messageVO.setCharacterId(message.getCharacter().getId());
+			messageVO.setCharacterName(message.getCharacter().getCharacter().getName());
+			return messageVO;
+		}
+
 		private MessageVO translateAcceptRequestJoinMessage(
 				AcceptRequestMessage message) {
 			AcceptRequestJoinMessageVO messageVO = new AcceptRequestJoinMessageVO();
@@ -88,6 +102,16 @@ public class MessageService {
 		return messageToVOFunction.apply(messageDao.requestJoin(user, campaign.getGameMaster(), campaign));
 	}
 
+	/**
+	 * Invite a friend to join a campaign and create his own character
+	 * 
+	 * @param id
+	 * @param from
+	 * @param emailTo
+	 * @param userTo
+	 * @param campaign
+	 * @return
+	 */
 	public MessageVO invite(Long id, User from,
 			String emailTo, User userTo, Campaign campaign) {
 		return messageToVOFunction.apply(messageDao.invite(id, from, emailTo, userTo, campaign));
@@ -107,5 +131,20 @@ public class MessageService {
 		messageDao.deleteMessage(requestId);
 		return true;
 	}
-	
+
+	/**
+	 * Invite a friend to join a campaign by claiming an already created character
+	 * 
+	 * @param id
+	 * @param from
+	 * @param emailTo
+	 * @param userTo
+	 * @param character
+	 * @return
+	 */
+	public MessageVO invite(Long id, User from, String emailTo, User userTo,
+			SystemCharacter character) {
+		return messageToVOFunction.apply(messageDao.invite(id, from, emailTo, userTo, character));
+	}
+		
 }

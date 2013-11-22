@@ -142,15 +142,16 @@
 	            <div class="templatemo_content width_70_p margin_right_10">
 	            	<div class="content_section">
 		            	<div class="header_02 campaign_header"><span id="campaign_name">${campaign.name }</span></div>
-		            	<div id="request_join" class="campaign_request_join ${(campaign.gameMaster.name == pageContext.request.userPrincipal.principal.name)? 'hidden':''}">
-		            		<input id="request_join_button" type="button" value="Join Campaign" class="small_button">
-           					</input>
-		            	</div>
-		            	<div id="invite_user" class="campaign_request_join ${(campaign.gameMaster.name != pageContext.request.userPrincipal.principal.name)? 'hidden':''}">
-		            		<input id="invite_player_button" type="button" value="Invite Friend" class="small_button">
-           					</input>
-		            	</div>
+		            	
 		            	<div id="campaign_description" class="scroll_description">
+			            	<div id="request_join" class="campaign_request_join ${(campaign.gameMaster.name == pageContext.request.userPrincipal.principal.name)? 'hidden':''}">
+			            		<input id="request_join_button" type="button" value="Join Campaign" class="small_button">
+	           					</input>
+			            	</div>
+			            	<div id="invite_user" class="campaign_request_join ${(campaign.gameMaster.name != pageContext.request.userPrincipal.principal.name)? 'hidden':''}">
+			            		<input id="invite_player_button" type="button" value="Invite Friend" class="small_button">
+	           					</input>
+			            	</div>
 		            		${campaign.description }
 		            	</div>
 		            	<p class="border_top">Current Combat: </p>
@@ -160,7 +161,7 @@
 		        </div>
 		        
 		        <div class="templatemo_content width_25_p">
-		        	<div class="header_03">Active Players:</div>
+		        	<div class="header_03">Characters:</div>
 	           		<div class="margin_bottom_10">&#160;</div>
 	           		<div class="content_section nice_list scroll_list_219" id="campaign_active_players">
 	           			
@@ -168,8 +169,14 @@
 	           				<c:forEach items="${campaign.playerCharacters }" var="pc">
 	           					<li pc_id="${pc.id}"><a title="Owner ${pc.owner.name }">${pc.name }</a></li>
 	           				</c:forEach>
+	           				<c:forEach items="${campaign.monsters }" var="npc">
+	           					<li pc_id="${npc.id}"><a>${npc.name }</a></li>
+	           				</c:forEach>
 	           			</ul>
 	           		</div>
+	           		<input id="create_monster_button" type="button" campaign_id="${campaign.id }" value="Create Character" 
+	           			class="small_button ${(campaign.gameMaster.name == pageContext.request.userPrincipal.principal.name)? '':'hidden'}">
+	           		</input>
 	           		<div class="margin_bottom_20">&#160;</div>
 	           	</div>
 	           	
@@ -179,42 +186,17 @@
 	           		<div class="nice_list">
 	           			<ul id="coming_combats_list">
 	           				<c:forEach items="${campaign.combats }" var="combat">
-	           					<li combat_id="${combat.id}"><a>${combat.name }</a></li>
+	           					<li combat_id="${combat.id}" class="combat_view"><a>${combat.name }</a></li>
 	           				</c:forEach>
 	           			</ul>
 	           		</div>
-	           		<input id="create_combat_button" campaign_id="${campaign.id }" type="button" value="Create Combat" class="small_button">
+	           		<input id="create_combat_button" campaign_id="${campaign.id }" type="button" value="Create Combat" 
+	           			class="small_button">
 	           		</input>
 	           		
 	           		<div class="margin_bottom_20">&#160;</div>
 	           	</div>
 	           	
-	           	<div id="campaign_historic_combats" class="templatemo_content margin_top_15 margin_right_10 width_30_p ${(campaign.gameMaster.name == pageContext.request.userPrincipal.principal.name)? '':'hidden'}">
-	           		<span>Historic Combats:</span>
-					<div class="margin_bottom_10">&#160;</div>
-	           		<div class="nice_list">
-	           			<ul id="historic_combats">
-	           			</ul>
-	           		</div>
-	           		
-	           		<div class="margin_bottom_20">&#160;</div>
-	           	</div>
-	           	
-	           	<div id="campaign_monsters" class="templatemo_content margin_top_15 width_30_p ${(campaign.gameMaster.name == pageContext.request.userPrincipal.principal.name)? '':'hidden'}">
-	           		<span>Monsters:</span>
-					<div class="margin_bottom_10">&#160;</div>
-	           		<div class="nice_list">
-	           			<ul id="campaign_monsters_list">
-	           				<c:forEach items="${campaign.monsters }" var="npc">
-	           					<li npc_id="${npc.id}"><a>${npc.name }</a></li>
-	           				</c:forEach>
-	           			</ul>
-	           		</div>
-	           		<input id="create_monster_button" type="button" campaign_id="${campaign.id }" value="Create Monster" class="small_button">
-	           		</input>
-	           		
-	           		<div class="margin_bottom_20">&#160;</div>
-	           	</div>
 	           	
 	           	<div id="campaign_pending_players" class="templatemo_content margin_top_15 margin_right_10 width_30_p ${(campaign.gameMaster.name == pageContext.request.userPrincipal.principal.name)? '':'hidden'}">	
 	           		<span>Pending Invitations:</span>
@@ -441,7 +423,7 @@
 	    })
 	    
 	    $("#create_monster_button").click(function(){
-	    	<c:url var="createMonsterUrl" value="/monsters/create?campaignId=[id]"/>
+	    	<c:url var="createMonsterUrl" value="/characters/create?campaignId=[id]"/>
 	    	window.location = "${createMonsterUrl}".replace("[id]", $(this).attr("campaign_id"))
 	    })
 	    
@@ -452,7 +434,7 @@
 	    })
 	    
 	    $("#campaign_monsters_list li").click(function() {
-	    	<c:url var="showMonsterUrl" value="/monsters/[id]/show"/>
+	    	<c:url var="showMonsterUrl" value="/characters/[id]/show"/>
 	    	var url = "${showMonsterUrl}".replace("[id]", $(this).attr("npc_id"))
 	    	window.location = url;
 	    })
@@ -460,6 +442,12 @@
 	    $("#create_combat_button").click(function() {
 	    	<c:url var="createCombatUrl" value="/combats/create?campaignId=[id]"/>
 	    	var url = "${createCombatUrl}".replace("[id]", $(this).attr("campaign_id"))
+	    	window.location = url;
+	    })
+	    
+	    $(".combat_view").click(function(){
+	    	<c:url var="showCombatUrl" value="/combats/[id]/show"/>
+	    	var url = "${showCombatUrl}".replace("[id]", $(this).attr("combat_id"))
 	    	window.location = url;
 	    })
 	    

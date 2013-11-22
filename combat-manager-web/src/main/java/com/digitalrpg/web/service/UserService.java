@@ -32,4 +32,8 @@ public class UserService {
 		}
 		userDao.updateUser(user);
 	}
+	
+	public User findByMail(String email) {
+		return userDao.findByMail(email);
+	}
 }
