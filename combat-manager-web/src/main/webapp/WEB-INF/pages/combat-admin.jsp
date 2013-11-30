@@ -64,7 +64,7 @@
 	        	<div class="header_02">Create Combat</div>
 	            <p>You are creating a combat campaign <span>${campaign.name}</span></p>
 	        	<c:url var="createCombatUrl" value="/combats/create"/>
-	        	<form:form modelAttribute="combat" action="${createCombatUrl }" method="POST">
+	        	<form:form modelAttribute="create-combat" action="${createCombatUrl }" method="POST">
 	        		<input type="hidden" name="campaignId" value="${campaign.id }"/>
 	        		<div class="margin_bottom_20">&#160;</div>
 					<div class="generic_label">
@@ -83,6 +83,12 @@
 							class="generic_field" rows="4" draggable="true">&#160;</textarea>
 						<form:errors element="div" path="description"/>
 					</div>
+					
+					<c:choose>
+						<c:when test="${campaign.system == 'Pathfinder' }">
+							<jsp:include page="systems/combat/pathfinder_input.jsp"/>
+						</c:when>
+					</c:choose>
 					
 					<div class="header_02">Select Combatants</div>
 					<select name='players' id='players' multiple='multiple'>
@@ -106,11 +112,19 @@
 	        	<div class="header_02" id="character_name">${combat.name }</div>
 		        <div class="scroll_description long" id="character_description">${combat.description }</div>
 		        <div class="border_top" id="character_campaign">Campaign ${combat.campaign.name }</div>
+		        <c:choose>
+					<c:when test="${combat.campaign.system == 'Pathfinder' }">
+						<jsp:include page="systems/combat/pathfinder_data.jsp"/>
+					</c:when>
+				</c:choose>
+					
 		        <div class="header_03">Combatants</div>
 		        <div class="nice_list scroll_list_219">
 		        	<ul>
 		        		<c:forEach items="${combat.combatCharacters}" var="combatCharacter">
-		        			<li><a>${combatCharacter.characterVO.name}</a></li>
+		        			<c:if test="${!combatCharacter.hidden or combat.campaign.gameMaster.name == pageContext.request.userPrincipal.principal.name }">
+		        				<li><a>${combatCharacter.characterVO.name}<span style="margin-left: 30px">Initiative: ${combatCharacter.initiative}</span></a></li>
+		        			</c:if>
 		        		</c:forEach>
 		        	</ul>
 		        </div>
@@ -143,6 +157,7 @@
 						.attr("id", id + "-initiative")
 						.attr("type","text")
 						.attr("name", "extraInfo["+id+"].initative")
+						.val(0)
 						.css("display","none")
 						.css("float","right")
 						.css("width","60px")

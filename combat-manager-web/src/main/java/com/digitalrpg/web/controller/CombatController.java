@@ -42,10 +42,17 @@ public class CombatController {
 	}
 	
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
-	public ModelAndView createCombat(@Valid @ModelAttribute("combat") CreateCombatVO createCombatVO,
+	public ModelAndView createCombat(@Valid @ModelAttribute("create-combat") CreateCombatVO createCombatVO,
 			BindingResult result, RedirectAttributes redirectAttributes) {
+		if(result.hasErrors()) {
+			CampaignVO campaign = CampaignService.campaignToVOFunction.apply(campaignService.get(createCombatVO.getCampaignId()));
+			Map<String, Object> modelMap = new HashMap<String, Object>();
+			modelMap.put("campaign", campaign);
+			modelMap.put("show_content", "combat_create");
+			return new ModelAndView("/combat-admin", modelMap );
+		}
 		combatService.createCombat(createCombatVO.getName(), createCombatVO.getDescription(), 
-				createCombatVO.getPlayers(), createCombatVO.getExtraInfo(), createCombatVO.getCampaignId());
+				createCombatVO.getPlayers(), createCombatVO.getExtraInfo(), createCombatVO.getCampaignId(), createCombatVO.getSystemCombatProperties());
 		redirectAttributes.addFlashAttribute("form_message", "Combat created");
 		return new ModelAndView("redirect:/campaigns/"+createCombatVO.getCampaignId() + "/show");
 	}

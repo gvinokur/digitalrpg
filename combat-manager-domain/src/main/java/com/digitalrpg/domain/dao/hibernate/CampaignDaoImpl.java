@@ -36,7 +36,7 @@ public class CampaignDaoImpl implements CampaignDao {
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
 	public List<Campaign> getCampaignsForUser(final String user) {
-		List<Campaign> campaignsAsPlayer = sessionFactory.getCurrentSession().createQuery("select distinct c from Campaign c join c.playerCharacters psc, PlayerCharacter pc where psc!= null and psc = pc and pc.owner.name = :user")
+		List<Campaign> campaignsAsPlayer = sessionFactory.getCurrentSession().createQuery("select distinct c from Campaign c join c.playerCharacters psc, PlayerCharacter pc where psc!= null and psc.character = pc and pc.owner.name = :user")
 			.setParameter("user", user).list();
 		List<Campaign> campaignsAsGameMaster = sessionFactory.getCurrentSession().createQuery("select c from Campaign c where c.gameMaster.name = :user")
 				.setParameter("user", user).list();

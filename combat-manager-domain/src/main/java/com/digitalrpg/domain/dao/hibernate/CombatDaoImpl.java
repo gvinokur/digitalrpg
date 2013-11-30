@@ -9,7 +9,10 @@ import com.digitalrpg.domain.dao.CombatDao;
 import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.Combat;
 import com.digitalrpg.domain.model.CombatCharacter;
+import com.digitalrpg.domain.model.SystemCombatCharacterProperties;
+import com.digitalrpg.domain.model.SystemCombatProperties;
 import com.digitalrpg.domain.model.characters.SystemCharacter;
+import com.digitalrpg.domain.model.factory.CombatFactory;
 
 public class CombatDaoImpl implements CombatDao{
 
@@ -17,23 +20,17 @@ public class CombatDaoImpl implements CombatDao{
 
 	@Transactional
 	public Combat createCombat(String name, String description,
-			Campaign campaign) {
-		Combat combat = new Combat();
-		combat.setName(name);
-		combat.setDescription(description);
-		combat.setCampaign(campaign);
+			Campaign campaign, SystemCombatProperties systemCombatProperties) {
+		Combat combat =CombatFactory.createCombat(name, description, campaign, systemCombatProperties);
 		sessionFactory.getCurrentSession().save(combat);
 		return combat;
 	}
 
 	@Transactional
 	public void createCharacter(Combat combat, SystemCharacter character,
-			Boolean hidden, Long initiative) {
-		CombatCharacter combatCharacter = new CombatCharacter();
-		combatCharacter.setCharacter(character);
-		combatCharacter.setHidden(hidden);
-		combatCharacter.setInitiative(initiative);
-		combatCharacter.setCombat(combat);
+			Boolean hidden, Long initiative, SystemCombatCharacterProperties properties) {
+		CombatCharacter combatCharacter = CombatFactory.createCombatCharacter(combat, character, hidden, initiative, properties);
+		
 		sessionFactory.getCurrentSession().save(combatCharacter);
 	}
 

@@ -159,5 +159,19 @@ public class MonsterController {
 		return "redirect:/player-characters/" + id + "/show"; 
 	}
 	
+	@RequestMapping(value = "/{id}/take", method = RequestMethod.GET)
+	@Transactional(rollbackFor = Exception.class)
+	public String takeCharacter(@PathVariable Long id, Principal principal, RedirectAttributes attributes) {
+		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+		SystemCharacter character = characterService.get(id);
+		if(character.getCampaign().getGameMaster().equals(user)) {
+			characterService.transfer(character, user);
+			attributes.addFlashAttribute("form_message", "You own this character now!");
+		} else {
+			attributes.addFlashAttribute("form_error", "You cannot take this character, you must be the campaign game master to do that.");
+		}
+		
+		return "redirect:/player-characters/" + id + "/show"; 
+	}
 
 }

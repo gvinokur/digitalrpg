@@ -7,9 +7,12 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -17,6 +20,7 @@ import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name = "combats")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Combat {
 
 	private Long id;
@@ -28,6 +32,18 @@ public class Combat {
 	private Campaign campaign;
 	
 	private List<CombatCharacter> combatCharacters;
+
+	private CombatCharacter currentCharacter;
+	
+	@OneToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name="current_character_id", referencedColumnName="id")	
+	public CombatCharacter getCurrentCharacter() {
+		return currentCharacter;
+	}
+
+	public void setCurrentCharacter(CombatCharacter currentCharacter) {
+		this.currentCharacter = currentCharacter;
+	}
 
 	public String getName() {
 		return name;

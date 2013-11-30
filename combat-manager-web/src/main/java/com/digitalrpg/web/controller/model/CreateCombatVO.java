@@ -3,7 +3,12 @@ package com.digitalrpg.web.controller.model;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.Valid;
+
 import org.hibernate.validator.constraints.NotEmpty;
+
+import com.digitalrpg.domain.model.SystemCombatProperties;
+import com.digitalrpg.domain.model.pathfinder.PathfinderCombatProperties;
 
 public class CreateCombatVO {
 
@@ -16,7 +21,19 @@ public class CreateCombatVO {
 	
 	private List<Long> players;
 	
+	@Valid
 	private Map<Long, PlayerExtraInfoVO> extraInfo;
+	
+	@Valid
+	private CreateCombatPathfinderPropertiesVO pathfinder;
+
+	public CreateCombatPathfinderPropertiesVO getPathfinder() {
+		return pathfinder;
+	}
+
+	public void setPathfinder(CreateCombatPathfinderPropertiesVO pathfinder) {
+		this.pathfinder = pathfinder;
+	}
 
 	public String getName() {
 		return name;
@@ -56,6 +73,17 @@ public class CreateCombatVO {
 
 	public void setCampaignId(Long campaignId) {
 		this.campaignId = campaignId;
+	}
+
+	public SystemCombatProperties getSystemCombatProperties() {
+		if(pathfinder != null) {
+			PathfinderCombatProperties properties = new PathfinderCombatProperties();
+			properties.setTurns(pathfinder.getTurns());
+			properties.setRoundsPerTurn(pathfinder.getRoundsPerTurn());
+			return properties;
+		}
+		//Do the same with other system combat properties
+		return null;
 	}
 	
 }

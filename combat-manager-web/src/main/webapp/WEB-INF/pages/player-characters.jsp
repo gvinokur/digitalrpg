@@ -106,6 +106,11 @@
 			            		<input message_id="${message.id }" id="claim_character_button" type="button" value="Claim Character" class="small_button">
 	           					</input>
 			            	</div>
+		            		<div id="take_character" 
+			        			class="campaign_request_join ${(character.campaign.gameMaster != character.owner and character.campaign.gameMaster.name == pageContext.request.userPrincipal.principal.name)? '':'hidden'}">
+			            		<input id="take_character_button" type="button" value="Take Character" class="small_button">
+	           					</input>
+			            	</div>
 		            		${character.description }
 		            	</div>
 		        		<div class="border_top" id="character_campaign">Campaign ${character.campaign.name }</div>
@@ -194,6 +199,13 @@
         	var characterId = $("#view_character").attr("character_id")
         	var messageId = $(this).attr("message_id")
         	var url = "${claimUrl}".replace("[id]",characterId).replace("[messageId]", messageId)
+        	window.location = url;
+        })
+        
+        <c:url var="takeUrl" value="/characters/[id]/take"/>
+        $('#take_character_button').click(function(){
+        	var characterId = $("#view_character").attr("character_id")
+        	var url = "${takeUrl}".replace("[id]",characterId)
         	window.location = url;
         })
 	})

@@ -104,7 +104,12 @@ public class CharacterService {
 
 	public void transfer(SystemCharacter systemCharacter, User user) {
 		Character oldCharacter = systemCharacter.getCharacter();
-		Character newCharacter = characterDao.createPlayerCharacter(oldCharacter.getName(), oldCharacter.getPictureUrl(), oldCharacter.getDescription(), user);
+		Character newCharacter;
+		if(systemCharacter.getCampaign().getGameMaster().equals(user)) {
+			newCharacter = characterDao.createNonPlayerCharacter(oldCharacter.getName(), oldCharacter.getPictureUrl(), oldCharacter.getDescription(), true, user);
+		} else {
+			newCharacter = characterDao.createPlayerCharacter(oldCharacter.getName(), oldCharacter.getPictureUrl(), oldCharacter.getDescription(), user);
+		}
 		systemCharacter.setCharacter(newCharacter);
 		characterDao.save(systemCharacter);
 		characterDao.delete(oldCharacter);

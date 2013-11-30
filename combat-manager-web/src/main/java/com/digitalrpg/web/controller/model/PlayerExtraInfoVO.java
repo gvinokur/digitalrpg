@@ -1,9 +1,12 @@
 package com.digitalrpg.web.controller.model;
 
+import javax.validation.constraints.NotNull;
+
 public class PlayerExtraInfoVO {
 
 	private Boolean hidden;
 	
+	@NotNull
 	private Long initative;
 
 	public Boolean getHidden() {

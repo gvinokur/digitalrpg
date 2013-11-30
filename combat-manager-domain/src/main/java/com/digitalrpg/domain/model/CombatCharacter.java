@@ -4,6 +4,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -15,6 +17,7 @@ import com.digitalrpg.domain.model.characters.SystemCharacter;
 
 @Entity
 @Table(name = "combat_characters")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class CombatCharacter {
 
 	private Long id;
@@ -26,7 +29,7 @@ public class CombatCharacter {
 	private Long initiative;
 	
 	private Boolean hidden;
-
+	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="combat_id", referencedColumnName="id")
 	public Combat getCombat() {
