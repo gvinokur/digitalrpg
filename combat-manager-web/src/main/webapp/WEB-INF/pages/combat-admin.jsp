@@ -50,7 +50,7 @@
         		${error_message }
         		<div class="margin_bottom_20">&#160;</div>
         	</div>
-	        <div id="combat_info" class="templatemo_content dynamic">
+	        <div id="combat_info" class="templatemo_content dynamic ${show_content == null?'':'hidden' }">
 	        
 	        	<div  class="content_section">
 	           	  <div class="header_02">Combat info</div>
@@ -60,7 +60,7 @@
 	            </div>
 	            <div class="margin_bottom_40">&#160;</div>
 	        </div>
-	        <div id="combat_create" class="templatemo_content dynamic">
+	        <div id="combat_create" class="templatemo_content dynamic ${show_content == 'combat_create'?'':'hidden' }">
 	        	<div class="header_02">Create Combat</div>
 	            <p>You are creating a combat campaign <span>${campaign.name}</span></p>
 	        	<c:url var="createCombatUrl" value="/combats/create"/>
@@ -108,7 +108,7 @@
 	        	<div class="margin_bottom_40">&#160;</div>
 	                <div class="cleaner">&#160;</div>
 	        </div>
-	        <div id="combat_view" class="templatemo_content dynamic">
+	        <div id="combat_view" class="templatemo_content dynamic ${show_content == 'combat_view'?'':'hidden' }">
 	        	<div class="header_02" id="character_name">${combat.name }</div>
 		        <div class="scroll_description long" id="character_description">${combat.description }</div>
 		        <div class="border_top" id="character_campaign">Campaign ${combat.campaign.name }</div>
@@ -188,10 +188,6 @@
 									
 				})
 				
-				<c:if test="${not empty show_content}">
-			   		$("#central_panel > .dynamic").addClass("hidden");
-					$("#${show_content}").removeClass("hidden");
-			   	</c:if>
 			})
 		</script>
 	</body>

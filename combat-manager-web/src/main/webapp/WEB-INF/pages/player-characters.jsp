@@ -30,7 +30,7 @@
         
         <div id="central_panel" class="templatemo_multi_content margin_right_10" >
         
-        	<div id="character_info" class="templatemo_content dynamic">
+        	<div id="character_info" class="templatemo_content dynamic ${show_content == null?'':'hidden' }">
 	        	<div class="content_section">
 	           	  <div class="header_02">Characters info</div>
 	                <p><span>View and Manage Characters.</span> View your character info and the campaign and combats they are involved in.</p>
@@ -40,7 +40,7 @@
 	            </div>
             </div>
             
-            <div id="create_character"  class="templatemo_content dynamic hidden">
+            <div id="create_character"  class="templatemo_content dynamic ${show_content == 'create_character'?'':'hidden' }">
             	<div class="content_section">
 	            	<div class="header_02">Create Character</div>
 	            	<p>You are creating a character for ${campaign.gameMaster.name }'s campaign <span>${campaign.name}</span></p>
@@ -91,7 +91,7 @@
                 </div>
             </div>
             
-        	<div id="view_character" character_id="${character.id }" class="templatemo_multi_content hidden dynamic">
+        	<div id="view_character" character_id="${character.id }" class="templatemo_multi_content ${show_content == 'view_character'?'':'hidden' } dynamic">
 	        	<div class="templatemo_content width_70_p margin_right_10">
 	        		<div class="content_section">
 		        		<div class="header_02" id="character_name">${character.name }</div>
@@ -161,10 +161,6 @@
    		</div>
 <script type="text/javascript">
 	$(document).ready(function(){
-		<c:if test="${not empty show_content}">
-	   		$("#central_panel > .dynamic").addClass("hidden");
-			$("#${show_content}").removeClass("hidden");
-	   	</c:if>
 		
 	   	$('#invite_player_button').click(function() { 
             $.blockUI({ message: $('#invite_user_form'), css: { width: '325px' } }); 

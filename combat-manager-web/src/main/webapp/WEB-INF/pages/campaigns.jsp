@@ -67,8 +67,8 @@
         		${error_message }
         		<div class="margin_bottom_20">&#160;</div>
         	</div>
-	        <div id="campaign_info" class="templatemo_content dynamic">
-	        
+	        <div id="campaign_info" class="templatemo_content dynamic ${show_content == null?'':'hidden' }">
+	        	
 	        	<div  class="content_section">
 	           	  <div class="header_02">Campaign info</div>
 	                <p><span>View and Manage Campaigns.</span> View and manage the campaigns you are GM of, check new combats of the campaigns you are playing.</p>
@@ -80,7 +80,7 @@
 	            </div>
 	            <div class="margin_bottom_40">&#160;</div>
 	        </div>
-	        <div id="create_campaign" class="templatemo_content dynamic hidden">
+	        <div id="create_campaign" class="templatemo_content dynamic ${show_content == 'create_campaign'?'':'hidden' }">
 	            
 	            <div class="content_section">
 	            	<div class="header_02">Create Campaign</div>
@@ -131,14 +131,14 @@
 	            </div>
 	            <div class="margin_bottom_40">&#160;</div>
 	        </div>
-	        <div id="campaign_search_result" class="templatemo_content dynamic hidden">
+	        <div id="campaign_search_result" class="templatemo_content dynamic ${show_content == 'campaign_search_result'?'':'hidden' }">
 	            <div id="search_result_holder" class="content_section">
 	            	<div class="header_02">Search Result for <span id="search_param"></span></div>
 	                <div class="cleaner">&#160;</div>
 	            </div>
 	            <div class="margin_bottom_40">&#160;</div>
 	        </div>
-	        <div id="campaign_view" campaign_id="${campaign.id }" class="templatemo_multi_content dynamic hidden">
+	        <div id="campaign_view" campaign_id="${campaign.id }" class="templatemo_multi_content dynamic ${show_content == 'campaign_view'?'':'hidden' }">
 	            <div class="templatemo_content width_70_p margin_right_10">
 	            	<div class="content_section">
 		            	<div class="header_02 campaign_header"><span id="campaign_name">${campaign.name }</span></div>
@@ -282,11 +282,7 @@
    
 <script type="text/javascript">
 	$(document).ready(function(){
-		<c:if test="${not empty show_content}">
-	   		$("#central_panel > .dynamic").addClass("hidden");
-			$("#${show_content}").removeClass("hidden");
-	   	</c:if>
-	
+		
 		$("#create_campaign_button").click(function() {
 			$("#central_panel > .dynamic").addClass("hidden");
 			$("#create_campaign").removeClass("hidden");

@@ -30,7 +30,7 @@
         
         <div id="central_panel" class="templatemo_multi_content margin_right_10" >
         
-        	<div id="character_info" class="templatemo_content dynamic">
+        	<div id="character_info" class="templatemo_content dynamic ${show_content == null?'':'hidden' }">
 	        	<div class="content_section">
 	           	  <div class="header_02">Character info</div>
 	                <p><span>View and Manage Characters.</span> View and Edit your campaign characters.</p>
@@ -40,7 +40,7 @@
 	            </div>
             </div>
             
-            <div id="create_character"  class="templatemo_content dynamic hidden">
+            <div id="create_character"  class="templatemo_content dynamic ${show_content == 'create_character'?'':'hidden' }">
             	<div class="content_section">
 	            	<div class="header_02">Create Character</div>
 	            	<p>You are creating a character for your campaign <span>${campaign.name}</span></p>
@@ -90,7 +90,7 @@
                 </div>
             </div>
             
-        	<div id="view_character" class="templatemo_multi_content hidden dynamic">
+        	<div id="view_character" class="templatemo_multi_content ${show_content == 'view_character'?'':'hidden' } dynamic">
 	        	<div class="templatemo_content width_70_p margin_right_10">
 	        		<div class="content_section">
 		        		<div class="header_02" id="character_name">${character.name }</div>
@@ -124,16 +124,6 @@
         
         <jsp:include page="ads.jsp"/>
    	
-   
-<script type="text/javascript">
-	$(document).ready(function(){
-		<c:if test="${not empty show_content}">
-	   		$("#central_panel > .dynamic").addClass("hidden");
-			$("#${show_content}").removeClass("hidden");
-	   	</c:if>
-		
-	})
-</script> 	
    
 </body>
 </html>
