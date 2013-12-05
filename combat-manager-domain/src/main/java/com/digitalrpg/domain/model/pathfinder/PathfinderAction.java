@@ -15,6 +15,10 @@ public class PathfinderAction {
 	
 	private String label;
 	
+	private Boolean current;
+	
+	private Boolean initial;
+	
 	@Id
 	@GeneratedValue(generator="increment")
 	@GenericGenerator(name="increment", strategy = "increment")
@@ -40,6 +44,22 @@ public class PathfinderAction {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public Boolean getCurrent() {
+		return current;
+	}
+
+	public void setCurrent(Boolean current) {
+		this.current = current;
+	}
+
+	public Boolean getInitial() {
+		return initial;
+	}
+
+	public void setInitial(Boolean initial) {
+		this.initial = initial;
 	}
 
 	private String description;

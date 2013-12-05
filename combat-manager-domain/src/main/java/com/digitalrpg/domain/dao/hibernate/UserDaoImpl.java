@@ -10,10 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.digitalrpg.domain.dao.UserDao;
 import com.digitalrpg.domain.model.User;
 
-public class UserDaoImpl implements UserDao {
+public class UserDaoImpl extends HibernateDao implements UserDao {
 
-	private SessionFactory sessionFactory;
-	
+	public UserDaoImpl(SessionFactory sessionFactory) {
+		super(sessionFactory);
+	}
+
 	@Transactional(isolation = Isolation.SERIALIZABLE)
 	public User createUser(String name, String password, String email) {
 		String sha1HexPassword = DigestUtils.sha1Hex(password);
@@ -52,6 +54,7 @@ public class UserDaoImpl implements UserDao {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
 	public User login(String name, String password) {
 		List<User> list = sessionFactory.getCurrentSession()
@@ -77,6 +80,7 @@ public class UserDaoImpl implements UserDao {
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
 	public Boolean checkUsername(String name) {
 		List<User> list = sessionFactory.getCurrentSession()
@@ -86,10 +90,7 @@ public class UserDaoImpl implements UserDao {
 		return list.isEmpty();
 	}
 	
-	public void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
-	}
-
+	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
 	public User findByMail(String emailTo) {
 		List<User> list = sessionFactory.getCurrentSession()

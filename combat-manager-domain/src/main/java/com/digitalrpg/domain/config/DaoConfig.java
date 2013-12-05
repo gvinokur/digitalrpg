@@ -9,12 +9,15 @@ import com.digitalrpg.domain.dao.CampaignDao;
 import com.digitalrpg.domain.dao.CharacterDao;
 import com.digitalrpg.domain.dao.CombatDao;
 import com.digitalrpg.domain.dao.MessageDao;
+import com.digitalrpg.domain.dao.SystemDao;
 import com.digitalrpg.domain.dao.UserDao;
 import com.digitalrpg.domain.dao.hibernate.CampaignDaoImpl;
 import com.digitalrpg.domain.dao.hibernate.CharacterDaoImpl;
 import com.digitalrpg.domain.dao.hibernate.CombatDaoImpl;
 import com.digitalrpg.domain.dao.hibernate.MessageDaoImpl;
+import com.digitalrpg.domain.dao.hibernate.SystemDaoImpl;
 import com.digitalrpg.domain.dao.hibernate.UserDaoImpl;
+import com.digitalrpg.domain.model.factory.CombatFactory;
 
 @Configuration
 public class DaoConfig {
@@ -24,36 +27,37 @@ public class DaoConfig {
 	
 	@Bean
 	public UserDao getUserDao() {
-		UserDaoImpl userDaoImpl = new UserDaoImpl();
-		userDaoImpl.setSessionFactory(sessionFactory);
-		return userDaoImpl;
+		return new UserDaoImpl(sessionFactory);
+		
 	}
 	
 	@Bean
 	public CampaignDao getCampaignDao() {
-		CampaignDaoImpl campaignDaoImpl = new CampaignDaoImpl();
-		campaignDaoImpl.setSessionFactory(sessionFactory);
-		return campaignDaoImpl;
+		return new CampaignDaoImpl(sessionFactory);
 	}
 	
 	@Bean
 	public CharacterDao getCharacterDao() {
-		CharacterDaoImpl characterDaoImpl = new CharacterDaoImpl();
-		characterDaoImpl.setSessionFactory(sessionFactory);
-		return characterDaoImpl;
+		return new CharacterDaoImpl(sessionFactory);
 	}
 	
 	@Bean 
 	public MessageDao getMessageDao() {
-		MessageDaoImpl messageDaoImpl = new MessageDaoImpl();
-		messageDaoImpl.setSessionFactory(sessionFactory);
-		return messageDaoImpl;
+		return new MessageDaoImpl(sessionFactory);
 	}
 	
 	@Bean
 	public CombatDao getCombatDao() {
-		CombatDaoImpl combatDaoImpl = new CombatDaoImpl();
-		combatDaoImpl.setSessionFactory(sessionFactory);
-		return combatDaoImpl;
+		return new CombatDaoImpl(sessionFactory, getCombatFactory());
+	}
+	
+	@Bean
+	public CombatFactory getCombatFactory() {
+		return new CombatFactory();
+	}
+
+	@Bean
+	public SystemDao getSystemDao(){
+		return new SystemDaoImpl(sessionFactory);
 	}
 }

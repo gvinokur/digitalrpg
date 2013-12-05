@@ -15,6 +15,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
@@ -24,19 +25,21 @@ import org.hibernate.annotations.Type;
 public class Combat {
 
 	private Long id;
-	
+
+	private Boolean active;
+
 	private String name;
-	
+
 	private String description;
-	
+
 	private Campaign campaign;
-	
+
 	private List<CombatCharacter> combatCharacters;
 
 	private CombatCharacter currentCharacter;
-	
+
 	@OneToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name="current_character_id", referencedColumnName="id")	
+	@JoinColumn(name = "current_character_id", referencedColumnName = "id")
 	public CombatCharacter getCurrentCharacter() {
 		return currentCharacter;
 	}
@@ -62,7 +65,7 @@ public class Combat {
 	}
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name="campaign_id", referencedColumnName="id")
+	@JoinColumn(name = "campaign_id", referencedColumnName = "id")
 	public Campaign getCampaign() {
 		return campaign;
 	}
@@ -71,7 +74,7 @@ public class Combat {
 		this.campaign = campaign;
 	}
 
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy="combat", orphanRemoval = true)
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "combat")
 	public List<CombatCharacter> getCombatCharacters() {
 		return combatCharacters;
 	}
@@ -82,8 +85,8 @@ public class Combat {
 
 	@Id
 	@Type(type = "long")
-	@GeneratedValue(generator="increment")
-	@GenericGenerator(name="increment", strategy = "increment")
+	@GeneratedValue(generator = "increment")
+	@GenericGenerator(name = "increment", strategy = "increment")
 	public Long getId() {
 		return id;
 	}
@@ -91,7 +94,13 @@ public class Combat {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
-	
-	
+
+	public Boolean getActive() {
+		return BooleanUtils.isTrue(active);
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+
 }

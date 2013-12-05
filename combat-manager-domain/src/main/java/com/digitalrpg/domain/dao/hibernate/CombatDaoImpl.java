@@ -14,14 +14,19 @@ import com.digitalrpg.domain.model.SystemCombatProperties;
 import com.digitalrpg.domain.model.characters.SystemCharacter;
 import com.digitalrpg.domain.model.factory.CombatFactory;
 
-public class CombatDaoImpl implements CombatDao{
+public class CombatDaoImpl extends HibernateDao implements CombatDao{
 
-	private SessionFactory sessionFactory;
+	private CombatFactory combatFactory;
+	
+	public CombatDaoImpl(SessionFactory sessionFactory, CombatFactory combatFactory) {
+		super(sessionFactory);
+		this.combatFactory = combatFactory;
+	}
 
 	@Transactional
 	public Combat createCombat(String name, String description,
 			Campaign campaign, SystemCombatProperties systemCombatProperties) {
-		Combat combat =CombatFactory.createCombat(name, description, campaign, systemCombatProperties);
+		Combat combat = combatFactory.createCombat(name, description, campaign, systemCombatProperties);
 		sessionFactory.getCurrentSession().save(combat);
 		return combat;
 	}
@@ -29,13 +34,9 @@ public class CombatDaoImpl implements CombatDao{
 	@Transactional
 	public void createCharacter(Combat combat, SystemCharacter character,
 			Boolean hidden, Long initiative, SystemCombatCharacterProperties properties) {
-		CombatCharacter combatCharacter = CombatFactory.createCombatCharacter(combat, character, hidden, initiative, properties);
+		CombatCharacter combatCharacter = combatFactory.createCombatCharacter(combat, character, hidden, initiative, properties);
 		
 		sessionFactory.getCurrentSession().save(combatCharacter);
-	}
-
-	public void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -48,6 +49,12 @@ public class CombatDaoImpl implements CombatDao{
 			return list.get(0);
 		}
 		return null;
+	}
+
+	@Transactional
+	public void startCombat(Combat combat) {
+		combat.setActive(true);
+		sessionFactory.getCurrentSession().saveOrUpdate(combat);
 	}
 	
 }

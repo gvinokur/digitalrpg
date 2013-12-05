@@ -1,11 +1,13 @@
 package com.digitalrpg.web.controller;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -16,8 +18,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.Combat;
-import com.digitalrpg.web.controller.model.CampaignVO;
+import com.digitalrpg.domain.model.User;
 import com.digitalrpg.web.controller.model.CreateCombatVO;
 import com.digitalrpg.web.service.CampaignService;
 import com.digitalrpg.web.service.CombatService;
@@ -34,7 +37,7 @@ public class CombatController {
 	
 	@RequestMapping(value = "/create", method = RequestMethod.GET)
 	public ModelAndView showCreateCombatPage(@RequestParam Long campaignId) {
-		CampaignVO campaign = CampaignService.campaignToVOFunction.apply(campaignService.get(campaignId));
+		Campaign campaign = campaignService.get(campaignId);
 		Map<String, Object> modelMap = new HashMap<String, Object>();
 		modelMap.put("campaign", campaign);
 		modelMap.put("show_content", "combat_create");
@@ -45,7 +48,7 @@ public class CombatController {
 	public ModelAndView createCombat(@Valid @ModelAttribute("create-combat") CreateCombatVO createCombatVO,
 			BindingResult result, RedirectAttributes redirectAttributes) {
 		if(result.hasErrors()) {
-			CampaignVO campaign = CampaignService.campaignToVOFunction.apply(campaignService.get(createCombatVO.getCampaignId()));
+			Campaign campaign = campaignService.get(createCombatVO.getCampaignId());
 			Map<String, Object> modelMap = new HashMap<String, Object>();
 			modelMap.put("campaign", campaign);
 			modelMap.put("show_content", "combat_create");
@@ -61,9 +64,41 @@ public class CombatController {
 	public ModelAndView showCombat(@PathVariable Long id) {
 		Map<String, Object> modelMap = new HashMap<String, Object>();
 		Combat combat = combatService.getCombat(id);
-		modelMap.put("combat", CombatService.combatToVOFunction.apply(combat));
+		modelMap.put("combat", combat);
 		modelMap.put("show_content", "combat_view");
 		return new ModelAndView("/combat-admin", modelMap);
 	}
 	
+	@RequestMapping(value = "/{id}/start", method = RequestMethod.GET)
+	public ModelAndView startCombat(@PathVariable Long id, Principal principal, RedirectAttributes redirectAttributes) {
+		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+		Map<String, Object> modelMap = new HashMap<String, Object>();
+		Combat combat = combatService.getCombat(id);
+		if(combat.getCampaign().getActiveCombat() != null) {
+			redirectAttributes.addFlashAttribute("error_message", "Cannot start combat, a combat is already active");
+			return new ModelAndView("redirect:/campaigns/" + combat.getCampaign().getId() + "/show");
+		}
+		if(!user.equals(combat.getCampaign().getGameMaster())) {
+			redirectAttributes.addFlashAttribute("error_message", "Cannot start combat, only the GM of the Campaign can do that");
+			return new ModelAndView("redirect:/campaigns/" + combat.getCampaign().getId() + "/show");
+		}
+		combatService.startCombat(combat);
+		
+		return new ModelAndView("/combat-gm", "combat", combat);
+	}
+	
+	@RequestMapping(value = "/{id}/console/show", method = RequestMethod.GET)
+	public ModelAndView showCombatConsole(@PathVariable Long id, Principal principal) {
+		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+		Map<String, Object> modelMap = new HashMap<String, Object>();
+		Combat combat = combatService.getCombat(id);
+		modelMap.put("combat", combat);
+		String viewName = null;
+		if(combat.getCampaign().getGameMaster().equals(user)) {
+			viewName = "/combat-gm";
+		} else {
+			viewName = "/combat-player";
+		}
+		return new ModelAndView(viewName, modelMap);
+	}
 }

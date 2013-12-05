@@ -8,11 +8,10 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Where;
@@ -44,6 +43,8 @@ public class Campaign {
 	private Set<RequestJoinToCampaignMessage> pendingRequest;
 	
 	private Set<Combat> combats;
+	
+	private Combat activeCombat;
 	
 	private Boolean isPublic;
 
@@ -141,14 +142,30 @@ public class Campaign {
 		this.system = system;
 	}
 
-	@OneToMany(cascade = CascadeType.PERSIST,
-			mappedBy = "campaign", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "campaign", fetch = FetchType.EAGER)
 	public Set<Combat> getCombats() {
 		return combats;
 	}
 
 	public void setCombats(Set<Combat> combats) {
 		this.combats = combats;
+		
+	}
+
+	@Transient
+	public Combat getActiveCombat() {
+		if(activeCombat == null && combats != null) {
+			for (Combat combat : combats) {
+				if(combat.getActive()) {
+					setActiveCombat(combat);
+				}
+			}
+		}
+		return activeCombat;
+	}
+
+	public void setActiveCombat(Combat activeCombat) {
+		this.activeCombat = activeCombat;
 	}
 	
 	

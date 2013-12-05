@@ -16,9 +16,11 @@ import com.digitalrpg.domain.model.characters.SystemCharacter;
 import com.digitalrpg.domain.model.characters.pathfinder.PathfinderCharacter;
 import com.digitalrpg.domain.model.characters.pathfinder.PathfinderCharacterProperties;
 
-public class CharacterDaoImpl implements CharacterDao {
+public class CharacterDaoImpl extends HibernateDao implements CharacterDao {
 
-	private SessionFactory sessionFactory;
+	public CharacterDaoImpl(SessionFactory sessionFactory) {
+		super(sessionFactory);
+	}
 
 	@Transactional
 	public PlayerCharacter createPlayerCharacter(String name,
@@ -79,10 +81,7 @@ public class CharacterDaoImpl implements CharacterDao {
 		return null;
 	}
 
-	public void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
-	}
-
+	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
 	public Collection<SystemCharacter> getUserMonsters(String user) {
 		List<SystemCharacter> characters = sessionFactory

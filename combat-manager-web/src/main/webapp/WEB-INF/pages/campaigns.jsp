@@ -154,7 +154,7 @@
 			            	</div>
 		            		${campaign.description }
 		            	</div>
-		            	<p class="border_top">Current Combat: </p>
+		            	<p class="border_top">Current Combat: ${campaign.activeCombat.name }</p>
 		            	<p class="border_top">Game Master: <span id="campaign_gm">${campaign.gameMaster.name }</span></p>
 		            </div>
 		            <div class="margin_bottom_20">&#160;</div>
@@ -167,10 +167,10 @@
 	           			
 	           			<ul id="campaign_active_players_list">
 	           				<c:forEach items="${campaign.playerCharacters }" var="pc">
-	           					<li pc_id="${pc.id}"><a title="Owner ${pc.owner.name }">${pc.name }</a></li>
+	           					<li pc_id="${pc.id}"><a title="Owner ${pc.character.owner.name }">${pc.character.name }</a></li>
 	           				</c:forEach>
-	           				<c:forEach items="${campaign.monsters }" var="npc">
-	           					<li pc_id="${npc.id}"><a>${npc.name }</a></li>
+	           				<c:forEach items="${campaign.nonPlayerCharacters }" var="npc">
+	           					<li pc_id="${npc.id}"><a>${npc.character.name }</a></li>
 	           				</c:forEach>
 	           			</ul>
 	           		</div>
@@ -224,7 +224,7 @@
 	           		<div class="margin_bottom_10">&#160;</div>
 	           		<div class="nice_list">
 	           			<ul id="campaign_pending_requests_list">
-	           				<c:forEach items="${campaign.pendingRequests }" var="request">
+	           				<c:forEach items="${campaign.pendingRequest }" var="request">
 	           					<c:url var="acceptUrl" value="/campaigns/${campaign.id }/accept/${request.id }"/>
 	           					<li ><a title="Accept Request" class="accept_request" url="${acceptUrl }">${request.from.name }</a></li>
 	           				</c:forEach>

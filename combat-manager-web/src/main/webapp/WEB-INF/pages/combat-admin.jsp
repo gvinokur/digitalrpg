@@ -108,9 +108,20 @@
 	        	<div class="margin_bottom_40">&#160;</div>
 	                <div class="cleaner">&#160;</div>
 	        </div>
-	        <div id="combat_view" class="templatemo_content dynamic ${show_content == 'combat_view'?'':'hidden' }">
+	        <div id="combat_view" combat_id="${combat.id }" class="templatemo_content dynamic ${show_content == 'combat_view'?'':'hidden' }">
 	        	<div class="header_02" id="character_name">${combat.name }</div>
-		        <div class="scroll_description long" id="character_description">${combat.description }</div>
+	        	
+		        <div class="scroll_description long" id="character_description">
+		        	<div id="start_combat" class="campaign_request_join ${(combat.campaign.gameMaster.name != pageContext.request.userPrincipal.principal.name or combat.active)? 'hidden':''}">
+	            		<input id="start_combat_button" type="button" value="Start Combat" class="small_button">
+          				</input>
+	            	</div>
+		        	<div id="view_combat_console" class="campaign_request_join ${(not combat.active)? 'hidden':''}">
+	            		<input id="view_combat_console_button" type="button" value="Combat Console" class="small_button">
+          				</input>
+	            	</div>
+		        	${combat.description }
+		        </div>
 		        <div class="border_top" id="character_campaign">Campaign ${combat.campaign.name }</div>
 		        <c:choose>
 					<c:when test="${combat.campaign.system == 'Pathfinder' }">
@@ -123,7 +134,7 @@
 		        	<ul>
 		        		<c:forEach items="${combat.combatCharacters}" var="combatCharacter">
 		        			<c:if test="${!combatCharacter.hidden or combat.campaign.gameMaster.name == pageContext.request.userPrincipal.principal.name }">
-		        				<li><a>${combatCharacter.characterVO.name}<span style="margin-left: 30px">Initiative: ${combatCharacter.initiative}</span></a></li>
+		        				<li><a>${combatCharacter.character.character.name}<span style="margin-left: 30px">Initiative: ${combatCharacter.initiative}</span></a></li>
 		        			</c:if>
 		        		</c:forEach>
 		        	</ul>
@@ -188,6 +199,17 @@
 									
 				})
 				
+				$("#start_combat_button").click(function(){
+					<c:url var="startCombatUrl" value="/combats/[id]/start"/>
+			    	var url = "${startCombatUrl}".replace("[id]", $("#combat_view").attr("combat_id"))
+			    	window.location = url;
+				})
+				
+				$("#view_combat_console_button").click(function(){
+					<c:url var="viewCombatConsoleUrl" value="/combats/[id]/console/show"/>
+			    	var url = "${viewCombatConsoleUrl}".replace("[id]", $("#combat_view").attr("combat_id"))
+			    	window.location = url;
+				})
 			})
 		</script>
 	</body>

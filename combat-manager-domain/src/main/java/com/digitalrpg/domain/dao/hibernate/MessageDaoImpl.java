@@ -17,9 +17,11 @@ import com.digitalrpg.domain.model.messages.InviteToClaimCharacterMessage;
 import com.digitalrpg.domain.model.messages.Message;
 import com.digitalrpg.domain.model.messages.RequestJoinToCampaignMessage;
 
-public class MessageDaoImpl implements MessageDao {
+public class MessageDaoImpl extends HibernateDao implements MessageDao {
 
-	private SessionFactory sessionFactory;
+	public MessageDaoImpl(SessionFactory sessionFactory) {
+		super(sessionFactory);
+	}
 
 	@Transactional
 	public Message invite(Long id, User from, String toMail, User toUser,
@@ -43,6 +45,7 @@ public class MessageDaoImpl implements MessageDao {
 		return message;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Transactional(isolation = Isolation.SERIALIZABLE)
 	public void assignOrphanMessages(User user) {
 		List<Message> list = sessionFactory
@@ -56,6 +59,7 @@ public class MessageDaoImpl implements MessageDao {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
 	public Collection<Message> getUserMessages(User user) {
 		return sessionFactory
@@ -65,10 +69,7 @@ public class MessageDaoImpl implements MessageDao {
 				.setParameter("user", user).list();
 	}
 
-	public void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
-	}
-
+	@SuppressWarnings("rawtypes")
 	@Transactional(isolation = Isolation.REPEATABLE_READ)
 	public void deleteMessage(Long id) {
 
@@ -80,6 +81,7 @@ public class MessageDaoImpl implements MessageDao {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
 	public Message get(Long id) {
 		List<Message> list = sessionFactory.getCurrentSession()

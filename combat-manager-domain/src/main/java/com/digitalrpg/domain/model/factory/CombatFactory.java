@@ -1,5 +1,8 @@
 package com.digitalrpg.domain.model.factory;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.digitalrpg.domain.dao.SystemDao;
 import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.Combat;
 import com.digitalrpg.domain.model.CombatCharacter;
@@ -13,7 +16,10 @@ import com.digitalrpg.domain.model.pathfinder.PathfinderCombatProperties;
 
 public class CombatFactory {
 
-	public static Combat createCombat(String name, String description,
+	@Autowired
+	SystemDao systemDao;
+	
+	public Combat createCombat(String name, String description,
 			Campaign campaign, SystemCombatProperties systemCombatProperties) {
 		if(campaign.getSystem() == SystemType.Pathfinder) {
 			PathfinderCombat combat = new PathfinderCombat();
@@ -28,15 +34,15 @@ public class CombatFactory {
 		return null;
 	}
 	
-	public static CombatCharacter createCombatCharacter(Combat combat, SystemCharacter character,
+	public CombatCharacter createCombatCharacter(Combat combat, SystemCharacter character,
 			Boolean hidden, Long initiative, SystemCombatCharacterProperties properties) {
 		if(combat.getCampaign().getSystem() == SystemType.Pathfinder) {
 			PathfinderCombatCharacter combatCharacter = new PathfinderCombatCharacter();
-//			PathfinderCombatCharacterProperties combatCharacterProperties = (PathfinderCombatCharacterProperties) properties;
 			combatCharacter.setCharacter(character);
 			combatCharacter.setHidden(hidden);
 			combatCharacter.setInitiative(initiative);
 			combatCharacter.setCombat(combat);
+			combatCharacter.setCurrentAction(systemDao.getPathfinderInitialAction());
 			return combatCharacter;
 		}
 		return null;

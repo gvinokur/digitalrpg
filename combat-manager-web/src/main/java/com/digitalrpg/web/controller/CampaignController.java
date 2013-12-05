@@ -86,24 +86,15 @@ public class CampaignController {
 	public Collection<CampaignVO> searchCampaigns(@PathVariable String searchString) {
 		return Collections2.transform(campaignService.search(searchString, 0, Integer.MAX_VALUE), CampaignService.campaignToVOFunction);
 	}
-
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	@ResponseBody
-	public CampaignVO getCampaign(@PathVariable Long id, Principal principal) {
-		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
-		CampaignVO vo = CampaignService.campaignToVOFunction.apply(campaignService.get(id));
-		userService.trackItem(user, String.format(SHOW_CAMPAIGN_URL, vo.getId()), vo.getName());
-		return vo;
-	}
 	
 	@RequestMapping(value = "/{id}/show", method = RequestMethod.GET)
 	public ModelAndView showCampaign(@PathVariable Long id, Principal principal) {
 		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
-		CampaignVO vo = CampaignService.campaignToVOFunction.apply(campaignService.get(id));
-		userService.trackItem(user, String.format(SHOW_CAMPAIGN_URL, vo.getId()), vo.getName());
+		Campaign campaign = campaignService.get(id);
+		userService.trackItem(user, String.format(SHOW_CAMPAIGN_URL, campaign.getId()), campaign.getName());
 		Map<String, Object> modelMap = new HashMap<String, Object>();
 		modelMap.put("show_content", "campaign_view");
-		modelMap.put("campaign", vo);
+		modelMap.put("campaign", campaign);
 		return new ModelAndView("/campaigns", modelMap);
 	}
 	
@@ -128,7 +119,7 @@ public class CampaignController {
 	public ModelAndView showJoinCampaign(@PathVariable Long id, @RequestParam Long messageId, Principal principal) {
 		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
 		Map<String, Object> model = new HashMap<String, Object>();
-		CampaignVO campaign = CampaignService.campaignToVOFunction.apply(campaignService.get(id));
+		Campaign campaign = campaignService.get(id);
 		MessageVO message = messageService.getMessage(messageId);
 		model.put("campaign", campaign);
 		model.put("message", message);

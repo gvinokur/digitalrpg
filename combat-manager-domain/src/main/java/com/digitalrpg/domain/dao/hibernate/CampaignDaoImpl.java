@@ -16,9 +16,11 @@ import com.digitalrpg.domain.model.SystemType;
 import com.digitalrpg.domain.model.User;
 import com.digitalrpg.domain.model.characters.SystemCharacter;
 
-public class CampaignDaoImpl implements CampaignDao {
+public class CampaignDaoImpl extends HibernateDao implements CampaignDao {
 
-	private SessionFactory sessionFactory;
+	public CampaignDaoImpl(SessionFactory sessionFactory) {
+		super(sessionFactory);
+	}
 	
 	@Transactional(isolation = Isolation.REPEATABLE_READ)
 	public Campaign createCampaign(String name, String description, User gm,
@@ -82,10 +84,6 @@ public class CampaignDaoImpl implements CampaignDao {
 		}
 		playerCharacters.add(character);
 		sessionFactory.getCurrentSession().save(campaign);
-	}
-
-	public void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
 	}
 
 }
