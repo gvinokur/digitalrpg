@@ -24,6 +24,8 @@
 <link href="${mainCssUrl}" rel="stylesheet" type="text/css" />
 <c:url var="multiSelectCssUrl" value="/css/multi_select.css" />
 <link href="${multiSelectCssUrl}" rel="stylesheet" type="text/css" />
+<c:url var="jQueryUIEditableCssUrl" value="/css/jqueryui-editable.css" />
+<link href="${jQueryUIEditableCssUrl}" rel="stylesheet" type="text/css" />
 <link rel="stylesheet"
 	href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 <script src='http://code.jquery.com/jquery-1.10.2.js'>&#160;</script>
@@ -34,7 +36,8 @@
 <script src='${jQueryBlockUIUrl}'>&#160;</script>
 <c:url var="jQueryMultiSelectUrl" value="/js/jquery.multiSelect.js" />
 <script src='${jQueryMultiSelectUrl}'>&#160;</script>
-
+<c:url var="jQueryUIEditableUrl" value="/js/jqueryui-editable.js" />
+<script src='${jQueryUIEditableUrl}'>&#160;</script>
 
 <script>
 	$(document).ready(function(){

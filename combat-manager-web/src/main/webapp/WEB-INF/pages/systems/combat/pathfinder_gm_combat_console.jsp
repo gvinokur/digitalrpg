@@ -31,8 +31,17 @@
    		<tbody>
    			<c:forEach items="${combat.combatCharacters }" var="combatCharacter">
    				<tr>
+   					<c:choose>
+   						<c:when test="${combatCharacter.character.character['class'].simpleName == 'NonPlayerCharacter'  and combatCharacter.character.character.createdBy.name == pageContext.request.userPrincipal.principal.name }">
+   							<c:set var="npc" value="true" ></c:set>
+   						</c:when>
+   						<c:otherwise>
+   							<c:set var="npc" value="false" ></c:set>
+   						</c:otherwise>
+   					</c:choose>
+   					
    					<td>${combatCharacter.character.character.name }</td>
-   					<td>${combatCharacter.hidden }</td>
+   					<td class="${npc=='true'?'editable':''}" data-type="select" data-source="[{value:true, text:'True'}, {value:false, text:'False'}]">${combatCharacter.hidden }</td>
    					<td>${combatCharacter.initiative }</td>
    					<td>${combatCharacter.currentAction.label }</td>
    					<td style="background-color:${combatCharacter.hitPointsStatus };color:${combatCharacter.hitPointsStatus };width:30px">${combatCharacter.currentHitPoints}</td>
@@ -41,7 +50,12 @@
    			</c:forEach>
    		</tbody>
    	</table>
-        	
+    <script>
+    $(document).ready(function() {
+    	$.fn.editable.defaults.mode = 'inline';
+    	$(".editable").editable();
+    })	
+    </script>    	
        	
 	
 </jsp:root>	             
