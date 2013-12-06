@@ -94,7 +94,7 @@
         	<div id="view_character" character_id="${character.id }" class="templatemo_multi_content ${show_content == 'view_character'?'':'hidden' } dynamic">
 	        	<div class="templatemo_content width_70_p margin_right_10">
 	        		<div class="content_section">
-		        		<div class="header_02" id="character_name">${character.name }</div>
+		        		<div class="header_02" id="character_name">${character.character.name }</div>
 		        		
 		        		<div class="scroll_description long" id="character_description">
 		        			<div id="invite_user" 

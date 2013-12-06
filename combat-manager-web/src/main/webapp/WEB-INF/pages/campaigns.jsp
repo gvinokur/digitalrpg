@@ -237,7 +237,7 @@
 	    			<div class="margin_bottom_40">&#160;</div>
 	          </div>  
 	            <c:if test="${campaign != null and message != null }">
-	            <div id="campaign_join" class="templatemo_content dynamic hidden"> 
+	            <div id="campaign_join" class="templatemo_content dynamic ${show_content == 'campaign_join'?'':'hidden' }"> 
 		            <div class="content_section">
 		            	<div class="header_02">Join ${campaign.name} </div>
 		            	<p id="campaign_description">${campaign.description }</p>
