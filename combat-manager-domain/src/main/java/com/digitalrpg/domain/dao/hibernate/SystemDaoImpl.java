@@ -20,7 +20,7 @@ public class SystemDaoImpl extends HibernateDao implements SystemDao {
 	@SuppressWarnings("rawtypes")
 	@Transactional(readOnly = true)
 	public PathfinderAction getPathfinderInitialAction() {
-		Iterator iterator = this.sessionFactory.getCurrentSession().createQuery("from PathFinderAction where initial = true").iterate();
+		Iterator iterator = this.sessionFactory.getCurrentSession().createQuery("from PathfinderAction where initial = true").iterate();
 		return (PathfinderAction) (iterator.hasNext() ? iterator.next() : null);
 	}
 
@@ -28,7 +28,7 @@ public class SystemDaoImpl extends HibernateDao implements SystemDao {
 	@Transactional(readOnly = true)
 	public List<PathfinderAction> getPathfinderActions() {
 		
-		return this.sessionFactory.getCurrentSession().createQuery("from PathFinderAction").list();
+		return this.sessionFactory.getCurrentSession().createQuery("from PathfinderAction").list();
 	}
 
 	@SuppressWarnings("unchecked")

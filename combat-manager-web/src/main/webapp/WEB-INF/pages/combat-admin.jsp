@@ -94,12 +94,12 @@
 					<select name='players' id='players' multiple='multiple'>
 					  <optgroup label='Player Managed'>
 					    <c:forEach items="${campaign.playerCharacters }" var="character">
-						    <option value='${character.id }'>${character.name }</option>
+						    <option value='${character.id }'>${character.character.name }</option>
 					    </c:forEach>
 					  </optgroup>
 					  <optgroup label='GM Managed'>
-					    <c:forEach items="${campaign.monsters }" var="monster">
-						    <option value='${monster.id }'>${monster.name }</option>
+					    <c:forEach items="${campaign.nonPlayerCharacters }" var="monster">
+						    <option value='${monster.id }'>${monster.character.name }</option>
 					    </c:forEach>
 					  </optgroup>
 					</select>
@@ -191,6 +191,7 @@
 						.attr("id", id + "-initiative")
 						.attr("type","text")
 						.attr("name", "extraInfo["+id+"].initative")
+						.val(0)
 						.css("display","none")
 						.css("float","right")
 						.css("width","60px")
