@@ -17,9 +17,9 @@
         	
             <div class="header_01">My Characters</div>
            	<ul class="campaigns">
-           		<c:forEach items="${characters}" var="character">
-           			<c:url var="characterUrl" value="/player-characters/${character.id }/show"/>
-           			<li class="player"><a id="pc_${character.id }" href="${characterUrl }">${character.character.name }</a></li>
+           		<c:forEach items="${characters}" var="aCharacter">
+           			<c:url var="characterUrl" value="/player-characters/${aCharacter.id }/show"/>
+           			<li class="player"><a id="pc_${aCharacter.id }" href="${characterUrl }">${aCharacter.character.name }</a></li>
            		</c:forEach>
                    
                </ul>
@@ -94,11 +94,11 @@
         	<div id="view_character" character_id="${character.id }" class="templatemo_multi_content ${show_content == 'view_character'?'':'hidden' } dynamic">
 	        	<div class="templatemo_content width_70_p margin_right_10">
 	        		<div class="content_section">
-		        		<div class="header_02" id="character_name">${character.character.name }</div>
+		        		<div class="header_02" id="character_name">${systemCharacter.character.name }</div>
 		        		
 		        		<div class="scroll_description long" id="character_description">
 		        			<div id="invite_user" 
-			        			class="campaign_request_join ${(character.campaign.gameMaster == character.owner and character.campaign.gameMaster.name == pageContext.request.userPrincipal.principal.name)? '':'hidden'}">
+			        			class="campaign_request_join ${(systemCharacter.character.class.simpleName == 'NonPlayerCharacter' and systemCharacter.campaign.gameMaster.name == pageContext.request.userPrincipal.principal.name)? '':'hidden'}">
 			            		<input id="invite_player_button" type="button" value="Send to Friend" class="small_button">
 	           					</input>
 			            	</div>
@@ -107,25 +107,25 @@
 	           					</input>
 			            	</div>
 		            		<div id="take_character" 
-			        			class="campaign_request_join ${(character.campaign.gameMaster != character.owner and character.campaign.gameMaster.name == pageContext.request.userPrincipal.principal.name)? '':'hidden'}">
+			        			class="campaign_request_join ${(systemCharacter.character.class.simpleName == 'PlayerCharacter' and systemCharacter.campaign.gameMaster.name == pageContext.request.userPrincipal.principal.name)? '':'hidden'}">
 			            		<input id="take_character_button" type="button" value="Take Character" class="small_button">
 	           					</input>
 			            	</div>
-		            		${character.description }
+		            		${systemCharacter.character.description }
 		            	</div>
-		        		<div class="border_top" id="character_campaign">Campaign ${character.campaign.name }</div>
+		        		<div class="border_top" id="character_campaign">Campaign ${systemCharacter.campaign.name }</div>
 		        	</div>
 		        	<div class="margin_bottom_40">&#160;</div>
 	        	</div>
-	        	<c:if test="${character.pictureUrl != null }">
+	        	<c:if test="${systemCharacter.character.pictureUrl != null }">
 		        	<div class="templatemo_content width_25_p character_image">
-	        			<img src="${character.pictureUrl}"/>
+	        			<img src="${systemCharacter.character.pictureUrl}"/>
 		        	</div>
 	        	</c:if>
 	        	<div id="system_attributes ">
 	        		<div class="templatemo_content width_25_p margin_top_15">
 	        			<c:choose>
-	        				<c:when test="${character.campaign.system == 'Pathfinder' }">	
+	        				<c:when test="${systemCharacter.campaign.system == 'Pathfinder' }">	
 	        					<jsp:include page="systems/character/pathfinder_data.jsp"/>
 	        				</c:when>
 	        			</c:choose>

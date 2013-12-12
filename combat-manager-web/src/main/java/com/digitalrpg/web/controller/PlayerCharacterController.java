@@ -96,7 +96,7 @@ public class PlayerCharacterController {
 		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
 		Map<String, Object> modelMap = new HashMap<String, Object>();
 		SystemCharacter systemCharacter = characterDao.get(id);
-		modelMap.put("character", CharacterService.characterToVOfunction.apply(systemCharacter));
+		modelMap.put("systemCharacter", systemCharacter);
 		modelMap.put("show_content", "view_character");
 		if(messageId != null) {
 			MessageVO message = messageService.getMessage(messageId);

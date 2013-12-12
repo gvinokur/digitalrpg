@@ -2,6 +2,7 @@ package com.digitalrpg.domain.dao;
 
 import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.Combat;
+import com.digitalrpg.domain.model.CombatCharacter;
 import com.digitalrpg.domain.model.SystemCombatCharacterProperties;
 import com.digitalrpg.domain.model.SystemCombatProperties;
 import com.digitalrpg.domain.model.characters.SystemCharacter;
@@ -15,5 +16,7 @@ public interface CombatDao {
 	public Combat get(Long id);
 
 	public void startCombat(Combat combat);
+
+	public CombatCharacter getCombatCharacter(Long id);
 	
 }

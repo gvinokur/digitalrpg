@@ -12,24 +12,24 @@
 					<div class="generic_label no_margin narrowest">
 						<label for="race">Race</label>
 					</div>
-					<div class="generic_value">
-						${character.race }
+					<div class="generic_value" id="character-race">
+						${systemCharacter.race }
 					</div>
 					<div class="margin_bottom_5">&#160;</div>
 					
 					<div class="generic_label no_margin narrowest">
 						<label for="class">Class</label>
 					</div>
-					<div class="generic_value">
-						${character.characterClass }
+					<div class="generic_value" id="character-class">
+						${systemCharacter.characterClass }
 					</div>
 					<div class="margin_bottom_5">&#160;</div>
 					
 					<div class="generic_label no_margin narrowest">
 						<label for="hp">HP</label>
 					</div>
-					<div class="generic_value">
-						${character.hp }
+					<div class="generic_value" id="character-hp">
+						${systemCharacter.hp }
 					</div>
 					<div class="margin_bottom_5">&#160;</div>
 					<div class="character_main_attributes pathfinder">
@@ -37,48 +37,48 @@
 						<div class="generic_label no_margin narrow">
 							<label for="pathfinder.strength">Strength</label>
 						</div>
-						<div class="generic_value">
-							${character.strength }
+						<div class="generic_value" id="character-strength">
+							${systemCharacter.strength }
 						</div>
 						<div class="margin_bottom_5">&#160;</div>
 						
 						<div class="generic_label no_margin narrow">
 							<label for="pathfinder.dexterity">Dexterity</label>
 						</div>
-						<div class="generic_value">
-							${character.dexterity }
+						<div class="generic_value" id="character-dexterity">
+							${systemCharacter.dexterity }
 						</div>
 						<div class="margin_bottom_5">&#160;</div>
 								
 						<div class="generic_label no_margin narrow">
 							<label for="pathfinder.constitution">Constitution</label>
 						</div>
-						<div class="generic_value">
-							${character.constitution }
+						<div class="generic_value" id="character-constitution">
+							${systemCharacter.constitution }
 						</div>
 						<div class="margin_bottom_5">&#160;</div>
 								
 						<div class="generic_label no_margin narrow">
 							<label for="pathfinder.intelligence">Intelligence</label>
 						</div>
-						<div class="generic_value">
-							${character.intelligence }
+						<div class="generic_value" id="character-intelligence">
+							${systemCharacter.intelligence }
 						</div>
 						<div class="margin_bottom_5">&#160;</div>
 								
 						<div class="generic_label no_margin narrow">
 							<label for="pathfinder.wisdom">wisdom</label>
 						</div>
-						<div class="generic_value">
-							${character.wisdom }
+						<div class="generic_value" id="character-wisdom">
+							${systemCharacter.wisdom }
 						</div>	
 						<div class="margin_bottom_5">&#160;</div>
 							
 						<div class="generic_label no_margin narrow">
 							<label for="pathfinder.charisma">Charisma</label>
 						</div>
-						<div class="generic_value">
-							${character.charisma }
+						<div class="generic_value" id="character-charisma">
+							${systemCharacter.charisma }
 						</div>
 						<div class="margin_bottom_20">&#160;</div>		
 					</div>       

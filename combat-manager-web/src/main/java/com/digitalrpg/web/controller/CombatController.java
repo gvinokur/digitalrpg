@@ -7,6 +7,8 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -15,12 +17,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.Combat;
 import com.digitalrpg.domain.model.User;
+import com.digitalrpg.web.controller.model.CombatCharacterVO;
 import com.digitalrpg.web.controller.model.CreateCombatVO;
 import com.digitalrpg.web.service.CampaignService;
 import com.digitalrpg.web.service.CombatService;
@@ -100,5 +104,17 @@ public class CombatController {
 			viewName = "/combat-player";
 		}
 		return new ModelAndView(viewName, modelMap);
+	}
+	
+	@RequestMapping(value = "/character/{attributeName}", method = RequestMethod.POST)
+	public ResponseEntity<?> updateCombatCharacterAttribute(@PathVariable String attributeName, @RequestParam("pk") Long id, @RequestParam("value") String value, Principal principal) {
+		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+		try {
+			CombatCharacterVO vo = combatService.updateCombatCharacter(id, attributeName, value, user);
+			return new ResponseEntity<CombatCharacterVO>(vo, HttpStatus.OK);	
+		} catch (Exception e) {
+			return new ResponseEntity<String>("Cannot update data", HttpStatus.BAD_REQUEST);
+		} 
+		
 	}
 }

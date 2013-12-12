@@ -93,15 +93,15 @@
         	<div id="view_character" class="templatemo_multi_content ${show_content == 'view_character'?'':'hidden' } dynamic">
 	        	<div class="templatemo_content width_70_p margin_right_10">
 	        		<div class="content_section">
-		        		<div class="header_02" id="character_name">${character.name }</div>
-		        		<div class="scroll_description long" id="character_description">${character.description }</div>
+		        		<div class="header_02" id="character_name">${character.character.name }</div>
+		        		<div class="scroll_description long" id="character_description">${character.character.description }</div>
 		        		<div class="border_top" id="character_campaign">Campaign ${character.campaign.name }</div>
 		        	</div>
 		        	<div class="margin_bottom_40">&#160;</div>
 	        	</div>
-	        	<c:if test="${character.pictureUrl != null }">
+	        	<c:if test="${character.character.pictureUrl != null }">
 		        	<div class="templatemo_content width_25_p character_image">
-	        			<img src="${character.pictureUrl}"/>
+	        			<img src="${character.character.pictureUrl}"/>
 		        	</div>
 	        	</c:if>
 	        	<div id="system_attributes ">

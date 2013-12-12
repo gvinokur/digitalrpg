@@ -1,8 +1,7 @@
 package com.digitalrpg.web.controller.model;
 
-public class CombatCharacterVO implements Comparable<CombatCharacterVO>{
+public class CombatCharacterVO{
 
-	private CharacterVO characterVO;
 	
 	private Long initiative;
 	
@@ -16,14 +15,6 @@ public class CombatCharacterVO implements Comparable<CombatCharacterVO>{
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public CharacterVO getCharacterVO() {
-		return characterVO;
-	}
-
-	public void setCharacterVO(CharacterVO characterVO) {
-		this.characterVO = characterVO;
 	}
 
 	public Long getInitiative() {
@@ -42,18 +33,4 @@ public class CombatCharacterVO implements Comparable<CombatCharacterVO>{
 		this.hidden = hidden;
 	}
 
-	/**
-	 * Sorts by initiative from highest to lowest
-	 * 
-	 * @param o
-	 * @return
-	 */
-	public int compareTo(CombatCharacterVO o) {
-		int res = -this.initiative.compareTo(o.initiative);
-		if(res == 0) {
-			res = this.characterVO.getName().compareTo(o.characterVO.getName());
-		}
-		return res;
-	}
-	
 }
