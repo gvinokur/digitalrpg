@@ -125,9 +125,9 @@ public class CombatController {
 		Combat combat = combatService.getCombat(id);
 		if(combat.getCampaign().getGameMaster().equals(user)) {
 			combat = combatService.nextCharacter(id);
-			return new ResponseEntity<>(combatService.getStatus(combat), HttpStatus.OK);
+			return new ResponseEntity(combatService.getStatus(combat), HttpStatus.OK);
 		} else {
-			return new ResponseEntity<>("Only the game master can update the current user", HttpStatus.FORBIDDEN);
+			return new ResponseEntity("Only the game master can update the current user", HttpStatus.FORBIDDEN);
 		}
 		
 	}
@@ -138,9 +138,9 @@ public class CombatController {
 		Combat combat = combatService.getCombat(id);
 		if(combat.getCampaign().getGameMaster().equals(user)) {
 			combat = combatService.previousCharacter(id);
-			return new ResponseEntity<>(combatService.getStatus(combat), HttpStatus.OK);
+			return new ResponseEntity(combatService.getStatus(combat), HttpStatus.OK);
 		} else {
-			return new ResponseEntity<>("Only the game master can update the current user", HttpStatus.FORBIDDEN);
+			return new ResponseEntity("Only the game master can update the current user", HttpStatus.FORBIDDEN);
 		}
 		
 	}
