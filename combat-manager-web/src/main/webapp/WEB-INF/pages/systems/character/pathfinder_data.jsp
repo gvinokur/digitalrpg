@@ -20,7 +20,7 @@
 					<div class="generic_label no_margin narrowest">
 						<label for="class">Class</label>
 					</div>
-					<div class="generic_value" id="character-class">
+					<div class="generic_value" id="character-character_class">
 						${systemCharacter.characterClass }
 					</div>
 					<div class="margin_bottom_5">&#160;</div>

@@ -13,9 +13,9 @@ public class PathfinderCombat extends Combat {
 	
 	private Integer roundsPerTurn;
 
-	private Integer currentTurn;
+	private Integer currentTurn = 1;
 	
-	private Integer currentRound;
+	private Integer currentRound = 1;
 	
 	public Integer getCurrentTurn() {
 		return currentTurn;
@@ -48,6 +48,31 @@ public class PathfinderCombat extends Combat {
 	public void setRoundsPerTurn(Integer roundsPerTurn) {
 		this.roundsPerTurn = roundsPerTurn;
 	}
+
+	@Override
+	public boolean advance() {
+		if(currentTurn < turns || currentRound<roundsPerTurn) {
+			currentRound++;
+			if(currentRound > roundsPerTurn) {
+				currentTurn++;
+				currentRound = 1;
+			}
+			return false;
+		}
+		return true;
+	}
 	
+	@Override
+	public boolean back() {
+		if(currentTurn > 1 || currentRound > 1) {
+			currentRound--;
+			if(currentRound == 0) {
+				currentRound = roundsPerTurn;
+				currentTurn--;
+			}
+			return false;
+		}
+		return true; 
+	}
 	
 }

@@ -18,7 +18,7 @@ import com.digitalrpg.domain.model.characters.SystemCharacter;
 @Entity
 @Table(name = "combat_characters")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class CombatCharacter {
+public abstract class CombatCharacter {
 
 	private Long id;
 	

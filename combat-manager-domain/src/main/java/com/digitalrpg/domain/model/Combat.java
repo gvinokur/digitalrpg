@@ -1,8 +1,8 @@
 package com.digitalrpg.domain.model;
 
-import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -17,12 +17,16 @@ import javax.persistence.Table;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Sort;
+import org.hibernate.annotations.SortType;
 import org.hibernate.annotations.Type;
+
+import com.google.common.collect.ImmutableSortedSet;
 
 @Entity
 @Table(name = "combats")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class Combat {
+public abstract class Combat {
 
 	private Long id;
 
@@ -34,7 +38,7 @@ public class Combat {
 
 	private Campaign campaign;
 
-	private List<CombatCharacter> combatCharacters;
+	private Set<CombatCharacter> combatCharacters;
 
 	private CombatCharacter currentCharacter;
 
@@ -75,11 +79,11 @@ public class Combat {
 	}
 
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "combat")
-	public List<CombatCharacter> getCombatCharacters() {
-		return combatCharacters;
+	public Set<CombatCharacter> getCombatCharacters() {
+		return ImmutableSortedSet.copyOf(new CombatCharacterComparator(), this.combatCharacters);
 	}
 
-	public void setCombatCharacters(List<CombatCharacter> combatCharacters) {
+	public void setCombatCharacters(Set<CombatCharacter> combatCharacters) {
 		this.combatCharacters = combatCharacters;
 	}
 
@@ -102,5 +106,17 @@ public class Combat {
 	public void setActive(Boolean active) {
 		this.active = active;
 	}
+
+	/**
+	 * Returns true when no movement has been made, this means the combat has reached the end. 
+	 * @return
+	 */
+	public abstract boolean advance();
+
+	/**
+	 * Returns true when no movement has been made, this means the combat is back at the beginning.
+	 * @return
+	 */
+	public abstract boolean back();
 
 }

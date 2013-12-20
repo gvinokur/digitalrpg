@@ -23,6 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.Combat;
+import com.digitalrpg.domain.model.CombatCharacter;
 import com.digitalrpg.domain.model.User;
 import com.digitalrpg.web.controller.model.CombatCharacterVO;
 import com.digitalrpg.web.controller.model.CreateCombatVO;
@@ -117,4 +118,38 @@ public class CombatController {
 		} 
 		
 	}
+	
+	@RequestMapping(value = "{id}/character/next", method = RequestMethod.POST)
+	public ResponseEntity<?> advanceCharacter(@PathVariable Long id, Principal principal) {
+		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+		Combat combat = combatService.getCombat(id);
+		if(combat.getCampaign().getGameMaster().equals(user)) {
+			combat = combatService.nextCharacter(id);
+			return new ResponseEntity<>(combatService.getStatus(combat), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>("Only the game master can update the current user", HttpStatus.FORBIDDEN);
+		}
+		
+	}
+	
+	@RequestMapping(value = "{id}/character/previous", method = RequestMethod.POST)
+	public ResponseEntity<?> previousCharacter(@PathVariable Long id, Principal principal) {
+		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+		Combat combat = combatService.getCombat(id);
+		if(combat.getCampaign().getGameMaster().equals(user)) {
+			combat = combatService.previousCharacter(id);
+			return new ResponseEntity<>(combatService.getStatus(combat), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>("Only the game master can update the current user", HttpStatus.FORBIDDEN);
+		}
+		
+	}
+	
+	@RequestMapping(value = "/characters/{id}", method = RequestMethod.GET)
+	@ResponseBody
+	public CombatCharacterVO getCombatCharacterData(@PathVariable Long id) {
+		CombatCharacter combatCharacter = combatService.getCombatCharacter(id);
+		return CombatService.combatCharacterToVOfunction.apply(combatCharacter);
+	}
+	
 }

@@ -12,6 +12,12 @@ body {
 	background-position: 0 -100px;
 }
 
+div.overriden, .overriden { 
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #999;
+}
+
 a:link,a:visited {
 	color: #FFFFFF;
 	text-decoration: none;
@@ -714,4 +720,86 @@ div.templatemo_content.character_image {
 	font-weight: bold;
 	color: #ffffff;
 	/*color: #99be29;*/
+}
+
+/* Tabs */
+#tabs { 
+    background: transparent; 
+    border: none; 
+} 
+#tabs .ui-widget-header { 
+    background: transparent; 
+    border: none; 
+    border-bottom: 1px solid #c0c0c0; 
+    -moz-border-radius: 0px; 
+    -webkit-border-radius: 0px; 
+    border-radius: 0px; 
+} 
+#tabs .ui-tabs-nav .ui-state-default { 
+    background: transparent; 
+    border: none; 
+} 
+#tabs .ui-tabs-nav .ui-state-active { 
+    background: transparent url(../img/uiTabsArrow.png) no-repeat bottom center; 
+    border: none; 
+} 
+#tabs .ui-tabs-nav .ui-state-default a { 
+    color: #c0c0c0; 
+} 
+#tabs .ui-tabs-nav .ui-state-active a { 
+    color: #459e00; 
+}
+:focus {
+	outline: none;
+}
+
+.combat-character.current td:first-child{
+	background: transparent url(../img/play.png) no-repeat center; 
+    border-left: thin solid #FF4040; 
+    background-position-x: 0px;
+	background-size: contain;
+	border-radius: 5px 0px 0px 5px;
+}
+
+.combat-character.current td{
+    border-top: thin solid #FF4040;
+    border-bottom: thin solid #FF4040; 
+}
+
+.combat-character.current td:last-child{
+    border-right: thin solid #FF4040;
+    border-radius: 0px 5px 5px 0px; 
+}
+
+.combat-character.selected {
+	background-color: #999;
+	color: #fff
+}
+
+.combat-character.selected td:first-child{
+	border-radius: 5px 0px 0px 5px;
+}
+
+.combat-character.selected td:last-child{
+    border-right: thin solid #FF4040;
+    border-radius: 0px 5px 5px 0px; 
+}
+
+.combat-character {
+	cursor: pointer;
+}
+
+.combat-character-header td {
+	padding: 5px 2px 5px 2px;
+	font-weight: bold;
+	color: #c0c0c0;
+	border-bottom: 1px solid #c0c0c0;
+}
+
+.combat-character td {
+	padding: 2px;
+}
+
+.narrow_input {
+	width: 20px;
 }

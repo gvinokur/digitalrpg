@@ -59,7 +59,7 @@ public class CombatDaoImpl extends HibernateDao implements CombatDao {
 	@Transactional
 	public void startCombat(Combat combat) {
 		combat.setActive(true);
-		CombatCharacter combatCharacter = combat.getCombatCharacters().get(0);
+		CombatCharacter combatCharacter = combat.getCombatCharacters().iterator().next();
 		combat.setCurrentCharacter(combatCharacter);
 		// System Specific configuration:
 		switch (combat.getCampaign().getSystem()) {

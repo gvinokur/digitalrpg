@@ -1,6 +1,5 @@
 package com.digitalrpg.domain.model;
 
-import java.util.Arrays;
 import java.util.SortedSet;
 
 import javax.persistence.CascadeType;
@@ -13,8 +12,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
@@ -104,12 +101,14 @@ public class User {
 
 	@Override
 	public int hashCode() {
-		return HashCodeBuilder.reflectionHashCode(this, Arrays.asList("id"));
+		return this.id.hashCode();
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		return EqualsBuilder.reflectionEquals(this, obj, Arrays.asList("id"));
+		if(obj == null || !(obj instanceof User))
+			return false;
+		return this.id.equals(((User)obj).id);
 	}
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true,  fetch = FetchType.EAGER, mappedBy = "user")

@@ -18,50 +18,56 @@
 		${error_message }
 		<div class="margin_bottom_20">&#160;</div>
 	</div>
-
-	<table style="display:inline-block;">
-		<thead>
-			<tr>
-				<td>Character</td>
-				<td>Hidden</td>
-				<td>Initiative</td>
-				<td>Action</td>
-				<td>HP</td>
-				<td>Conditions/Effects</td>
-			</tr>
-		</thead>
-		<tbody>
-			<c:forEach items="${combat.combatCharacters }" var="combatCharacter">
-				<tr class="${combatCharacter.id == combat.currentCharacter.id?'current':'' }">
-					<c:choose>
-						<c:when
-							test="${combatCharacter.character.character['class'].simpleName == 'NonPlayerCharacter'  and combatCharacter.character.character.createdBy.name == pageContext.request.userPrincipal.principal.name }">
-							<c:set var="npc" value="true"></c:set>
-						</c:when>
-						<c:otherwise>
-							<c:set var="npc" value="false"></c:set>
-						</c:otherwise>
-					</c:choose>
-
-					<td>${combatCharacter.character.character.name }</td>
-					<c:url var="postHiddenUrl" value="/combats/character/hidden"></c:url>
-					<td class="hiddenSelect ${npc=='true'?'editable':''}" data-type="select"
-						data-pk="${combatCharacter.id }" data-url="${postHiddenUrl }"
-						data-source="[{value:true, text:'True'}, {value:false, text:'False'}]">${combatCharacter.hidden }</td>
-					<td>${combatCharacter.initiative }</td>
-					<td>${combatCharacter.currentAction.label }</td>
-					<c:url var="postHpUrl" value="/combats/character/currentHitPoints"></c:url>
-					<td
-						style="background-color:${combatCharacter.hitPointsStatus };color:${combatCharacter.hitPointsStatus };width:30px"
-						class="hp ${npc=='true'?'editable':''}" data-type="text"
-						data-pk="${combatCharacter.id }" data-url="${postHpUrl }" >${combatCharacter.currentHitPoints}</td>
-					<td>${combatCharacter.conditionsAndEffectsString }</td>
+	<div class="templatemo_content margin_right_10" style="width: 370px;">
+		<div class="combat_header">
+			Round <span id="round">${combat.currentRound }</span>/${combat.roundsPerTurn } - Turn <span id="turn">${combat.currentTurn }</span>/${combat.turns }
+		</div>
+		<table style="border-spacing: 0px">
+			<thead>
+				<tr class="combat-character-header">
+					<td>&#160;</td>
+					<td>Character</td>
+					<td>Hidden</td>
+					<td>Initiative</td>
+					<td>Action</td>
+					<td>HP</td>
+					<td>Conditions/Effects</td>
 				</tr>
-			</c:forEach>
-		</tbody>
-	</table>
-	
-	<div id="character-details" style="display: inline-table;margin-left: 15px">
+			</thead>
+			<tbody>
+				<c:forEach items="${combat.combatCharacters }" var="combatCharacter">
+					<tr character-id="${combatCharacter.id}" class="${combatCharacter.id == combat.currentCharacter.id?'current':'' } combat-character">
+						<c:choose>
+							<c:when
+								test="${combatCharacter.character.character['class'].simpleName == 'NonPlayerCharacter'  and combatCharacter.character.character.createdBy.name == pageContext.request.userPrincipal.principal.name }">
+								<c:set var="npc" value="true"></c:set>
+							</c:when>
+							<c:otherwise>
+								<c:set var="npc" value="false"></c:set>
+							</c:otherwise>
+						</c:choose>
+						<td style="width: 10px">&#160;</td>
+						<td>${combatCharacter.character.character.name }</td>
+						<c:url var="postHiddenUrl" value="/combats/character/hidden"></c:url>
+						<td class="hiddenSelect ${npc=='true'?'editable':''}" data-type="select"
+							data-pk="${combatCharacter.id }" data-url="${postHiddenUrl }"
+							data-source="[{value:true, text:'True'}, {value:false, text:'False'}]">${combatCharacter.hidden }</td>
+						<td>${combatCharacter.initiative }</td>
+						<td>${combatCharacter.currentAction.label }</td>
+						<c:url var="postHpUrl" value="/combats/character/currentHitPoints"></c:url>
+						<td
+							style="background-color:${combatCharacter.hitPointsStatus };color:${combatCharacter.hitPointsStatus };width:30px"
+							class="hp ${npc=='true'?'editable':''}" data-type="text"
+							data-pk="${combatCharacter.id }" data-url="${postHpUrl }" >${combatCharacter.currentHitPoints}</td>
+						<td>${combatCharacter.conditionsAndEffectsString }</td>
+					</tr>
+				</c:forEach>
+			</tbody>
+		</table>
+		<input id="next_button" type="Button" value="Next" class="small_button"></input>
+		<input id="previous_button" type="Button" value="Previous" class="small_button"></input>
+	</div>
+	<div id="character-details" class="templatemo_content" style="width: 390px;">
 		<div id="tabs">
 			<ul>
 				<li><a href="#image">Image</a></li>
@@ -69,19 +75,19 @@
 				<li><a href="#conditions">Conditions</a></li>
 				<li><a href="#magical-effects">Magical Effects</a></li>
 			</ul>
-			<div id="image">
+			<div id="image" class="overriden">
 				<div class="character_image">
-	       			<img src="${combat.currentCharacter.character.character.pictureUrl}"/>
+	       			<img id="character-image" src="${combat.currentCharacter.character.character.pictureUrl}"/>
 	        	</div>
 			</div>
-			<div id="stats">
+			<div id="stats" class="overriden">
 				<c:set var="systemCharacter" scope="request" value="${combat.currentCharacter.character }"/>
 				<jsp:include page="../character/pathfinder_data.jsp"/>
 			</div>
-			<div id="conditions">
+			<div id="conditions" class="overriden">
 				<!-- TODO: -->
 			</div>
-			<div id="magical-effects">
+			<div id="magical-effects" class="overriden">
 				<!-- TODO: -->
 			</div>
 		</div>
@@ -94,14 +100,7 @@
     
     	$.fn.editable.defaults.mode = 'inline';
     	$.fn.editable.defaults.ajaxOptions = {
-    		    beforeSend: function(xhr, settings) {
-    		        if (!csrfSafeMethod(settings.type) &amp;&amp; sameOrigin(settings.url)) {
-    		            // Send the token to same-origin, relative URLs only.
-    		            // Send the token only if the method warrants CSRF protection
-    		            // Using the CSRFToken value acquired earlier
-    		            xhr.setRequestHeader("${_csrf.headerName}", "${_csrf.token}");
-    		        }
-    		    }
+    		    beforeSend: beforePost
     		};
     	$.fn.editable.defaults.showbuttons = false;
     	$(".editable.hiddenSelect").editable();
@@ -109,10 +108,74 @@
     		success : function(response, newValue) {
     			$(this).css("color", response.hit_point_status);
     			$(this).css("background-color", response.hit_point_status);
-    		}
+    		},
+    		inputclass : "narrow_input"
+    	})
+    	
+    	<c:url var="nextUrl" value="/combats/${combat.id}/character/next"/>
+    	$("#next_button").click(function(){
+    		$.ajax({
+    			url: "${nextUrl}",
+    			beforeSend : beforePost,
+    			type: "POST",
+    			dataType : "json",
+    			success : function(combatStatus) {
+    				$(".combat-character.current").removeClass("current");
+    				$(".combat-character[character-id=" + combatStatus.current_character_id+ "]").addClass("current")
+    				$("#round").text(combatStatus.current_round);
+    				$("#turn").text(combatStatus.current_turn)
+    			}
+    		})
+    	})
+    	
+    	<c:url var="previousUrl" value="/combats/${combat.id}/character/previous"/>
+    	$("#previous_button").click(function(){
+    		$.ajax({
+    			url: "${previousUrl}",
+    			beforeSend : beforePost,
+    			type: "POST",
+    			dataType : "json",
+    			success : function(combatStatus) {
+    				$(".combat-character.current").removeClass("current");
+    				$(".combat-character[character-id=" + combatStatus.current_character_id+ "]").addClass("current")
+    				$("#round").text(combatStatus.current_round);
+    				$("#turn").text(combatStatus.current_turn)
+    			}
+    		})
+    	})
+    	
+    	$(".combat-character").click(function(){
+    		$(".combat-character").removeClass("selected")
+    		$(this).addClass("selected")
+    		showCharacter($(this).attr("character-id"))
     	})
     })	
     
+    <c:url var="combatCharacterDataUrl" value="/combats/characters/[id]"/>
+    function showCharacter(id) {
+    	var url = "${combatCharacterDataUrl}".replace("[id]", id)
+    	$.ajax({
+    		url: url,
+    		dataType: "json",
+    		type: "GET",
+    		success : function(characterData) {
+    			$("#character-image").attr("src", characterData.image_url);
+    			for(key in characterData) {
+    				$("#character-" + key).text(characterData[key]);
+    			}	
+    			//TODO: Populate conditions and magical effects
+    		}
+    	})
+    }
+    
+    function beforePost(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) &amp;&amp; sameOrigin(settings.url)) {
+            // Send the token to same-origin, relative URLs only.
+            // Send the token only if the method warrants CSRF protection
+            // Using the CSRFToken value acquired earlier
+            xhr.setRequestHeader("${_csrf.headerName}", "${_csrf.token}");
+        }
+    }
     
     function csrfSafeMethod(method) {
 	    // these HTTP methods do not require CSRF protection

@@ -8,6 +8,8 @@ public class CombatCharacterVO{
 	private Boolean hidden;
 	
 	private Long id;
+	
+	private String imageUrl;
 
 	public Long getId() {
 		return id;
@@ -31,6 +33,14 @@ public class CombatCharacterVO{
 
 	public void setHidden(Boolean hidden) {
 		this.hidden = hidden;
+	}
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
 	}
 
 }
