@@ -21,6 +21,8 @@ import com.digitalrpg.domain.dao.SystemDao;
 import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.Combat;
 import com.digitalrpg.domain.model.CombatCharacter;
+import com.digitalrpg.domain.model.SystemCombatItem;
+import com.digitalrpg.domain.model.SystemCombatItems;
 import com.digitalrpg.domain.model.SystemCombatProperties;
 import com.digitalrpg.domain.model.SystemType;
 import com.digitalrpg.domain.model.User;
@@ -37,6 +39,7 @@ import com.digitalrpg.web.controller.model.PathfinderCombatStatusVO;
 import com.digitalrpg.web.controller.model.PathfinderCombatVO;
 import com.digitalrpg.web.controller.model.PlayerExtraInfoVO;
 import com.digitalrpg.web.service.combat.CharacterAttributeConverter;
+import com.digitalrpg.web.service.combat.ItemAction;
 import com.google.common.base.Function;
 
 public class CombatService {
@@ -163,13 +166,46 @@ public class CombatService {
 		}
 		return combatCharacterToVOfunction.apply(combatCharacter);
 	}
+	
+	@Transactional(rollbackFor = Exception.class, isolation = Isolation.SERIALIZABLE)
+	public CombatCharacterVO updateCombatCharacterItem(Long id,
+			String itemType, ItemAction action, Long itemId, User user) throws IllegalArgumentException, IllegalAccessException {
+		CombatCharacter combatCharacter = combatDao.getCombatCharacter(id);
+		SystemType system = combatCharacter.getCombat().getCampaign().getSystem();
+		SystemCombatItems systemCombatItems = combatDao.getSystemCombatItems(system);
+		SystemCombatItem item = getItem(systemCombatItems, itemType, itemId);
+		switch (action) {
+		case ADD:
+			combatCharacter.addItem(item);
+			break;
+		case REMOVE:
+			combatCharacter.removeItem(item);
+			break;
+		}
+		return combatCharacterToVOfunction.apply(combatCharacter);
+	}
+
+	private SystemCombatItem getItem(SystemCombatItems systemCombatItems, String itemType,
+			Long itemId) throws IllegalArgumentException, IllegalAccessException {
+		Field field = ReflectionUtils.findField(systemCombatItems.getClass(), itemType);
+		if(field != null) {
+			field.setAccessible(true);
+			List<? extends SystemCombatItem> items = (List<? extends SystemCombatItem>) field.get(systemCombatItems);
+			for (SystemCombatItem item : items) {
+				if(item.getId().equals(itemId)) {
+					return item;
+				}
+			}
+		}
+		return null;
+	}
 
 	@Transactional
 	public Combat nextCharacter(Long combatId) {
 		Combat combat = combatDao.get(combatId);
 		CombatCharacter currentCharacter = combat.getCurrentCharacter();
 		CombatCharacter nextCharacter = null;
-		NavigableSet<CombatCharacter> combatCharacters = (NavigableSet<CombatCharacter>) combat.getCombatCharacters();
+		NavigableSet<CombatCharacter> combatCharacters = combat.getCombatCharactersAsNavigableSet();
 		nextCharacter = combatCharacters.higher(currentCharacter);
 		if (nextCharacter == null) {
 			boolean end = combat.advance();
@@ -186,7 +222,7 @@ public class CombatService {
 		Combat combat = combatDao.get(combatId);
 		CombatCharacter currentCharacter = combat.getCurrentCharacter();
 		CombatCharacter nextCharacter = null;
-		NavigableSet<CombatCharacter> combatCharacters = (NavigableSet<CombatCharacter>) combat.getCombatCharacters();
+		NavigableSet<CombatCharacter> combatCharacters = combat.getCombatCharactersAsNavigableSet();
 		if(currentCharacter == null) {
 			nextCharacter = combatCharacters.last();
 		} else {
@@ -232,5 +268,11 @@ public class CombatService {
 				.getCurrentTurn());
 		return combatStatusVO;
 	}
+	
+	public SystemCombatItems getSystemCombatItems(SystemType system) {
+		return combatDao.getSystemCombatItems(system);
+	}
+
+
 
 }

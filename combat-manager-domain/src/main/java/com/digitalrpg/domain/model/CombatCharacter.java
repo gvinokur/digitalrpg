@@ -77,5 +77,9 @@ public abstract class CombatCharacter {
 	public void setId(Long id) {
 		this.id = id;
 	}
+
+	public abstract void addItem(SystemCombatItem item);
+
+	public abstract void removeItem(SystemCombatItem item);
 	
 }

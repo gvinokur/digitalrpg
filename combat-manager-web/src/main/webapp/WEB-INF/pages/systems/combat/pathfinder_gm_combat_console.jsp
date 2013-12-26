@@ -36,7 +36,7 @@
 			</thead>
 			<tbody>
 				<c:forEach items="${combat.combatCharacters }" var="combatCharacter">
-					<tr character-id="${combatCharacter.id}" class="${combatCharacter.id == combat.currentCharacter.id?'current':'' } combat-character">
+					<tr character-id="${combatCharacter.id}" class="${combatCharacter.id == combat.currentCharacter.id?'current selected':'' } combat-character">
 						<c:choose>
 							<c:when
 								test="${combatCharacter.character.character['class'].simpleName == 'NonPlayerCharacter'  and combatCharacter.character.character.createdBy.name == pageContext.request.userPrincipal.principal.name }">
@@ -53,13 +53,15 @@
 							data-pk="${combatCharacter.id }" data-url="${postHiddenUrl }"
 							data-source="[{value:true, text:'True'}, {value:false, text:'False'}]">${combatCharacter.hidden }</td>
 						<td>${combatCharacter.initiative }</td>
-						<td>${combatCharacter.currentAction.label }</td>
+						<c:url var="postCurrentActionUrl" value="/combats/character/currentAction"></c:url>
+						<td class="currentAction editable" data-type="select"
+							data-pk="${combatCharacter.id }" data-url="${postCurrentActionUrl}">${combatCharacter.currentAction.label }</td>
 						<c:url var="postHpUrl" value="/combats/character/currentHitPoints"></c:url>
 						<td
 							style="background-color:${combatCharacter.hitPointsStatus };color:${combatCharacter.hitPointsStatus };width:30px"
 							class="hp ${npc=='true'?'editable':''}" data-type="text"
 							data-pk="${combatCharacter.id }" data-url="${postHpUrl }" >${combatCharacter.currentHitPoints}</td>
-						<td>${combatCharacter.conditionsAndEffectsString }</td>
+						<td class="conditions-and-effects">${combatCharacter.conditionsAndEffectsString }</td>
 					</tr>
 				</c:forEach>
 			</tbody>
@@ -85,10 +87,31 @@
 				<jsp:include page="../character/pathfinder_data.jsp"/>
 			</div>
 			<div id="conditions" class="overriden">
-				<!-- TODO: -->
+				<div class="nice_list scroll_list_219">
+					<ul>
+						<c:forEach items="${items.conditions }" var="condition">
+							<li class="condition">
+								<a>
+									${condition.label }
+									<input type="checkbox" condition-id="${condition.id }" style="float: right;margin-right: 20px"/>
+								</a> 
+							</li>
+						</c:forEach>
+					</ul>
+				</div>
 			</div>
 			<div id="magical-effects" class="overriden">
-				<!-- TODO: -->
+				<div class="nice_list scroll_list_219">
+					<ul>
+						<c:forEach items="${items.magicalEffects }" var="magicalEffect">
+							<li class="magicalEffect">
+								<a> ${magicalEffect.label }
+									<input type="checkbox" condition-id="${magicalEffect.id }"/>
+								</a> 
+							</li>
+						</c:forEach>
+					</ul>
+				</div>
 			</div>
 		</div>
 		
@@ -104,6 +127,9 @@
     		};
     	$.fn.editable.defaults.showbuttons = false;
     	$(".editable.hiddenSelect").editable();
+    	$(".editable.currentAction").editable({
+    		source : getAvailableActions
+    	});
     	$(".editable.hp").editable({
     		success : function(response, newValue) {
     			$(this).css("color", response.hit_point_status);
@@ -149,7 +175,43 @@
     		$(this).addClass("selected")
     		showCharacter($(this).attr("character-id"))
     	})
+    	
+    	<c:url var="conditionChangeUrl" value="/combats/character/conditions/[action]"/>
+    	$(".condition input[type=checkbox]").click(function(){
+    		var checked = $(this).prop("checked")
+    		var characterId = $(".combat-character.selected").attr("character-id")
+    		var url = "${conditionChangeUrl}"
+    		var data = { pk : characterId, itemId : $(this).attr("condition-id") }
+    		if(checked) {
+    			url = url.replace("[action]","ADD")
+    		} else {
+    			url = url.replace("[action]","REMOVE")
+    		}
+    		$.ajax({
+				url : url,
+				dataType : "json",
+				type : "POST",
+				data: data,
+				beforeSend : beforePost,
+				success : function (combatCharacter) {
+					$(".combat-character[character-id=" + combatCharacter.id+ "] .conditions-and-effects").text(combatCharacter.conditions_and_effects_string)
+				}
+			})
+    	})
+    	
+    	//Initial set up of conditions:
+    	<c:forEach items="${combat.currentCharacter.conditions}" var="condition">
+    	$(".condition input[type=checkbox][condition-id=${condition.id}]").prop("checked", true)
+    	</c:forEach>
     })	
+    
+    function getAvailableActions() {
+    	var actions = []
+    	<c:forEach items="${items.actions}" var="action">
+    	actions.push({value: "${action.id }", text: "${action.label}"})
+    	</c:forEach>
+    	return actions;
+    } 
     
     <c:url var="combatCharacterDataUrl" value="/combats/characters/[id]"/>
     function showCharacter(id) {
@@ -163,7 +225,11 @@
     			for(key in characterData) {
     				$("#character-" + key).text(characterData[key]);
     			}	
-    			//TODO: Populate conditions and magical effects
+    			$(".condition input[type=checkbox]").prop("checked", false)
+    			for(var i=0; i &lt; characterData.current_conditions.length;i++) {
+    				$(".condition input[type=checkbox][condition-id=" + characterData.current_conditions[i].id + "]").prop("checked", true)
+    			}
+    			//TODO: Populatemagical effects
     		}
     	})
     }

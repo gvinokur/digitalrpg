@@ -1,5 +1,6 @@
 package com.digitalrpg.domain.model;
 
+import java.util.NavigableSet;
 import java.util.Set;
 import java.util.SortedSet;
 
@@ -14,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.hibernate.annotations.GenericGenerator;
@@ -79,8 +81,9 @@ public abstract class Combat {
 	}
 
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "combat")
+	@Sort(comparator  =CombatCharacterComparator.class, type = SortType.COMPARATOR)
 	public Set<CombatCharacter> getCombatCharacters() {
-		return ImmutableSortedSet.copyOf(new CombatCharacterComparator(), this.combatCharacters);
+		return this.combatCharacters;
 	}
 
 	public void setCombatCharacters(Set<CombatCharacter> combatCharacters) {
@@ -118,5 +121,11 @@ public abstract class Combat {
 	 * @return
 	 */
 	public abstract boolean back();
+
+	@Transient
+	public NavigableSet<CombatCharacter> getCombatCharactersAsNavigableSet() {
+		SortedSet<CombatCharacter> ss = (SortedSet<CombatCharacter>) this.combatCharacters;
+		return ImmutableSortedSet.copyOfSorted(ss);
+	}
 
 }

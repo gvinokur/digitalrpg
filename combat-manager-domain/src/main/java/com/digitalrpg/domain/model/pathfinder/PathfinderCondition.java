@@ -7,9 +7,11 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import com.digitalrpg.domain.model.SystemCombatItem;
+
 @Entity
 @Table(name = "pathfinder_conditions")
-public class PathfinderCondition {
+public class PathfinderCondition implements SystemCombatItem{
 
 	private Long id;
 	

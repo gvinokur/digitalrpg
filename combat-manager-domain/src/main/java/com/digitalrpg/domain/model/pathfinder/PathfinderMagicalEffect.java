@@ -7,9 +7,11 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import com.digitalrpg.domain.model.SystemCombatItem;
+
 @Entity
 @Table(name = "pathfinder_magical_effects")
-public class PathfinderMagicalEffect {
+public class PathfinderMagicalEffect implements SystemCombatItem{
 	
 	private Long id;
 	

@@ -781,7 +781,6 @@ div.templatemo_content.character_image {
 }
 
 .combat-character.selected td:last-child{
-    border-right: thin solid #FF4040;
     border-radius: 0px 5px 5px 0px; 
 }
 

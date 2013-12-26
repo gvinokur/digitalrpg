@@ -10,10 +10,13 @@ import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.Combat;
 import com.digitalrpg.domain.model.CombatCharacter;
 import com.digitalrpg.domain.model.SystemCombatCharacterProperties;
+import com.digitalrpg.domain.model.SystemCombatItems;
 import com.digitalrpg.domain.model.SystemCombatProperties;
+import com.digitalrpg.domain.model.SystemType;
 import com.digitalrpg.domain.model.characters.SystemCharacter;
 import com.digitalrpg.domain.model.factory.CombatFactory;
 import com.digitalrpg.domain.model.pathfinder.PathfinderCombat;
+import com.digitalrpg.domain.model.pathfinder.PathfinderCombatItems;
 
 public class CombatDaoImpl extends HibernateDao implements CombatDao {
 
@@ -83,6 +86,34 @@ public class CombatDaoImpl extends HibernateDao implements CombatDao {
 				.setParameter(0, id).list();
 		if (list.size() == 1) {
 			return list.get(0);
+		}
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
+	public SystemCombatItems getSystemCombatItems(SystemType system) {
+		switch (system) {
+		case Pathfinder:
+			PathfinderCombatItems items = new PathfinderCombatItems();
+			items.setActions(this.sessionFactory.getCurrentSession().createQuery("from PathfinderAction").list());
+			items.setConditions(this.sessionFactory.getCurrentSession().createQuery("from PathfinderCondition").list());
+			items.setMagicalEffects(this.sessionFactory.getCurrentSession().createQuery("from PathfinderMagicalEffect").list());
+			return items;
+
+		default:
+			break;
+		}
+		return null;
+	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Transactional(readOnly = true)
+	public <T> T getCombatItem(Class<T> clazz, Long id) {
+		String itemClassName = clazz.getSimpleName();
+		List list = this.sessionFactory.getCurrentSession().createQuery("from " + itemClassName + " where id = ?").setParameter(0, id).list();
+		if(list.size() == 1) {
+			return (T) list.get(0);
 		}
 		return null;
 	}

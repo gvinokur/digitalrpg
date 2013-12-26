@@ -4,7 +4,9 @@ import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.Combat;
 import com.digitalrpg.domain.model.CombatCharacter;
 import com.digitalrpg.domain.model.SystemCombatCharacterProperties;
+import com.digitalrpg.domain.model.SystemCombatItems;
 import com.digitalrpg.domain.model.SystemCombatProperties;
+import com.digitalrpg.domain.model.SystemType;
 import com.digitalrpg.domain.model.characters.SystemCharacter;
 
 public interface CombatDao {
@@ -18,5 +20,9 @@ public interface CombatDao {
 	public void startCombat(Combat combat);
 
 	public CombatCharacter getCombatCharacter(Long id);
+	
+	public SystemCombatItems getSystemCombatItems(SystemType system);
+
+	public <T> T getCombatItem(Class<T> clazz, Long id);
 	
 }

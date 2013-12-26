@@ -24,11 +24,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.Combat;
 import com.digitalrpg.domain.model.CombatCharacter;
+import com.digitalrpg.domain.model.SystemCombatItems;
 import com.digitalrpg.domain.model.User;
 import com.digitalrpg.web.controller.model.CombatCharacterVO;
 import com.digitalrpg.web.controller.model.CreateCombatVO;
 import com.digitalrpg.web.service.CampaignService;
 import com.digitalrpg.web.service.CombatService;
+import com.digitalrpg.web.service.combat.ItemAction;
 
 @Controller
 @RequestMapping("/combats")
@@ -97,7 +99,9 @@ public class CombatController {
 		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
 		Map<String, Object> modelMap = new HashMap<String, Object>();
 		Combat combat = combatService.getCombat(id);
+		SystemCombatItems items = combatService.getSystemCombatItems(combat.getCampaign().getSystem());
 		modelMap.put("combat", combat);
+		modelMap.put("items", items);
 		String viewName = null;
 		if(combat.getCampaign().getGameMaster().equals(user)) {
 			viewName = "/combat-gm";
@@ -116,8 +120,20 @@ public class CombatController {
 		} catch (Exception e) {
 			return new ResponseEntity<String>("Cannot update data", HttpStatus.BAD_REQUEST);
 		} 
-		
 	}
+	
+	@RequestMapping(value ="/character/{itemType}/{action}", method = RequestMethod.POST) 
+	public ResponseEntity<?> updateCombatCharacterItem(@PathVariable String itemType, @PathVariable ItemAction action,
+			@RequestParam("pk") Long id, @RequestParam("itemId") Long itemId, Principal principal){
+		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+		try {
+			CombatCharacterVO vo = combatService.updateCombatCharacterItem(id, itemType, action, itemId, user);
+			return new ResponseEntity<CombatCharacterVO>(vo, HttpStatus.OK);	
+		} catch (Exception e) {
+			return new ResponseEntity<String>("Cannot update data", HttpStatus.BAD_REQUEST);
+		} 
+	}
+	
 	
 	@RequestMapping(value = "{id}/character/next", method = RequestMethod.POST)
 	public ResponseEntity<?> advanceCharacter(@PathVariable Long id, Principal principal) {

@@ -12,6 +12,7 @@ import com.digitalrpg.web.service.combat.CharacterAttributeConverter;
 import com.digitalrpg.web.service.combat.DoubleCharacterAttributeConverter;
 import com.digitalrpg.web.service.combat.IntegerCharacterAttributeConverter;
 import com.digitalrpg.web.service.combat.LongCharacterAttributeConverter;
+import com.digitalrpg.web.service.combat.PathfinderActionCharacterAttributeConverter;
 import com.digitalrpg.web.service.combat.StringCharacterAttributeConverter;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
@@ -39,6 +40,10 @@ public class CharacterAttributeConverterConfiguration {
 	@Bean 
 	public CharacterAttributeConverter getDoubleCharacterAttributeConverter() {
 		return new DoubleCharacterAttributeConverter();
+	}
+	@Bean
+	public CharacterAttributeConverter getPathfinderActionCharacterAttributeConverter() {
+		return new PathfinderActionCharacterAttributeConverter();
 	}
 	@SuppressWarnings("rawtypes")
 	@Bean(name = "characterAttributeConvertersMap")

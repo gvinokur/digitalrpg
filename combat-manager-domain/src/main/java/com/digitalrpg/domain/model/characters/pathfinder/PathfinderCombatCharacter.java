@@ -16,6 +16,7 @@ import javax.persistence.Transient;
 import org.apache.commons.lang3.StringUtils;
 
 import com.digitalrpg.domain.model.CombatCharacter;
+import com.digitalrpg.domain.model.SystemCombatItem;
 import com.digitalrpg.domain.model.characters.SystemCharacter;
 import com.digitalrpg.domain.model.pathfinder.PathfinderAction;
 import com.digitalrpg.domain.model.pathfinder.PathfinderCondition;
@@ -107,6 +108,24 @@ public class PathfinderCombatCharacter extends CombatCharacter {
 			}
 		}));
 		return StringUtils.join(conditionsAndEffects, ", ");
+	}
+
+	@Override
+	public void addItem(SystemCombatItem item) {
+		if(item instanceof PathfinderCondition) {
+			this.conditions.add((PathfinderCondition)item);
+		} else if(item instanceof PathfinderMagicalEffect) {
+			this.magicalEffects.add((PathfinderMagicalEffect) item);
+		}
+	}
+
+	@Override
+	public void removeItem(SystemCombatItem item) {
+		if(item instanceof PathfinderCondition) {
+			this.conditions.remove(item);
+		} else if(item instanceof PathfinderMagicalEffect) {
+			this.magicalEffects.remove(item);
+		}
 	}
 	
 	
