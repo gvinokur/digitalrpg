@@ -108,9 +108,13 @@ public class MonsterController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView createPlayerCharacter(@Valid @ModelAttribute("character") CreateCharacterVO character, BindingResult result, Principal principal, RedirectAttributes attributes) {
+	public ModelAndView createPlayerCharacter(@Valid @ModelAttribute("createCharacter") CreateCharacterVO character, BindingResult result, Principal principal, RedirectAttributes attributes) {
 		if(result.hasErrors()) {
-			return new ModelAndView("monsters", "show_content", "create_character");
+			Map<String, Object> modelMap = new HashMap<String, Object>();
+			modelMap.put("campaign", CampaignService.campaignToVOFunction.apply(campaignService.get(character.getCampaignId())));
+			modelMap.put("show_content", "create_character");
+			modelMap.put("createCharacter", character);
+			return new ModelAndView("monsters", modelMap);
 		}
 		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
 		Campaign campaign = campaignService.get(character.getCampaignId());

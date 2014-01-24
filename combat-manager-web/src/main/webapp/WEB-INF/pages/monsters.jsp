@@ -46,7 +46,7 @@
 	            	<p>You are creating a character for your campaign <span>${campaign.name}</span></p>
 	            	
 	            	<c:url value="/characters" var="createCharacterUrl"></c:url>
-	            	<form:form action="${createCharacterUrl }" modelAttribute="character" id="character" method="POST">
+	            	<form:form action="${createCharacterUrl }" modelAttribute="createCharacter" id="character" method="POST">
 	            		
 	            		<input type="hidden" name="campaignId" value="${campaign.id}"/>
 	            		
