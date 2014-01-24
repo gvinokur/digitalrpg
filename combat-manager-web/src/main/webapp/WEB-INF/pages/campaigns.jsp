@@ -287,57 +287,14 @@
 			$("#central_panel > .dynamic").addClass("hidden");
 			$("#create_campaign").removeClass("hidden");
 		})
-		<c:url var="searchUrl" value="/campaigns/search/"/>
-		$("#search_button").click(function(){
-			
-			var searchValue = $("#search_field").val();
-			$('#search_form').block({message : "<h3>Searching Campaigns...</h3>", css: { border: '2px solid #363434', width: '100%', left: '0px', height: '100%', top: '0px' }})			
-			var url = "${searchUrl}" + searchValue
-			if(searchValue.length > 0) {
-				$.ajax({
-					url: url
-				}).done(function(result) {
-					$("#search_param").text(searchValue + "(" + result.length +")")
-					$("#search_result_holder > p").remove();
-					var lastItem = $("#search_result_holder > .header_02")
-					for(i= 0; i &lt; result.length; i++) {
-						var newItem = $("<p/>")
-						newItem.append($("<span/>").append(result[i].name))
-						lastItem.after(newItem);
-						lastItem = newItem;
-						var newItem = $("<p/>")
-						if(result[i].description) {
-							newItem.append(result[i].description)
-						} else {
-							newItem.append("&#160;");
-						}
-						lastItem.after(newItem);
-						lastItem = newItem;
-						var newItem = $("<p/>")
-						var link = $("<a/>")
-						link.addClass("campaign_list_item")
-						link.addClass("search_result")
-						link.attr("id", "campaign_" + result[i].id)
-						link.append("Show More")
-						newItem.append(link)
-						lastItem.after(newItem);
-						lastItem = newItem;
-						var newItem = $("<p/>")
-						newItem.append($("<span/>").append("Game Master: " + result[i].game_master.name))
-						lastItem.after(newItem);
-						lastItem = newItem;
-						var newItem = $("<p/>")
-						newItem.append("&#160;");
-						lastItem.after(newItem);
-						lastItem = newItem;
-					}
-					$("#central_panel > .dynamic").addClass("hidden");
-					$("#campaign_search_result").removeClass("hidden");
-				}).always(function() {
-					$('#search_form').unblock()
-				})
-			} 
-		})
+		
+		$("#search_button").click(searchCampaign())
+		$("#search_field").keypress(function(e) {
+			if(e.which == 13) {
+				searchCampaign();
+				e.stopPropagation();
+		    }
+		});
 		
 		<c:url var="getUrl" value="/campaigns/[id]/show"/>
 		$(document).on("click", ".campaign_list_item", function(){
@@ -448,6 +405,58 @@
 	    })
 	    
 	})
+	<c:url var="searchUrl" value="/campaigns/search/"/>
+	function searchCampaign(){
+			
+			var searchValue = $("#search_field").val();
+			if(!searchValue) return;
+			$('#search_form').block({message : "<h3>Searching Campaigns...</h3>", css: { border: '2px solid #363434', width: '100%', left: '0px', height: '100%', top: '0px' }})			
+			var url = "${searchUrl}" + searchValue
+			if(searchValue.length > 0) {
+				$.ajax({
+					url: url
+				}).done(function(result) {
+					$("#search_param").text(searchValue + "(" + result.length +")")
+					$("#search_result_holder > p").remove();
+					var lastItem = $("#search_result_holder > .header_02")
+					for(i= 0; i &lt; result.length; i++) {
+						var newItem = $("<p/>")
+						newItem.append($("<span/>").append(result[i].name))
+						lastItem.after(newItem);
+						lastItem = newItem;
+						var newItem = $("<p/>")
+						if(result[i].description) {
+							newItem.append(result[i].description)
+						} else {
+							newItem.append("&#160;");
+						}
+						lastItem.after(newItem);
+						lastItem = newItem;
+						var newItem = $("<p/>")
+						var link = $("<a/>")
+						link.addClass("campaign_list_item")
+						link.addClass("search_result")
+						link.attr("id", "campaign_" + result[i].id)
+						link.append("Show More")
+						newItem.append(link)
+						lastItem.after(newItem);
+						lastItem = newItem;
+						var newItem = $("<p/>")
+						newItem.append($("<span/>").append("Game Master: " + result[i].game_master.name))
+						lastItem.after(newItem);
+						lastItem = newItem;
+						var newItem = $("<p/>")
+						newItem.append("&#160;");
+						lastItem.after(newItem);
+						lastItem = newItem;
+					}
+					$("#central_panel > .dynamic").addClass("hidden");
+					$("#campaign_search_result").removeClass("hidden");
+				}).always(function() {
+					$('#search_form').unblock()
+				})
+			} 
+		}
 </script> 	
    
 </body>

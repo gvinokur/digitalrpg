@@ -106,7 +106,7 @@
 						<c:forEach items="${items.magicalEffects }" var="magicalEffect">
 							<li class="magicalEffect">
 								<a> ${magicalEffect.label }
-									<input type="checkbox" condition-id="${magicalEffect.id }"/>
+									<input type="checkbox" condition-id="${magicalEffect.id }" style="float: right;margin-right: 20px"/>
 								</a> 
 							</li>
 						</c:forEach>

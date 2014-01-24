@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -66,11 +68,22 @@ public class CampaignDaoImpl extends HibernateDao implements CampaignDao {
 	public Collection<Campaign> search(String searchString, int offset, int limit) {
 		// TODO Auto-generated method stub
 		List list = sessionFactory.getCurrentSession()
-			.createQuery("from Campaign c where c.isPublic = true and (c.name like :searchString or c.description like :searchString) order by c.name")
-			.setParameter("searchString", "%" + searchString + "%")
+			.createQuery("from Campaign c where c.isPublic = true and (upper(c.name) like :searchString or upper(c.description) like :searchString) order by c.name")
+			.setParameter("searchString", "%" + searchString.toUpperCase() + "%")
 			.setFirstResult(offset)
 			.setMaxResults(limit)
 			.list();
+		
+//		searchString ="%" + searchString + "%";
+//		
+//		List list = sessionFactory.getCurrentSession()
+//			.createCriteria(Campaign.class)
+//			.add(Restrictions.eq("isPublic", Boolean.TRUE))
+//			.add(Restrictions.or(Restrictions.ilike("name", searchString), Restrictions.ilike("description", searchString)))
+//			.addOrder(Order.asc("name"))
+//			.setFirstResult(offset)
+//			.setMaxResults(limit)
+//			.list();
 		return list;
 	}
 
