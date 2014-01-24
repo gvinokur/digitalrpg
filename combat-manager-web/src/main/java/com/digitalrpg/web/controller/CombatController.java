@@ -2,6 +2,7 @@ package com.digitalrpg.web.controller;
 
 import java.security.Principal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
@@ -41,6 +42,17 @@ public class CombatController {
 	
 	@Autowired 
 	private CombatService combatService;
+	
+	@ModelAttribute("combats")
+	public List<Combat> getCombats(Principal principal) {
+		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+		return combatService.getCombats(user);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public String showCombats() {
+		return "/combat-admin";
+	}
 	
 	@RequestMapping(value = "/create", method = RequestMethod.GET)
 	public ModelAndView showCreateCombatPage(@RequestParam Long campaignId) {

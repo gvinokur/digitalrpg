@@ -1,5 +1,7 @@
 package com.digitalrpg.domain.dao;
 
+import java.util.List;
+
 import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.Combat;
 import com.digitalrpg.domain.model.CombatCharacter;
@@ -24,5 +26,7 @@ public interface CombatDao {
 	public SystemCombatItems getSystemCombatItems(SystemType system);
 
 	public <T> T getCombatItem(Class<T> clazz, Long id);
+
+	public List<Combat> getCombatsForUser(final String user);
 	
 }

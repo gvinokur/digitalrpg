@@ -1,5 +1,6 @@
 package com.digitalrpg.domain.dao.hibernate;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.hibernate.SessionFactory;
@@ -28,6 +29,19 @@ public class CombatDaoImpl extends HibernateDao implements CombatDao {
 		this.combatFactory = combatFactory;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
+	public List<Combat> getCombatsForUser(final String user) {
+		List<Combat> combatAsPlayer = sessionFactory.getCurrentSession().createQuery("select distinct combat from Campaign c join c.playerCharacters psc join c.combats combat, PlayerCharacter pc where combat.active = true and psc!= null and psc.character = pc and pc.owner.name = :user")
+			.setParameter("user", user).list();
+		List<Combat> combatsAsGameMaster = sessionFactory.getCurrentSession().createQuery("select combat from Campaign c join c.combats combat where c.gameMaster.name = :user and combat.active = true")
+				.setParameter("user", user).list();
+		List<Combat> sorted = new LinkedList<Combat>();
+		sorted.addAll(combatsAsGameMaster);
+		sorted.addAll(combatAsPlayer);
+		return sorted;
+	}
+	
 	@Transactional
 	public Combat createCombat(String name, String description,
 			Campaign campaign, SystemCombatProperties systemCombatProperties) {

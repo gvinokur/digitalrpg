@@ -273,6 +273,10 @@ public class CombatService {
 		return combatDao.getSystemCombatItems(system);
 	}
 
+	public List<Combat> getCombats(User user) {
+		return combatDao.getCombatsForUser(user.getName());
+	}
+
 
 
 }

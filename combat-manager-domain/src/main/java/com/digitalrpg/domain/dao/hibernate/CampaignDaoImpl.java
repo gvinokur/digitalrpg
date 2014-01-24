@@ -74,16 +74,6 @@ public class CampaignDaoImpl extends HibernateDao implements CampaignDao {
 			.setMaxResults(limit)
 			.list();
 		
-//		searchString ="%" + searchString + "%";
-//		
-//		List list = sessionFactory.getCurrentSession()
-//			.createCriteria(Campaign.class)
-//			.add(Restrictions.eq("isPublic", Boolean.TRUE))
-//			.add(Restrictions.or(Restrictions.ilike("name", searchString), Restrictions.ilike("description", searchString)))
-//			.addOrder(Order.asc("name"))
-//			.setFirstResult(offset)
-//			.setMaxResults(limit)
-//			.list();
 		return list;
 	}
 

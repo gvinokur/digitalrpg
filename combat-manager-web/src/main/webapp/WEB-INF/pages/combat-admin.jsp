@@ -13,7 +13,7 @@
 	</head>
 	<body>
 		<div class="templatemo_side_bar margin_right_10">
-			<div class="header_02">My Combats</div>
+			<div class="header_02">My Active Combats</div>
             <div class="header_01 toggle_header" toggle_id="player">I'm a Player in</div>
            	<div class="scroll_list_150 toggle_child" toggle_id="player">
            		<ul class="combats">
@@ -144,6 +144,13 @@
 	   </div>
 		<script type="text/javascript">
 			$(document).ready(function() {
+				<c:url var="viewCombatUrl" value="/combats/[id]/show"/>
+				$(".combat_list_item").click(function(){
+					var combatId = $(this).attr("combat_id")
+					var url = "${viewCombatUrl}".replace("[id]", combatId)
+			    	window.location = url;
+				}) 
+				
 				$('#players').multiSelect({ 
 					selectableOptgroup: false,
 					afterSelect: function(values){
