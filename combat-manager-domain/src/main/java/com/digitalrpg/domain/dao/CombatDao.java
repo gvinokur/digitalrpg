@@ -15,7 +15,7 @@ public interface CombatDao {
 
 	public Combat createCombat(String name, String description, Campaign campaign, SystemCombatProperties properties);
 	
-	public void createCharacter(Combat combat, SystemCharacter character, Boolean hidden, Long initiative, SystemCombatCharacterProperties properties);
+	public void createCharacter(Combat combat, SystemCharacter character, Boolean hidden, Long initiative, Long order, SystemCombatCharacterProperties properties);
 
 	public Combat get(Long id);
 

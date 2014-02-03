@@ -53,10 +53,10 @@ public class CombatDaoImpl extends HibernateDao implements CombatDao {
 
 	@Transactional
 	public void createCharacter(Combat combat, SystemCharacter character,
-			Boolean hidden, Long initiative,
+			Boolean hidden, Long initiative, Long order,
 			SystemCombatCharacterProperties properties) {
 		CombatCharacter combatCharacter = combatFactory.createCombatCharacter(
-				combat, character, hidden, initiative, properties);
+				combat, character, hidden, initiative, order, properties);
 
 		sessionFactory.getCurrentSession().save(combatCharacter);
 	}

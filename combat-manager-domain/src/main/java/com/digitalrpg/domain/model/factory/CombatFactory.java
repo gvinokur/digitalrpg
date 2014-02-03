@@ -35,13 +35,14 @@ public class CombatFactory {
 	}
 	
 	public CombatCharacter createCombatCharacter(Combat combat, SystemCharacter character,
-			Boolean hidden, Long initiative, SystemCombatCharacterProperties properties) {
+			Boolean hidden, Long initiative, Long order, SystemCombatCharacterProperties properties) {
 		if(combat.getCampaign().getSystem() == SystemType.Pathfinder) {
 			PathfinderCombatCharacter combatCharacter = new PathfinderCombatCharacter();
 			combatCharacter.setCharacter(character);
 			combatCharacter.setHidden(hidden);
 			combatCharacter.setInitiative(initiative);
 			combatCharacter.setCombat(combat);
+			combatCharacter.setOrder(order);
 			combatCharacter.setCurrentAction(systemDao.getPathfinderInitialAction());
 			return combatCharacter;
 		}

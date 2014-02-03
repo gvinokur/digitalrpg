@@ -1,5 +1,6 @@
 package com.digitalrpg.domain.model;
 
+import java.util.List;
 import java.util.NavigableSet;
 import java.util.Set;
 import java.util.SortedSet;
@@ -111,16 +112,18 @@ public abstract class Combat {
 	}
 
 	/**
-	 * Returns true when no movement has been made, this means the combat has reached the end. 
+	 * This method should advance turns, rounds or whatever the system uses and make sure the state
+	 * of the combat is updated (current character, character status, etc)
 	 * @return
 	 */
-	public abstract boolean advance();
+	public abstract void advance(List<? extends SystemAction> availableActions);
 
 	/**
-	 * Returns true when no movement has been made, this means the combat is back at the beginning.
+	 * This method should undo turns, rounds or whatever the system uses and make sure the state
+	 * of the combat is updated (current character, character status, etc)
 	 * @return
 	 */
-	public abstract boolean back();
+	public abstract void back(List<? extends SystemAction> list);
 
 	@Transient
 	public NavigableSet<CombatCharacter> getCombatCharactersAsNavigableSet() {

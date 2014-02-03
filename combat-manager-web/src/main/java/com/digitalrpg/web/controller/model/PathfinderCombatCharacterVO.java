@@ -2,7 +2,7 @@ package com.digitalrpg.web.controller.model;
 
 import java.util.Set;
 
-import com.digitalrpg.domain.model.pathfinder.PathfinderAction;
+import com.digitalrpg.domain.model.SystemAction;
 import com.digitalrpg.domain.model.pathfinder.PathfinderCondition;
 import com.digitalrpg.domain.model.pathfinder.PathfinderMagicalEffect;
 
@@ -10,7 +10,7 @@ public class PathfinderCombatCharacterVO extends CombatCharacterVO{
 
 	private Integer currentHitPoints;
 	
-	private PathfinderAction currentAction;
+	private SystemAction currentAction;
 	
 	private Set<PathfinderCondition> currentConditions;
 	
@@ -118,11 +118,11 @@ public class PathfinderCombatCharacterVO extends CombatCharacterVO{
 		this.currentHitPoints = currentHitPoints;
 	}
 
-	public PathfinderAction getCurrentAction() {
+	public SystemAction getCurrentAction() {
 		return currentAction;
 	}
 
-	public void setCurrentAction(PathfinderAction currentAction) {
+	public void setCurrentAction(SystemAction currentAction) {
 		this.currentAction = currentAction;
 	}
 

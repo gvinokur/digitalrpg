@@ -63,7 +63,7 @@ public class PlayerCharacterController {
 		Map<String, Object> modelMap = new HashMap<String, Object>();
 		modelMap.put("campaign", CampaignService.campaignToVOFunction.apply(campaignService.get(campaignId)));
 		modelMap.put("message", message);
-		if(message !=null && message.getTo().equals(user)) {
+		if(message !=null && message.getTo() != null && message.getTo().equals(user)) {
 			modelMap.put("show_content", "create_character");
 		} else {
 			attributes.addFlashAttribute("error_message", "You tried to Join to a campaign you were not invited, go ahead and ask for an invitation");

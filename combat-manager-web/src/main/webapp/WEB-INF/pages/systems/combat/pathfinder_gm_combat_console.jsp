@@ -8,6 +8,8 @@
 	<jsp:output doctype-root-element="HTML"
 		doctype-system="about:legacy-compat" />
 
+	
+
 	<div id="form_message"
 		class="templatemo_content form_message margin_bottom_15 ${form_message==null?'hidden':''}">
 		${form_message }
@@ -18,25 +20,19 @@
 		${error_message }
 		<div class="margin_bottom_20">&#160;</div>
 	</div>
-	<div class="templatemo_content margin_right_10" style="width: 370px;">
+	<div class="templatemo_content margin_right_10" style="width: 470px;">
 		<div class="combat_header">
 			Round <span id="round">${combat.currentRound }</span>/${combat.roundsPerTurn } - Turn <span id="turn">${combat.currentTurn }</span>/${combat.turns }
 		</div>
-		<table style="border-spacing: 0px">
-			<thead>
-				<tr class="combat-character-header">
-					<td>&#160;</td>
-					<td>Character</td>
-					<td>Hidden</td>
-					<td>Initiative</td>
-					<td>Action</td>
-					<td>HP</td>
-					<td>Conditions/Effects</td>
-				</tr>
-			</thead>
-			<tbody>
-				<c:forEach items="${combat.combatCharacters }" var="combatCharacter">
-					<tr character-id="${combatCharacter.id}" class="${combatCharacter.id == combat.currentCharacter.id?'current selected':'' } combat-character">
+		<div class="titles">
+			<div class="lane" style="text-align: right;">Playing</div>
+			<div class="lane" style="text-align: center;">Ready</div>
+			<div class="lane" style="text-align: left;">Delayed</div>
+		</div>
+		<div class="gridster">
+			<ul>
+				<c:forEach items="${combat.combatCharacters }" var="combatCharacter" varStatus="index">
+					<li data-row="${index.count }" data-col="${combatCharacter.currentAction.ready ? '2' : combatCharacter.currentAction.delayed ? '3' : '1'  }" data-sizex="3" data-sizey="1" character-id="${combatCharacter.id}" class="${combatCharacter.id == combat.currentCharacter.id?'current selected':'' } combat-character">
 						<c:choose>
 							<c:when
 								test="${combatCharacter.character.character['class'].simpleName == 'NonPlayerCharacter'  and combatCharacter.character.character.createdBy.name == pageContext.request.userPrincipal.principal.name }">
@@ -46,26 +42,37 @@
 								<c:set var="npc" value="false"></c:set>
 							</c:otherwise>
 						</c:choose>
-						<td style="width: 10px">&#160;</td>
-						<td>${combatCharacter.character.character.name }</td>
-						<c:url var="postHiddenUrl" value="/combats/character/hidden"></c:url>
-						<td class="hiddenSelect ${npc=='true'?'editable':''}" data-type="select"
-							data-pk="${combatCharacter.id }" data-url="${postHiddenUrl }"
-							data-source="[{value:true, text:'True'}, {value:false, text:'False'}]">${combatCharacter.hidden }</td>
-						<td>${combatCharacter.initiative }</td>
-						<c:url var="postCurrentActionUrl" value="/combats/character/currentAction"></c:url>
-						<td class="currentAction editable" data-type="select"
-							data-pk="${combatCharacter.id }" data-url="${postCurrentActionUrl}">${combatCharacter.currentAction.label }</td>
+						<div class="selected-char" style="width: 10px">&#160;</div>
+						<div class="character-name">${combatCharacter.character.character.name }</div>
+						<div class="initiative">Initiative ${combatCharacter.initiative }</div>
 						<c:url var="postHpUrl" value="/combats/character/currentHitPoints"></c:url>
-						<td
-							style="background-color:${combatCharacter.hitPointsStatus };color:${combatCharacter.hitPointsStatus };width:30px"
+						<div
+							style="background-color:${combatCharacter.hitPointsStatus };color:${combatCharacter.hitPointsStatus };width:25px"
 							class="hp ${npc=='true'?'editable':''}" data-type="text"
-							data-pk="${combatCharacter.id }" data-url="${postHpUrl }" >${combatCharacter.currentHitPoints}</td>
-						<td class="conditions-and-effects">${combatCharacter.conditionsAndEffectsString }</td>
-					</tr>
+							data-pk="${combatCharacter.id }" data-url="${postHpUrl }" >${combatCharacter.currentHitPoints}</div>
+						<c:url var="postHiddenUrl" value="/combats/character/hidden"></c:url>
+						<div class="hiddenSelect ${npc=='true'?'editable':''}"
+							data-pk="${combatCharacter.id }" data-url="${postHiddenUrl }">
+								Hidden 
+								<c:choose>
+									<c:when test="${combatCharacter.hidden }">
+										<input type="checkbox" checked="checked"/>
+									</c:when>
+									<c:when test="${npc=='true' }">
+										<input type="checkbox"/>
+									</c:when>
+									<c:otherwise>
+										<input type="checkbox" disabled="true"/>
+									</c:otherwise>
+								</c:choose>
+								
+							</div>	
+						
+						<div class="conditions-and-effects" title="${combatCharacter.conditionsAndEffectsString }">${combatCharacter.conditionsAndEffectsString }</div>
+					</li>
 				</c:forEach>
-			</tbody>
-		</table>
+			</ul>
+		</div>
 		<input id="next_button" type="Button" value="Next" class="small_button"></input>
 		<input id="previous_button" type="Button" value="Previous" class="small_button"></input>
 	</div>
@@ -121,12 +128,48 @@
     $(document).ready(function() {
     	$("#tabs").tabs();
     
-    	$.fn.editable.defaults.mode = 'inline';
+    	<c:url var="updateOrderAndActionUrl" value="/combats/${combat.id}/character/orderAndAction"/>
+    	$(".gridster ul").gridster({
+            widget_margins: [5, 5],
+            widget_base_dimensions: [85, 40],
+            min_cols:5,
+            max_cols:5,
+            draggable : {
+            	stop : function(e, ui, $widget){
+            		var data = buildSortAndStatusData();
+            		$.ajax({
+        				url : "${updateOrderAndActionUrl}",
+        				dataType : "json",
+        				type : "POST",
+        				contentType : "application/json",
+        				data: JSON.stringify(data),
+        				beforeSend : beforePost,
+        				success : function () {
+        				}
+        			})
+            	}
+            }
+        });
+    	
+//     	$.fn.editable.defaults.mode = 'inline';
     	$.fn.editable.defaults.ajaxOptions = {
     		    beforeSend: beforePost
     		};
     	$.fn.editable.defaults.showbuttons = false;
-    	$(".editable.hiddenSelect").editable();
+    	$(".editable.hiddenSelect.editable input").click(function(){
+    		var pk = $(this).parent().attr("data-pk");
+    		var url = $(this).parent().attr("data-url");
+    		var checked = $(this).prop( "checked" )
+    		$.ajax({
+    			url: url,
+    			beforeSend : beforePost,
+    			type: "POST",
+    			data: {pk : pk, value : checked},
+    			dataType : "json",
+    			success : function(combatStatus) {
+    			}
+    		})
+    	});
     	$(".editable.currentAction").editable({
     		source : getAvailableActions
     	});
@@ -195,6 +238,7 @@
 				beforeSend : beforePost,
 				success : function (combatCharacter) {
 					$(".combat-character[character-id=" + combatCharacter.id+ "] .conditions-and-effects").text(combatCharacter.conditions_and_effects_string)
+					$(".combat-character[character-id=" + combatCharacter.id+ "] .conditions-and-effects").attr("title",combatCharacter.conditions_and_effects_string)
 				}
 			})
     	})
@@ -204,6 +248,21 @@
     	$(".condition input[type=checkbox][condition-id=${condition.id}]").prop("checked", true)
     	</c:forEach>
     })	
+    
+    function buildSortAndStatusData() {
+    	var result = new Object();
+    	var currentPassed = false;
+    	$("li.combat-character").each(function(){
+    		id = $(this).attr("character-id")
+    		order = $(this).attr("data-row")
+    		col = $(this).attr("data-col")
+    		current = $(this).hasClass("current")
+    		if(current) currentPassed = true  
+    		action = col == 2 ? "Ready" : col == 3 ? "Delayed" : current ? "In Progress" : currentPassed ? "Pending" : "Taken"
+    		result[id] = {order : order, action: action }
+    	});
+    	return result
+    }
     
     function getAvailableActions() {
     	var actions = []

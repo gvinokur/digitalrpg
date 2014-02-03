@@ -7,9 +7,11 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import com.digitalrpg.domain.model.SystemAction;
+
 @Entity
 @Table(name = "pathfinder_action")
-public class PathfinderAction {
+public class PathfinderAction implements SystemAction{
 
 	private Long id;
 	
@@ -18,6 +20,12 @@ public class PathfinderAction {
 	private Boolean current;
 	
 	private Boolean initial;
+	
+	private Boolean finished;
+	
+	private Boolean ready;
+	
+	private Boolean delayed;
 	
 	@Id
 	@GeneratedValue(generator="increment")
@@ -60,6 +68,30 @@ public class PathfinderAction {
 
 	public void setInitial(Boolean initial) {
 		this.initial = initial;
+	}
+
+	public Boolean getFinished() {
+		return finished;
+	}
+
+	public void setFinished(Boolean finished) {
+		this.finished = finished;
+	}
+
+	public Boolean getDelayed() {
+		return delayed;
+	}
+
+	public void setDelayed(Boolean delayed) {
+		this.delayed = delayed;
+	}
+
+	public Boolean getReady() {
+		return ready;
+	}
+
+	public void setReady(Boolean ready) {
+		this.ready = ready;
 	}
 
 	private String description;

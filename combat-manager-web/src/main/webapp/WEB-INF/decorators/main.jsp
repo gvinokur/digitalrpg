@@ -26,6 +26,8 @@
 <link href="${multiSelectCssUrl}" rel="stylesheet" type="text/css" />
 <c:url var="jQueryUIEditableCssUrl" value="/css/jqueryui-editable.css" />
 <link href="${jQueryUIEditableCssUrl}" rel="stylesheet" type="text/css" />
+<c:url var="jQueryGridsterCssUrl" value="/css/jquery.gridster.css" />
+<link href="${jQueryGridsterCssUrl}" rel="stylesheet" type="text/css" />
 <link rel="stylesheet"
 	href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 <script src='http://code.jquery.com/jquery-1.10.2.js'>&#160;</script>
@@ -38,6 +40,19 @@
 <script src='${jQueryMultiSelectUrl}'>&#160;</script>
 <c:url var="jQueryUIEditableUrl" value="/js/jqueryui-editable.js" />
 <script src='${jQueryUIEditableUrl}'>&#160;</script>
+<c:url var="jQueryGridsterUrl" value="/js/jquery.gridster.js" />
+<script src='${jQueryGridsterUrl}'>&#160;</script>
+
+<c:url var="jQueryGridsterUrl" value="/js/utils.js" />
+<script src='${jQueryGridsterUrl}'>&#160;</script>
+<c:url var="jQueryGridsterUrl" value="/js/jquery.draggable.js" />
+<script src='${jQueryGridsterUrl}'>&#160;</script>
+<c:url var="jQueryGridsterUrl" value="/js/jquery.coords.js" />
+<script src='${jQueryGridsterUrl}'>&#160;</script>
+<c:url var="jQueryGridsterUrl" value="/js/jquery.collision.js" />
+<script src='${jQueryGridsterUrl}'>&#160;</script>
+<c:url var="jQueryGridsterUrl" value="/js/jquery.gridster.extras.js" />
+<script src='${jQueryGridsterUrl}'>&#160;</script>
 
 <script>
 	$(document).ready(function(){

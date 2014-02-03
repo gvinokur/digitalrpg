@@ -1,9 +1,14 @@
 package com.digitalrpg.domain.model.pathfinder;
 
+import java.util.List;
+import java.util.NavigableSet;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import com.digitalrpg.domain.model.Combat;
+import com.digitalrpg.domain.model.CombatCharacter;
+import com.digitalrpg.domain.model.SystemAction;
 
 @Entity
 @Table(name = "pathfinder_combats")
@@ -50,7 +55,24 @@ public class PathfinderCombat extends Combat {
 	}
 
 	@Override
-	public boolean advance() {
+	public void advance(List<? extends SystemAction> availableActions) {
+		boolean end = true;
+		CombatCharacter currentCharacter = this.getCurrentCharacter();
+		CombatCharacter nextCharacter = null;
+		NavigableSet<CombatCharacter> combatCharacters = this.getCombatCharactersAsNavigableSet();
+		nextCharacter = combatCharacters.higher(currentCharacter);
+		if (nextCharacter == null) {
+			end = this.advanceTurn();
+			if (!end) {
+				nextCharacter = combatCharacters.first();
+			}
+		}
+		currentCharacter.played(availableActions);
+		if(nextCharacter != null) nextCharacter.startPlaying(availableActions);
+		this.setCurrentCharacter(nextCharacter);
+	}
+	
+	public boolean advanceTurn() {
 		if(currentTurn < turns || currentRound<roundsPerTurn) {
 			currentRound++;
 			if(currentRound > roundsPerTurn) {
@@ -63,7 +85,31 @@ public class PathfinderCombat extends Combat {
 	}
 	
 	@Override
-	public boolean back() {
+	public void back(List<? extends SystemAction> availableActions) {
+		CombatCharacter currentCharacter = getCurrentCharacter();
+		CombatCharacter nextCharacter = null;
+		NavigableSet<CombatCharacter> combatCharacters = getCombatCharactersAsNavigableSet();
+		if(currentCharacter == null) {
+			nextCharacter = combatCharacters.last();
+		} else {
+			nextCharacter = combatCharacters.lower(currentCharacter);
+			if (nextCharacter == null) {
+				boolean end = backTurn();
+				if (!end) {
+					nextCharacter = combatCharacters.last();
+				} else {
+					nextCharacter = currentCharacter;
+				}
+			}	
+		}
+		if(currentCharacter != nextCharacter) {
+			currentCharacter.notPlayed(availableActions);
+			nextCharacter.restartPlaying(availableActions);
+		}
+		setCurrentCharacter(nextCharacter);
+	}
+	
+	private boolean backTurn() {
 		if(currentTurn > 1 || currentRound > 1) {
 			currentRound--;
 			if(currentRound == 0) {
@@ -72,7 +118,7 @@ public class PathfinderCombat extends Combat {
 			}
 			return false;
 		}
-		return true; 
+		return true;
 	}
 	
 }

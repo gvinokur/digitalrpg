@@ -1,11 +1,14 @@
 package com.digitalrpg.web.service;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableSet;
+import java.util.SortedMap;
 import java.util.SortedSet;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.annotation.Resource;
@@ -21,6 +24,7 @@ import com.digitalrpg.domain.dao.SystemDao;
 import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.Combat;
 import com.digitalrpg.domain.model.CombatCharacter;
+import com.digitalrpg.domain.model.SystemAction;
 import com.digitalrpg.domain.model.SystemCombatItem;
 import com.digitalrpg.domain.model.SystemCombatItems;
 import com.digitalrpg.domain.model.SystemCombatProperties;
@@ -34,6 +38,7 @@ import com.digitalrpg.web.controller.model.CombatCharacterDataVO;
 import com.digitalrpg.web.controller.model.CombatCharacterVO;
 import com.digitalrpg.web.controller.model.CombatStatusVO;
 import com.digitalrpg.web.controller.model.CombatVO;
+import com.digitalrpg.web.controller.model.OrderAndAction;
 import com.digitalrpg.web.controller.model.PathfinderCombatCharacterVO;
 import com.digitalrpg.web.controller.model.PathfinderCombatStatusVO;
 import com.digitalrpg.web.controller.model.PathfinderCombatVO;
@@ -131,13 +136,29 @@ public class CombatService {
 		Campaign campaign = campaignService.get(campaignId);
 		Combat combat = combatDao.createCombat(name, description, campaign,
 				systemCombatProperties);
+		Map<Long, Long> orderByPlayer = getOrdersByInitiative(playersExtraInfoMap);
 		for (Long playerId : players) {
 			SystemCharacter character = characterService.get(playerId);
 			PlayerExtraInfoVO extraInfoVO = playersExtraInfoMap.get(playerId);
 			combatDao.createCharacter(combat, character,
-					extraInfoVO.getHidden(), extraInfoVO.getInitative(), null);
+					extraInfoVO.getHidden(), extraInfoVO.getInitative(), orderByPlayer.get(playerId), null);
 		}
 		return combat;
+	}
+
+	private Map<Long, Long> getOrdersByInitiative(
+			Map<Long, PlayerExtraInfoVO> playersExtraInfoMap) {
+		SortedMap<Long, Long> playerByInititative = new TreeMap<Long, Long>();
+		for (Long pk : playersExtraInfoMap.keySet()) {
+			playerByInititative.put(playersExtraInfoMap.get(pk).getInitative(), pk);
+		}
+		Long i = Long.valueOf(playerByInititative.size());
+		Map<Long, Long> orderByInitiative = new HashMap<Long, Long>();
+		for(Long initiative : playerByInititative.keySet()) {
+			orderByInitiative.put(playerByInititative.get(initiative), i);
+			i--;
+		}
+		return orderByInitiative;
 	}
 
 	public Combat getCombat(Long id) {
@@ -203,40 +224,16 @@ public class CombatService {
 	@Transactional
 	public Combat nextCharacter(Long combatId) {
 		Combat combat = combatDao.get(combatId);
-		CombatCharacter currentCharacter = combat.getCurrentCharacter();
-		CombatCharacter nextCharacter = null;
-		NavigableSet<CombatCharacter> combatCharacters = combat.getCombatCharactersAsNavigableSet();
-		nextCharacter = combatCharacters.higher(currentCharacter);
-		if (nextCharacter == null) {
-			boolean end = combat.advance();
-			if (!end) {
-				nextCharacter = combatCharacters.first();
-			}
-		}
-		combat.setCurrentCharacter(nextCharacter);
+		SystemCombatItems systemCombatItems = combatDao.getSystemCombatItems(combat.getCampaign().getSystem());
+		combat.advance(systemCombatItems.getActions());
 		return combat;
 	}
 
 	@Transactional
 	public Combat previousCharacter(Long combatId) {
 		Combat combat = combatDao.get(combatId);
-		CombatCharacter currentCharacter = combat.getCurrentCharacter();
-		CombatCharacter nextCharacter = null;
-		NavigableSet<CombatCharacter> combatCharacters = combat.getCombatCharactersAsNavigableSet();
-		if(currentCharacter == null) {
-			nextCharacter = combatCharacters.last();
-		} else {
-			nextCharacter = combatCharacters.lower(currentCharacter);
-			if (nextCharacter == null) {
-				boolean end = combat.back();
-				if (!end) {
-					nextCharacter = combatCharacters.last();
-				} else {
-					nextCharacter = currentCharacter;
-				}
-			}	
-		}
-		combat.setCurrentCharacter(nextCharacter);
+		SystemCombatItems systemCombatItems = combatDao.getSystemCombatItems(combat.getCampaign().getSystem());
+		combat.back(systemCombatItems.getActions());
 		return combat;
 	}
 	
@@ -275,6 +272,33 @@ public class CombatService {
 
 	public List<Combat> getCombats(User user) {
 		return combatDao.getCombatsForUser(user.getName());
+	}
+
+	@Transactional
+	public Combat updateOrderAndActions(Long id,
+			Map<Long, OrderAndAction> charactersOrderAndActions) {
+		Combat combat = combatDao.get(id);
+		List<? extends SystemAction> actions = combatDao.getSystemCombatItems(combat.getCampaign().getSystem()).getActions();
+		for(CombatCharacter character : combat.getCombatCharacters()) {
+			OrderAndAction orderAndAction = charactersOrderAndActions.get(character.getId());
+			character.setOrder(orderAndAction.getOrder());
+			character.setCurrentAction(getCurrentAction(actions, orderAndAction.getAction()));
+		}
+		return combat;
+	}
+
+	private <T extends SystemAction> T getCurrentAction(List<T> actions,
+			String actionString) {
+		T currentAction = null;
+		for(T action : actions) {
+			if(action.getLabel().equalsIgnoreCase(actionString)) {
+				currentAction = action;
+			}
+			if(currentAction == null && action.getInitial()) {
+				currentAction = action;
+			}
+		}
+		return currentAction;
 	}
 
 

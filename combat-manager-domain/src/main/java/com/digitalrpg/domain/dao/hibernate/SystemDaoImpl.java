@@ -7,6 +7,7 @@ import org.hibernate.SessionFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.digitalrpg.domain.dao.SystemDao;
+import com.digitalrpg.domain.model.SystemAction;
 import com.digitalrpg.domain.model.pathfinder.PathfinderAction;
 import com.digitalrpg.domain.model.pathfinder.PathfinderCondition;
 import com.digitalrpg.domain.model.pathfinder.PathfinderMagicalEffect;

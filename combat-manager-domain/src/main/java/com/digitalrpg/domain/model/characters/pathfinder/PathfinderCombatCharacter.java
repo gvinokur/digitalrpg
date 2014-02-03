@@ -1,6 +1,7 @@
 package com.digitalrpg.domain.model.characters.pathfinder;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -13,11 +14,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.digitalrpg.domain.model.CombatCharacter;
+import com.digitalrpg.domain.model.SystemAction;
 import com.digitalrpg.domain.model.SystemCombatItem;
-import com.digitalrpg.domain.model.characters.SystemCharacter;
 import com.digitalrpg.domain.model.pathfinder.PathfinderAction;
 import com.digitalrpg.domain.model.pathfinder.PathfinderCondition;
 import com.digitalrpg.domain.model.pathfinder.PathfinderMagicalEffect;
@@ -26,7 +28,7 @@ import com.google.common.collect.Collections2;
 
 @Entity
 @Table(name = "pathfinder_combat_characters")
-public class PathfinderCombatCharacter extends CombatCharacter {
+public class PathfinderCombatCharacter extends CombatCharacter<PathfinderAction> {
 
 	private Integer currentHitPoints;
 	
@@ -35,7 +37,7 @@ public class PathfinderCombatCharacter extends CombatCharacter {
 	private Set<PathfinderCondition> conditions;
 	
 	private Set<PathfinderMagicalEffect> magicalEffects;
-
+	
 	public Integer getCurrentHitPoints() {
 		if(currentHitPoints == null) {
 			PathfinderCharacter pathfinderCharacter = (PathfinderCharacter) getCharacter();
@@ -127,6 +129,49 @@ public class PathfinderCombatCharacter extends CombatCharacter {
 			this.magicalEffects.remove(item);
 		}
 	}
-	
+
+	@Override
+	public void played(List<PathfinderAction> availableActions) {
+		if(BooleanUtils.isTrue(currentAction.getCurrent())) {
+			for(SystemAction action : availableActions) {
+				if(BooleanUtils.isTrue(action.getFinished())) {
+					currentAction = (PathfinderAction) action;
+				}
+			}
+		}
+	}
+
+	@Override
+	public void startPlaying(List<PathfinderAction> availableActions) {
+		if(BooleanUtils.isTrue(currentAction.getInitial())) {
+			for(SystemAction action : availableActions) {
+				if(BooleanUtils.isTrue(action.getCurrent())) {
+					currentAction = (PathfinderAction) action;
+				}
+			}
+		}
+	}
+
+	@Override
+	public void notPlayed(List<PathfinderAction> availableActions) {
+		if(BooleanUtils.isTrue(currentAction.getCurrent())) {
+			for(SystemAction action : availableActions) {
+				if(BooleanUtils.isTrue(action.getInitial())) {
+					currentAction = (PathfinderAction) action;
+				}
+			}
+		}
+	}
+
+	@Override
+	public void restartPlaying(List<PathfinderAction> availableActions) {
+		if(BooleanUtils.isTrue(currentAction.getFinished())) {
+			for(SystemAction action : availableActions) {
+				if(BooleanUtils.isTrue(action.getCurrent())) {
+					currentAction = (PathfinderAction) action;
+				}
+			}
+		}
+	}
 	
 }

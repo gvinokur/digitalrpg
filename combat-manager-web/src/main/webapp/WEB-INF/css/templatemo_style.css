@@ -753,35 +753,30 @@ div.templatemo_content.character_image {
 	outline: none;
 }
 
-.combat-character.current td:first-child{
+li.combat-character {
+	list-style: none;
+}
+
+.combat-character {
+	border-radius: 5px;
+	border: thin solid #FFF;
+}
+
+.combat-character.current {
+	border-radius: 5px;
+	border: thin solid #FF4040;
+}
+
+.combat-character.current div:first-child{
 	background: transparent url(../img/play.png) no-repeat center; 
-    border-left: thin solid #FF4040; 
     background-position-x: 0px;
 	background-size: contain;
-	border-radius: 5px 0px 0px 5px;
-}
-
-.combat-character.current td{
-    border-top: thin solid #FF4040;
-    border-bottom: thin solid #FF4040; 
-}
-
-.combat-character.current td:last-child{
-    border-right: thin solid #FF4040;
-    border-radius: 0px 5px 5px 0px; 
 }
 
 .combat-character.selected {
 	background-color: #999;
-	color: #fff
-}
-
-.combat-character.selected td:first-child{
-	border-radius: 5px 0px 0px 5px;
-}
-
-.combat-character.selected td:last-child{
-    border-radius: 0px 5px 5px 0px; 
+	color: #fff;
+	border-radius: 5px;
 }
 
 .combat-character {
@@ -795,10 +790,59 @@ div.templatemo_content.character_image {
 	border-bottom: 1px solid #c0c0c0;
 }
 
-.combat-character td {
+.combat-character div {
 	padding: 2px;
+	display: inline-block;
+	float: left;
+}
+
+.conditions-and-effects {
+	text-overflow: ellipsis;
+	width: 50%;
+	white-space:nowrap;
+	overflow: hidden;
+	color: #FF9900;
+}
+
+.character-name {
+	text-overflow: ellipsis;
+	width: 50%;
+	white-space:nowrap;
+	overflow: hidden;
+}
+
+.initiative {
+	text-overflow: ellipsis;
+	width: 25%;
+	white-space:nowrap;
+	overflow: hidden;
+}
+
+.combat-character div.hp {
+	float: right;
+	margin-top: 5px;
+	margin-right: 5px;
+	height: 25px;
+	border-radius: 5px;
+}
+
+.selected-char {
+	height: 100%;
 }
 
 .narrow_input {
 	width: 20px;
+}
+
+div.titles {
+	width:100%;
+}
+
+div.lane {
+	width: 33%;
+	height: 30px;
+	color: #fff;
+	font-weight: bold;
+	font-size: 14px;
+	display: inline-block;
 }

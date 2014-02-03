@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,6 +30,7 @@ import com.digitalrpg.domain.model.SystemCombatItems;
 import com.digitalrpg.domain.model.User;
 import com.digitalrpg.web.controller.model.CombatCharacterVO;
 import com.digitalrpg.web.controller.model.CreateCombatVO;
+import com.digitalrpg.web.controller.model.OrderAndAction;
 import com.digitalrpg.web.service.CampaignService;
 import com.digitalrpg.web.service.CombatService;
 import com.digitalrpg.web.service.combat.ItemAction;
@@ -88,6 +90,7 @@ public class CombatController {
 		return new ModelAndView("/combat-admin", modelMap);
 	}
 	
+
 	@RequestMapping(value = "/{id}/start", method = RequestMethod.GET)
 	public ModelAndView startCombat(@PathVariable Long id, Principal principal, RedirectAttributes redirectAttributes) {
 		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
@@ -102,8 +105,10 @@ public class CombatController {
 			return new ModelAndView("redirect:/campaigns/" + combat.getCampaign().getId() + "/show");
 		}
 		combatService.startCombat(combat);
-		
-		return new ModelAndView("/combat-gm", "combat", combat);
+		SystemCombatItems items = combatService.getSystemCombatItems(combat.getCampaign().getSystem());
+		modelMap.put("combat", combat);
+		modelMap.put("items", items);	
+		return new ModelAndView("/combat-gm", modelMap);
 	}
 	
 	@RequestMapping(value = "/{id}/console/show", method = RequestMethod.GET)
@@ -171,6 +176,18 @@ public class CombatController {
 			return new ResponseEntity("Only the game master can update the current user", HttpStatus.FORBIDDEN);
 		}
 		
+	}
+	
+	@RequestMapping(value = "{id}/character/orderAndAction", method = RequestMethod.POST)
+	public ResponseEntity<?> updateOrderAndActions(@PathVariable Long id, @RequestBody Map<Long, OrderAndAction> charactersOrderAndActions, Principal principal) {
+		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+		Combat combat = combatService.getCombat(id);
+		if(combat.getCampaign().getGameMaster().equals(user)) {
+			combat = combatService.updateOrderAndActions(id, charactersOrderAndActions);
+			return new ResponseEntity(combatService.getStatus(combat), HttpStatus.OK);
+		} else {
+			return new ResponseEntity("Only the game master can update the current user", HttpStatus.FORBIDDEN);
+		}
 	}
 	
 	@RequestMapping(value = "/characters/{id}", method = RequestMethod.GET)

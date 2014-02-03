@@ -1,5 +1,8 @@
 package com.digitalrpg.domain.model;
 
+import java.util.List;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -18,7 +21,7 @@ import com.digitalrpg.domain.model.characters.SystemCharacter;
 @Entity
 @Table(name = "combat_characters")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class CombatCharacter {
+public abstract class CombatCharacter<ACTION_TYPE extends SystemAction> {
 
 	private Long id;
 	
@@ -27,6 +30,8 @@ public abstract class CombatCharacter {
 	private SystemCharacter character;
 	
 	private Long initiative;
+	
+	private Long order;
 	
 	private Boolean hidden;
 	
@@ -78,8 +83,39 @@ public abstract class CombatCharacter {
 		this.id = id;
 	}
 
+	@Column(name = "CHARACTER_ORDER")
+	public Long getOrder() {
+		return order;
+	}
+
+	public void setOrder(Long order) {
+		this.order = order;
+	}
+	
 	public abstract void addItem(SystemCombatItem item);
 
 	public abstract void removeItem(SystemCombatItem item);
+
+	/**
+	 * The current character has finished playing, if it can be done, automatically mark as played
+	 */
+	public abstract void played(List<ACTION_TYPE> availableActions);
+	
+	/**
+	 * The current character has become the active player, if it can be done, mark automatically as playing
+	 */
+	public abstract void startPlaying(List<ACTION_TYPE> availableActions);
+
+	/**
+	 * Used when rolling back, if the user was the active payer, mark it as not played.
+	 */
+	public abstract void notPlayed(List<ACTION_TYPE> availableActions);
+
+	/**
+	 * Used when rolling back, if the user had finished playing, restart playing.
+	 */
+	public abstract void restartPlaying(List<ACTION_TYPE> availableActions) ;
+
+	public abstract void setCurrentAction(ACTION_TYPE action);
 	
 }
