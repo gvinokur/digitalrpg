@@ -23,6 +23,7 @@
 	<div class="templatemo_content margin_right_10" style="width: 470px;">
 		<div class="combat_header">
 			Round <span id="round">${combat.currentRound }</span>/${combat.roundsPerTurn } - Turn <span id="turn">${combat.currentTurn }</span>/${combat.turns }
+			<div class="right"><input id="end_button" type="Button" value="End Combat" class="small_button"></input></div>
 		</div>
 		<div class="titles">
 			<div class="lane" style="text-align: right;">Playing</div>
@@ -241,6 +242,10 @@
 					$(".combat-character[character-id=" + combatCharacter.id+ "] .conditions-and-effects").attr("title",combatCharacter.conditions_and_effects_string)
 				}
 			})
+    	})
+    	<c:url var="endCombatUrl" value="/combats/${combat.id}/end"/>
+    	$("#end_button").click(function(){
+    		window.location = "${endCombatUrl}"
     	})
     	
     	//Initial set up of conditions:

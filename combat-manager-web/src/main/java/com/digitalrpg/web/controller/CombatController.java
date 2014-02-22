@@ -128,6 +128,23 @@ public class CombatController {
 		return new ModelAndView(viewName, modelMap);
 	}
 	
+	@RequestMapping(value = "/{id}/end", method = RequestMethod.GET)
+	public ModelAndView endCombat(@PathVariable Long id, Principal principal, RedirectAttributes redirectAttributes) {
+		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+		Map<String, Object> modelMap = new HashMap<String, Object>();
+		Combat combat = combatService.getCombat(id);
+		String viewName = null;
+		if(combat.getCampaign().getGameMaster().equals(user)) {
+			combatService.endCombat(combat);
+			redirectAttributes.addFlashAttribute("form_message", "Combat " + combat.getName() +" finished");
+			viewName = "redirect:/campaigns/" + combat.getCampaign().getId() + "/show";
+		} else {
+			redirectAttributes.addFlashAttribute("error_message", "Cannot end combat, you must be the GM to end it");
+			viewName = "redirect:/combats";
+		}
+		return new ModelAndView(viewName, modelMap);
+	}
+	
 	@RequestMapping(value = "/character/{attributeName}", method = RequestMethod.POST)
 	public ResponseEntity<?> updateCombatCharacterAttribute(@PathVariable String attributeName, @RequestParam("pk") Long id, @RequestParam("value") String value, Principal principal) {
 		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();

@@ -301,6 +301,12 @@ public class CombatService {
 		return currentAction;
 	}
 
+	@Transactional
+	public void endCombat(Combat combat) {
+		combat = this.getCombat(combat.getId());
+		combat.setActive(Boolean.FALSE);
+	}
+
 
 
 }

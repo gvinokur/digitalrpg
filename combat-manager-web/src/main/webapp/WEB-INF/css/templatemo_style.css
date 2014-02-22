@@ -12,7 +12,7 @@ body {
 	background-position: 0 -100px;
 }
 
-div.overriden, .overriden { 
+div.overriden,.overriden {
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 12px;
 	color: #999;
@@ -508,7 +508,7 @@ a.search_result:hover {
 	padding: 0 0 0 0;
 }
 
-.hidden, div.hidden {
+.hidden,div.hidden {
 	display: none;
 }
 
@@ -537,7 +537,7 @@ div.templatemo_content.character_image {
 	width: 136px;
 }
 
-.character_image img{
+.character_image img {
 	width: 134px;
 	border: 1px solid #999;
 }
@@ -723,32 +723,39 @@ div.templatemo_content.character_image {
 }
 
 /* Tabs */
-#tabs { 
-    background: transparent; 
-    border: none; 
-} 
-#tabs .ui-widget-header { 
-    background: transparent; 
-    border: none; 
-    border-bottom: 1px solid #c0c0c0; 
-    -moz-border-radius: 0px; 
-    -webkit-border-radius: 0px; 
-    border-radius: 0px; 
-} 
-#tabs .ui-tabs-nav .ui-state-default { 
-    background: transparent; 
-    border: none; 
-} 
-#tabs .ui-tabs-nav .ui-state-active { 
-    background: transparent url(../img/uiTabsArrow.png) no-repeat bottom center; 
-    border: none; 
-} 
-#tabs .ui-tabs-nav .ui-state-default a { 
-    color: #c0c0c0; 
-} 
-#tabs .ui-tabs-nav .ui-state-active a { 
-    color: #459e00; 
+#tabs {
+	background: transparent;
+	border: none;
 }
+
+#tabs .ui-widget-header {
+	background: transparent;
+	border: none;
+	border-bottom: 1px solid #c0c0c0;
+	-moz-border-radius: 0px;
+	-webkit-border-radius: 0px;
+	border-radius: 0px;
+}
+
+#tabs .ui-tabs-nav .ui-state-default {
+	background: transparent;
+	border: none;
+}
+
+#tabs .ui-tabs-nav .ui-state-active {
+	background: transparent url(../img/uiTabsArrow.png) no-repeat bottom
+		center;
+	border: none;
+}
+
+#tabs .ui-tabs-nav .ui-state-default a {
+	color: #c0c0c0;
+}
+
+#tabs .ui-tabs-nav .ui-state-active a {
+	color: #459e00;
+}
+
 :focus {
 	outline: none;
 }
@@ -767,9 +774,9 @@ li.combat-character {
 	border: thin solid #FF4040;
 }
 
-.combat-character.current div:first-child{
-	background: transparent url(../img/play.png) no-repeat center; 
-    background-position-x: 0px;
+.combat-character.current div:first-child {
+	background: transparent url(../img/play.png) no-repeat center;
+	background-position-x: 0px;
 	background-size: contain;
 }
 
@@ -799,7 +806,7 @@ li.combat-character {
 .conditions-and-effects {
 	text-overflow: ellipsis;
 	width: 50%;
-	white-space:nowrap;
+	white-space: nowrap;
 	overflow: hidden;
 	color: #FF9900;
 }
@@ -807,14 +814,14 @@ li.combat-character {
 .character-name {
 	text-overflow: ellipsis;
 	width: 50%;
-	white-space:nowrap;
+	white-space: nowrap;
 	overflow: hidden;
 }
 
 .initiative {
 	text-overflow: ellipsis;
 	width: 25%;
-	white-space:nowrap;
+	white-space: nowrap;
 	overflow: hidden;
 }
 
@@ -835,7 +842,9 @@ li.combat-character {
 }
 
 div.titles {
-	width:100%;
+	width: 100%;
+	clear: both;
+	padding-top: 5px;
 }
 
 div.lane {
@@ -844,5 +853,14 @@ div.lane {
 	color: #fff;
 	font-weight: bold;
 	font-size: 14px;
+	display: inline-block;
+}
+
+.gridster li.preview-holder {
+	opacity: 0;
+}
+
+div.right {
+	float: right;
 	display: inline-block;
 }
