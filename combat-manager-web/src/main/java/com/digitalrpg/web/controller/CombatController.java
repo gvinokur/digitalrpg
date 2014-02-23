@@ -26,11 +26,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.Combat;
 import com.digitalrpg.domain.model.CombatCharacter;
+import com.digitalrpg.domain.model.SystemAction;
 import com.digitalrpg.domain.model.SystemCombatItems;
 import com.digitalrpg.domain.model.User;
 import com.digitalrpg.web.controller.model.CombatCharacterVO;
 import com.digitalrpg.web.controller.model.CreateCombatVO;
 import com.digitalrpg.web.controller.model.OrderAndAction;
+import com.digitalrpg.web.controller.model.status.CombatStatusVO;
 import com.digitalrpg.web.service.CampaignService;
 import com.digitalrpg.web.service.CombatService;
 import com.digitalrpg.web.service.combat.ItemAction;
@@ -123,6 +125,8 @@ public class CombatController {
 		if(combat.getCampaign().getGameMaster().equals(user)) {
 			viewName = "/combat-gm";
 		} else {
+			CombatCharacter<SystemAction> playerCharacter = combatService.getPlayerCharacter(combat, user);
+			modelMap.put("playerCharacter", playerCharacter);
 			viewName = "/combat-player";
 		}
 		return new ModelAndView(viewName, modelMap);
@@ -213,5 +217,15 @@ public class CombatController {
 		CombatCharacter combatCharacter = combatService.getCombatCharacter(id);
 		return CombatService.combatCharacterToVOfunction.apply(combatCharacter);
 	}
+	
+	@RequestMapping(value = "/{id}/status", method = RequestMethod.GET)
+	@ResponseBody
+	public ResponseEntity<CombatStatusVO> getCurrrentStatus(@PathVariable Long id) {
+		Combat combat = combatService.getCombat(id);
+		CombatStatusVO status = combatService.getStatus(combat, true);
+		//TODO: Verify if changed, then send only if modified. (Use Last-Modified, If-Modified-Since or ETag headers)
+		return new ResponseEntity<CombatStatusVO>(status, HttpStatus.OK);
+	}
+	
 	
 }

@@ -14,12 +14,13 @@ import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 
 import com.digitalrpg.domain.model.Campaign;
+import com.digitalrpg.domain.model.User;
 
 
 @Entity
 @Table(name = "system_character")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class SystemCharacter {
+public abstract class SystemCharacter {
 	
 	private Long id;
 	
@@ -67,6 +68,10 @@ public class SystemCharacter {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public boolean belongsTo(User user) {
+		return character.belongsTo(user);
 	}
 	
 	

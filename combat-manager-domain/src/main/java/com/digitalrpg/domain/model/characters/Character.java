@@ -10,6 +10,8 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import com.digitalrpg.domain.model.User;
+
 /**
  * 
  * @author gvinokur
@@ -18,7 +20,7 @@ import org.hibernate.annotations.GenericGenerator;
 @Entity
 @Table(name = "characters")
 @Inheritance(strategy = InheritanceType.JOINED)
-public class Character {
+public abstract class Character {
 
 	private Long id;
 	
@@ -27,7 +29,6 @@ public class Character {
 	private int level = 1;
 	
 	private String pictureUrl;
-
 	
 	private String description;
 	
@@ -79,6 +80,10 @@ public class Character {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public boolean belongsTo(User user) {
+		return false;
 	}
 	
 }

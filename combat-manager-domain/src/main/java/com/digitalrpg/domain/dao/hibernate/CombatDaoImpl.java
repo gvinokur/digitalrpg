@@ -2,8 +2,11 @@ package com.digitalrpg.domain.dao.hibernate;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.digitalrpg.domain.dao.CombatDao;
@@ -21,6 +24,8 @@ import com.digitalrpg.domain.model.pathfinder.PathfinderCombatItems;
 
 public class CombatDaoImpl extends HibernateDao implements CombatDao {
 
+	private static Logger logger = LoggerFactory.getLogger(CombatDaoImpl.class);
+
 	private CombatFactory combatFactory;
 
 	public CombatDaoImpl(SessionFactory sessionFactory,
@@ -32,16 +37,22 @@ public class CombatDaoImpl extends HibernateDao implements CombatDao {
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
 	public List<Combat> getCombatsForUser(final String user) {
-		List<Combat> combatAsPlayer = sessionFactory.getCurrentSession().createQuery("select distinct combat from Campaign c join c.playerCharacters psc join c.combats combat, PlayerCharacter pc where combat.active = true and psc!= null and psc.character = pc and pc.owner.name = :user")
-			.setParameter("user", user).list();
-		List<Combat> combatsAsGameMaster = sessionFactory.getCurrentSession().createQuery("select combat from Campaign c join c.combats combat where c.gameMaster.name = :user and combat.active = true")
+		List<Combat> combatAsPlayer = sessionFactory
+				.getCurrentSession()
+				.createQuery(
+						"select distinct combat from Campaign c join c.playerCharacters psc join c.combats combat, PlayerCharacter pc where combat.active = true and psc!= null and psc.character = pc and pc.owner.name = :user")
+				.setParameter("user", user).list();
+		List<Combat> combatsAsGameMaster = sessionFactory
+				.getCurrentSession()
+				.createQuery(
+						"select combat from Campaign c join c.combats combat where c.gameMaster.name = :user and combat.active = true")
 				.setParameter("user", user).list();
 		List<Combat> sorted = new LinkedList<Combat>();
 		sorted.addAll(combatsAsGameMaster);
 		sorted.addAll(combatAsPlayer);
 		return sorted;
 	}
-	
+
 	@Transactional
 	public Combat createCombat(String name, String description,
 			Campaign campaign, SystemCombatProperties systemCombatProperties) {
@@ -68,7 +79,16 @@ public class CombatDaoImpl extends HibernateDao implements CombatDao {
 				.createQuery("from Combat where id = ?").setParameter(0, id)
 				.list();
 		if (list.size() == 1) {
-			return list.get(0);
+			Combat combat = list.get(0);
+			// Hack to avoid having combat characters fetched eager (Get them
+			// multiple times) but also allow for getting them outside the
+			// transaction.
+			// Assignment is important to avoid removal of code while
+			// optimization
+			Set<CombatCharacter> combatCharacters = combat
+					.getCombatCharacters();
+			logger.debug("foo:" + combatCharacters.size());
+			return combat;
 		}
 		return null;
 	}
@@ -76,7 +96,8 @@ public class CombatDaoImpl extends HibernateDao implements CombatDao {
 	@Transactional
 	public void startCombat(Combat combat) {
 		combat.setActive(true);
-		CombatCharacter combatCharacter = combat.getCombatCharacters().iterator().next();
+		CombatCharacter combatCharacter = combat.getCombatCharacters()
+				.iterator().next();
 		combat.setCurrentCharacter(combatCharacter);
 		// System Specific configuration:
 		switch (combat.getCampaign().getSystem()) {
@@ -110,9 +131,12 @@ public class CombatDaoImpl extends HibernateDao implements CombatDao {
 		switch (system) {
 		case Pathfinder:
 			PathfinderCombatItems items = new PathfinderCombatItems();
-			items.setActions(this.sessionFactory.getCurrentSession().createQuery("from PathfinderAction").list());
-			items.setConditions(this.sessionFactory.getCurrentSession().createQuery("from PathfinderCondition").list());
-			items.setMagicalEffects(this.sessionFactory.getCurrentSession().createQuery("from PathfinderMagicalEffect").list());
+			items.setActions(this.sessionFactory.getCurrentSession()
+					.createQuery("from PathfinderAction").list());
+			items.setConditions(this.sessionFactory.getCurrentSession()
+					.createQuery("from PathfinderCondition").list());
+			items.setMagicalEffects(this.sessionFactory.getCurrentSession()
+					.createQuery("from PathfinderMagicalEffect").list());
 			return items;
 
 		default:
@@ -125,8 +149,10 @@ public class CombatDaoImpl extends HibernateDao implements CombatDao {
 	@Transactional(readOnly = true)
 	public <T> T getCombatItem(Class<T> clazz, Long id) {
 		String itemClassName = clazz.getSimpleName();
-		List list = this.sessionFactory.getCurrentSession().createQuery("from " + itemClassName + " where id = ?").setParameter(0, id).list();
-		if(list.size() == 1) {
+		List list = this.sessionFactory.getCurrentSession()
+				.createQuery("from " + itemClassName + " where id = ?")
+				.setParameter(0, id).list();
+		if (list.size() == 1) {
 			return (T) list.get(0);
 		}
 		return null;

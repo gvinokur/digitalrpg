@@ -1,4 +1,5 @@
-package com.digitalrpg.web.controller.model;
+package com.digitalrpg.web.controller.model.status;
+
 
 public class PathfinderCombatStatusVO extends CombatStatusVO {
 

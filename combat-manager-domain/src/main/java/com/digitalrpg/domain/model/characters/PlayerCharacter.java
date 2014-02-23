@@ -23,5 +23,11 @@ public class PlayerCharacter extends Character{
 	public void setOwner(User user) {
 		this.owner = user;
 	}
+
+	@Override
+	public boolean belongsTo(User user) {
+	
+		return owner.equals(user);
+	}
 	
 }

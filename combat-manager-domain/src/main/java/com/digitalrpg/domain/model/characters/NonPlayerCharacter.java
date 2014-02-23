@@ -34,4 +34,8 @@ public class NonPlayerCharacter extends Character{
 		this.isPublic = isPublic;
 	}
 	
+	@Override
+	public boolean belongsTo(User user) {
+		return createdBy.equals(user);
+	}
 }

@@ -81,7 +81,7 @@ public abstract class Combat {
 		this.campaign = campaign;
 	}
 
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "combat")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "combat")
 	@Sort(comparator  =CombatCharacterComparator.class, type = SortType.COMPARATOR)
 	public Set<CombatCharacter> getCombatCharacters() {
 		return this.combatCharacters;
