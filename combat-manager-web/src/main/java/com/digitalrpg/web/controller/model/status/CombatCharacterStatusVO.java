@@ -2,6 +2,10 @@ package com.digitalrpg.web.controller.model.status;
 
 public class CombatCharacterStatusVO implements Comparable<CombatCharacterStatusVO>{
 
+	private String name;
+	
+	private Long id;
+
 	private Long order;
 	
 	private Boolean hidden;
@@ -20,13 +24,18 @@ public class CombatCharacterStatusVO implements Comparable<CombatCharacterStatus
 		return this.getOrder().compareTo(o.getOrder());
 	}
 
+	
+	public Long getId() {
+		return id;
+	}
 
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public Long getOrder() {
 		return order;
 	}
-
-
 
 	public void setOrder(Long order) {
 		this.order = order;
@@ -38,6 +47,16 @@ public class CombatCharacterStatusVO implements Comparable<CombatCharacterStatus
 
 	public void setHidden(Boolean hidden) {
 		this.hidden = hidden;
+	}
+
+
+	public String getName() {
+		return name;
+	}
+
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }

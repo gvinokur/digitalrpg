@@ -2,4 +2,7 @@
     <decorator name="main" page="main.jsp">
           <pattern>/*</pattern>
     </decorator>
+    <decorator name="dev" page="dev.jsp">
+          <pattern>/dev/*</pattern>
+    </decorator>
 </decorators>

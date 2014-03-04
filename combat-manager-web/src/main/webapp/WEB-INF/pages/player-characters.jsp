@@ -91,7 +91,7 @@
                 </div>
             </div>
             
-        	<div id="view_character" character_id="${character.id }" class="templatemo_multi_content ${show_content == 'view_character'?'':'hidden' } dynamic">
+        	<div id="view_character" character_id="${systemCharacter.id }" class="templatemo_multi_content ${show_content == 'view_character'?'':'hidden' } dynamic">
 	        	<div class="templatemo_content width_70_p margin_right_10">
 	        		<div class="content_section">
 		        		<div class="header_02" id="character_name">${systemCharacter.character.name }</div>
@@ -182,7 +182,7 @@
 	          			alert("Could not send mail, please try again.");
 	          			$.blockUI({ message: $('#invite_user_form'), css: { width: '275px' } }); 
 	          		}
-	          	});
+	          	})
 	          }
         }) 
         

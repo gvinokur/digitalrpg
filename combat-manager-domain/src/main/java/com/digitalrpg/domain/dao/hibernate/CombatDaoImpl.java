@@ -7,6 +7,8 @@ import java.util.Set;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.digitalrpg.domain.dao.CombatDao;
@@ -63,13 +65,15 @@ public class CombatDaoImpl extends HibernateDao implements CombatDao {
 	}
 
 	@Transactional
-	public void createCharacter(Combat combat, SystemCharacter character,
+	public CombatCharacter createCharacter(Combat combat, SystemCharacter character,
 			Boolean hidden, Long initiative, Long order,
 			SystemCombatCharacterProperties properties) {
 		CombatCharacter combatCharacter = combatFactory.createCombatCharacter(
 				combat, character, hidden, initiative, order, properties);
 
 		sessionFactory.getCurrentSession().save(combatCharacter);
+		
+		return combatCharacter;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -156,6 +160,16 @@ public class CombatDaoImpl extends HibernateDao implements CombatDao {
 			return (T) list.get(0);
 		}
 		return null;
+	}
+
+	@Transactional(isolation = Isolation.SERIALIZABLE)
+	public void delete(CombatCharacter combatCharacter) {
+		this.sessionFactory.getCurrentSession().delete(combatCharacter);
+	}
+
+	@Transactional(isolation = Isolation.SERIALIZABLE)
+	public void update(Combat combat) {
+		this.sessionFactory.getCurrentSession().update(combat);
 	}
 
 }

@@ -1,12 +1,16 @@
 package com.digitalrpg.web.controller;
 
 import java.security.Principal;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.validation.Valid;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +33,7 @@ import com.digitalrpg.domain.model.CombatCharacter;
 import com.digitalrpg.domain.model.SystemAction;
 import com.digitalrpg.domain.model.SystemCombatItems;
 import com.digitalrpg.domain.model.User;
+import com.digitalrpg.domain.model.characters.SystemCharacter;
 import com.digitalrpg.web.controller.model.CombatCharacterVO;
 import com.digitalrpg.web.controller.model.CreateCombatVO;
 import com.digitalrpg.web.controller.model.OrderAndAction;
@@ -36,6 +41,12 @@ import com.digitalrpg.web.controller.model.status.CombatStatusVO;
 import com.digitalrpg.web.service.CampaignService;
 import com.digitalrpg.web.service.CombatService;
 import com.digitalrpg.web.service.combat.ItemAction;
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.Maps;
 
 @Controller
 @RequestMapping("/combats")
@@ -199,6 +210,33 @@ public class CombatController {
 		
 	}
 	
+	@RequestMapping(value = "{id}/character/{characterId}/add", method = RequestMethod.POST)
+	public ResponseEntity<?> addCharacter(@PathVariable Long id, @PathVariable Long characterId, Principal principal) {
+		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+		Combat combat = combatService.getCombat(id);
+		if(combat.getCampaign().getGameMaster().equals(user)) {
+			combat = combatService.addCombatant(combat, characterId);
+			return new ResponseEntity(combatService.getStatus(combat, true), HttpStatus.OK);
+		} else {
+			return new ResponseEntity("Only the game master can update the current user", HttpStatus.FORBIDDEN);
+		}
+	}
+	
+	@RequestMapping(value = "{id}/character/{characterId}/delete", method = RequestMethod.POST)
+	public ResponseEntity<?> deleteCharacter(@PathVariable Long id, @PathVariable Long characterId, Principal principal) {
+		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+		Combat combat = combatService.getCombat(id);
+		if(combat.getCampaign().getGameMaster().equals(user)) {
+			combatService.deleteCombatant(combat, characterId);
+			//Reload changes
+			combat = combatService.getCombat(combat.getId());
+			return new ResponseEntity(combatService.getStatus(combat, true), HttpStatus.OK);
+		} else {
+			return new ResponseEntity("Only the game master can update the current user", HttpStatus.FORBIDDEN);
+		}
+		
+	}
+	
 	@RequestMapping(value = "{id}/character/orderAndAction", method = RequestMethod.POST)
 	public ResponseEntity<?> updateOrderAndActions(@PathVariable Long id, @RequestBody Map<Long, OrderAndAction> charactersOrderAndActions, Principal principal) {
 		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
@@ -225,6 +263,34 @@ public class CombatController {
 		CombatStatusVO status = combatService.getStatus(combat, true);
 		//TODO: Verify if changed, then send only if modified. (Use Last-Modified, If-Modified-Since or ETag headers)
 		return new ResponseEntity<CombatStatusVO>(status, HttpStatus.OK);
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@RequestMapping(value ="/{id}/nonPlayingCombatants", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<Long, String> getNonPlayingCombatants(@PathVariable Long id) {
+		Combat combat = combatService.getCombat(id);
+		
+		Campaign campaign = combat.getCampaign();
+		Collection<SystemCharacter> playingCharacter =  
+				Collections2.transform(combat.getCombatCharacters(), new Function<CombatCharacter, SystemCharacter>() {
+					@Override
+					public SystemCharacter apply(CombatCharacter input) {
+						return input.getCharacter();
+					}
+				});
+		Builder<Long, String> builder = ImmutableMap.builder();
+		for(SystemCharacter c : combat.getCampaign().getNonPlayerCharacters()) {
+			if(!playingCharacter.contains(c)) {
+				builder.put(c.getId(), c.getCharacter().getName());
+			}
+		}
+		for(SystemCharacter c : combat.getCampaign().getPlayerCharacters()) {
+			if(!playingCharacter.contains(c)) {
+				builder.put(c.getId(), c.getCharacter().getName());
+			}
+		}
+		return builder.build();
 	}
 	
 	

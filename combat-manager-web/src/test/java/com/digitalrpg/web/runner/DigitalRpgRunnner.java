@@ -1,27 +1,9 @@
 package com.digitalrpg.web.runner;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.eclipse.jetty.annotations.AbstractDiscoverableAnnotationHandler;
 import org.eclipse.jetty.annotations.AnnotationConfiguration;
-import org.eclipse.jetty.annotations.AnnotationDecorator;
-import org.eclipse.jetty.annotations.AnnotationParser;
-import org.eclipse.jetty.annotations.AnnotationParser.DiscoverableAnnotationHandler;
 import org.eclipse.jetty.annotations.ClassInheritanceHandler;
-import org.eclipse.jetty.annotations.ClassNameResolver;
-import org.eclipse.jetty.annotations.WebFilterAnnotationHandler;
-import org.eclipse.jetty.annotations.WebListenerAnnotationHandler;
-import org.eclipse.jetty.annotations.WebServletAnnotationHandler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.MultiMap;
-import org.eclipse.jetty.util.resource.FileResource;
-import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.webapp.Configuration;
 import org.eclipse.jetty.webapp.TagLibConfiguration;
 import org.eclipse.jetty.webapp.WebAppContext;

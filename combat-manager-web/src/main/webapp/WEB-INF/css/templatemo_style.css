@@ -411,6 +411,14 @@ img {
 	width: 40px;
 }
 
+.generic_label.micro {
+	width: 20px;
+}
+
+.generic_value.micro {
+	width: 20px;
+}
+
 .generic_field {
 	padding: 5px 0 0 0;
 	height: 20px;
@@ -436,6 +444,10 @@ img {
 
 .generic_field.tinier {
 	width: 50px;
+}
+
+.generic_field.micro {
+	width: 25px;
 }
 
 input[type="checkbox"].generic_field {
@@ -831,6 +843,7 @@ li.combat-character {
 	margin-right: 5px;
 	height: 25px;
 	border-radius: 5px;
+	border: 1px solid white;
 }
 
 .selected-char {
@@ -863,4 +876,24 @@ div.lane {
 div.right {
 	float: right;
 	display: inline-block;
+}
+
+.loading-gridster {
+	background-image: url("../img/loading_1.gif");
+	height: 128px;
+	width: 100%;
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-position-x: 170px;
+}
+
+.loading-gridster.small {
+	height: 100px;
+	background-position-x: 130px; 
+}
+
+.combat-actions {
+	width: 105%;
+	margin-top: 20px;
+	margin-left: -20px;
 }

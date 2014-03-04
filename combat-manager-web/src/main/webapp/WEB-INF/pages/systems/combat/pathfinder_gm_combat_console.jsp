@@ -30,7 +30,9 @@
 			<div class="lane" style="text-align: center;">Ready</div>
 			<div class="lane" style="text-align: left;">Delayed</div>
 		</div>
-		<div class="gridster">
+		<div class="loading-gridster"><!--  -->
+		</div>
+		<div class="gridster" style="display: none;">
 			<ul>
 				<c:forEach items="${combat.combatCharacters }" var="combatCharacter" varStatus="index">
 					<li data-row="${index.count }" data-col="${combatCharacter.currentAction.ready ? '2' : combatCharacter.currentAction.delayed ? '3' : '1'  }" data-sizex="3" data-sizey="1" character-id="${combatCharacter.id}" class="${combatCharacter.id == combat.currentCharacter.id?'current selected':'' } combat-character">
@@ -74,11 +76,19 @@
 				</c:forEach>
 			</ul>
 		</div>
-		<input id="next_button" type="Button" value="Next" class="small_button"></input>
-		<input id="previous_button" type="Button" value="Previous" class="small_button"></input>
+		<div class="combat-actions">
+			<input id="next_button" type="Button" value="Next" class="small_button"></input>
+			<input id="previous_button" type="Button" value="Previous" class="small_button"></input>
+			
+			<input id="add_combatant_button" type="Button" value="Add ..." class="small_button"></input>
+			<input id="remove_combatant_button" type="Button" value="Remove" class="small_button"></input>
+		</div>
+		
 	</div>
-	<div id="character-details" class="templatemo_content" style="width: 390px;">
-		<div id="tabs">
+	<div id="character-details" class="templatemo_content" style="width: 390px;padding-bottom: 20px;">
+		<div class="loading-gridster small"><!--  -->
+		</div>
+		<div id="tabs" style="display: none;">
 			<ul>
 				<li><a href="#image">Image</a></li>
 				<li><a href="#stats">Stats</a></li>
@@ -125,12 +135,51 @@
 		
 	</div>
 	
+	<div id="add_combatant" style="display:none; cursor: default"> 
+   			<form:form id="add_combatant_form">
+   				<h2>Add Combatant</h2>
+   				<p>Add a campaign character to the current combat</p>
+   				<div class="margin_bottom_20">&#160;</div>
+   				
+				<div class="generic_label">
+					<label for="email">Character</label>
+				</div>
+				<div class="generic_label narrow">
+					<select id="nonPlayingCombants">&#160;</select>
+				</div>
+				
+				<div class="margin_bottom_20">&#160;</div>
+				
+				<input id="confirm_add_combatant_button" type="button" value="Add" class="small_button">
+           		</input>
+           		<input id="cancel_add_combatant_button" type="button" value="Cancel" class="small_button">
+           		</input>  
+   			</form:form>
+   		</div>
+   		
+   		<div id="remove_combatant" style="display:none; cursor: default"> 
+   			<form:form id="add_combatant_form">
+   				<h2>Remove Combatant</h2>
+   				<p>Remove <span id="character_to_remove"><!--  --></span> from Combat?</p>
+   				<div class="margin_bottom_20">&#160;</div>
+   				
+				<input id="confirm_remove_combatant_button" type="button" value="Confirm" class="small_button">
+           		</input>
+           		<input id="cancel_remove_combatant_button" type="button" value="Cancel" class="small_button">
+           		</input>  
+   			</form:form>
+   		</div>
 	<script>
+	var gridster;
+	
     $(document).ready(function() {
+    	$(".loading-gridster").css("display","none");
+    	$("#tabs").css("display","block");
     	$("#tabs").tabs();
     
     	<c:url var="updateOrderAndActionUrl" value="/combats/${combat.id}/character/orderAndAction"/>
-    	$(".gridster ul").gridster({
+    	$(".gridster").css("display","block");
+    	gridster = $(".gridster ul").gridster({
             widget_margins: [5, 5],
             widget_base_dimensions: [85, 40],
             min_cols:5,
@@ -150,7 +199,7 @@
         			})
             	}
             }
-        });
+        }).data("gridster");
     	
 //     	$.fn.editable.defaults.mode = 'inline';
     	$.fn.editable.defaults.ajaxOptions = {
@@ -214,7 +263,7 @@
     		})
     	})
     	
-    	$(".combat-character").click(function(){
+    	$(".gridster").on("click",".combat-character", function(){
     		$(".combat-character").removeClass("selected")
     		$(this).addClass("selected")
     		showCharacter($(this).attr("character-id"))
@@ -252,6 +301,109 @@
     	<c:forEach items="${combat.currentCharacter.conditions}" var="condition">
     	$(".condition input[type=checkbox][condition-id=${condition.id}]").prop("checked", true)
     	</c:forEach>
+    	
+    	<c:url var="nonPlayingCombatantsUrl" value="/combats/${combat.id}/nonPlayingCombatants"/>
+    	$("#add_combatant_button").click(function(){
+    		$("#nonPlayingCombants option").remove();
+    		$.ajax({
+    			url: "${nonPlayingCombatantsUrl}",
+    			dataType: "json",
+    			type: "GET",
+    			async : false,
+    			success : function(characters) {
+    				//Only update the HP as the rest is managed in the page. 
+    				for(character in characters) {
+    					$("#nonPlayingCombants").append($("<option/>").val(character).text(characters[character]))
+    				}
+    			}
+    		});
+    		$.blockUI({ message: $('#add_combatant'), css: { width: '325px' } });
+    	})
+    	
+    	$("#remove_combatant_button").click(function(){
+    		$("#character_to_remove").text($(".combat-character.selected .character-name").text())
+    		$.blockUI({ message: $('#remove_combatant'), css: { width: '325px' } });
+    	})
+    	
+    	<c:url var="addCombatantUrl" value="/combats/${combat.id}/character/[characterId]/add"/>
+    	$('#confirm_add_combatant_button').click(function(){
+    		var url = "${addCombatantUrl}".replace("[characterId]", $("#nonPlayingCombants").val())
+    		$.ajax({
+				url : url,
+				dataType : "json",
+				type : "POST",
+				async : false,
+				beforeSend : beforePost,
+				success : function (combatStatus) {
+					//Add not existing character
+					for(index in combatStatus.combat_characters) {
+						character = combatStatus.combat_characters[index]
+						characterWidget = $(".combat-character[character-id='"+ character.id +"']")
+						if(characterWidget.size() == 0) {
+							newWidget = $(".combat-character").first().clone();
+							html = newWidget.attr("character-id", character.id).get();
+							gridster.add_widget( 
+									html, 3, 1, 
+									character.current_action == "Ready" ? '2' : character.current_action == "Delayed" ? '3' : '1', 
+									parseInt(index)+1)
+							characterWidget = $(".combat-character[character-id='"+ character.id +"']")
+							$(".character-name",characterWidget).text(character.name)
+							$(".initiative",characterWidget).text("Initiative 0")
+							$(".conditions-and-effects", characterWidget).text(character.conditions_and_effects)
+							$(".conditions-and-effects", characterWidget).attr("title", character.conditions_and_effects)
+							$(".hp", characterWidget).css('background-color',character.current_hit_point_status).css('color',character.current_hit_point_status)
+							characterWidget.removeClass("selected")
+							characterWidget.removeClass("current")
+						} else {
+							characterWidget.attr("data-row", parseInt(index)+1)
+						}
+						
+					}
+				}
+			})
+        	$.unblockUI();
+        })
+    	
+        <c:url var="removeCombatantUrl" value="/combats/${combat.id}/character/[characterId]/delete"/>
+    	$('#confirm_remove_combatant_button').click(function(){
+    		var url = "${removeCombatantUrl}".replace("[characterId]", $(".combat-character.selected").attr("character-id"))
+    		$.ajax({
+				url : url,
+				dataType : "json",
+				type : "POST",
+				async : false,
+				beforeSend : beforePost,
+				success : function (combatStatus) {
+					//Add not existing character
+					$(".combat-character").each(function() {
+						var found = false;
+						for(index in combatStatus.combat_characters) {
+							character = combatStatus.combat_characters[index]
+							if(character.id == $(this).attr("character-id")) {
+								found = true;
+								//TODO: Hid hidden.
+							}
+						}
+						if(!found) {
+							gridster.remove_widget($(this).get());
+						}
+					})
+					$(".combat-character[character-id='"+ combatStatus.current_character_id +"']").addClass("current").click();
+					
+				}
+			})
+        	$.unblockUI();
+        })
+        
+    	$('#cancel_add_combatant_button').click(function(){
+        	$.unblockUI();
+        })
+        
+        $('#cancel_remove_combatant_button').click(function(){
+        	$.unblockUI();
+        })
+        
+    	poll();
     })	
     
     function buildSortAndStatusData() {
@@ -323,6 +475,31 @@
 	        (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
 	        // or any other URL that isn't scheme relative or absolute i.e relative.
 	        !(/^(\/\/|http:|https:).*/.test(url));
+	}
+	
+	<c:url var="combatStatusUrl" value="/combats/${combat.id}/status"/>
+	function poll() {
+		var url = "${combatStatusUrl}"
+    	$.ajax({
+			url: url,
+			dataType: "json",
+			type: "GET",
+			success : function(combatStatus) {
+				//Only update the HP as the rest is managed in the page. 
+				for(var i = 0; i &lt; combatStatus.combat_characters.length; i++) {
+					character = combatStatus.combat_characters[i];
+					characterWidget = $(".combat-character[character-id='"+ character.id +"']")
+					if(!character.hidden) {
+						if(characterWidget.size() == 1) {
+							$(".hp", characterWidget).css('background-color',character.current_hit_point_status).css('color',character.current_hit_point_status)
+						}
+					}
+				}
+			},
+			complete: function() {
+				setTimeout(poll, 5000); 
+			}
+		});
 	}
     </script>
 

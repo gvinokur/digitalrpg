@@ -20,10 +20,6 @@
 <c:url var="faviconUrl" value="/img/favicon.ico" />
 <link rel="icon" type="image/x-icon" href="${faviconUrl}" />
 
-<!-- Required images go first :D -->
-<c:url var="loadingImageUrl" value="/img/loading_1.gif" />
-<div style="background: url(${loadingImageUrl})"><!--  --></div>
-
 <c:url var="mainCssUrl" value="/css/templatemo_style.css" />
 <link href="${mainCssUrl}" rel="stylesheet" type="text/css" />
 <c:url var="multiSelectCssUrl" value="/css/multi_select.css" />
@@ -35,18 +31,28 @@
 <link rel="stylesheet"
 	href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 	
-<script src='http://code.jquery.com/jquery-1.10.2.min.js'>&#160;</script>
-<c:url var="jQueryUIUrl" value="/js/min/jquery-ui-1.10.4.custom.min.js" />
-<script src='${jQueryUIUrl}'>&#160;</script>
+<script src='http://code.jquery.com/jquery-1.10.2.js'>&#160;</script>
+<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js">&#160;</script>
 <script
 	src='http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js'>&#160;</script>
 <c:url var="jQueryBlockUIUrl" value="/js/jquery.blockUI.js" />
 <script src='${jQueryBlockUIUrl}'>&#160;</script>
-<c:url var="jQueryMultiSelectUrl" value="/js/min/jquery.multiSelect.min.js" />
+<c:url var="jQueryMultiSelectUrl" value="/js/jquery.multiSelect.js" />
 <script src='${jQueryMultiSelectUrl}'>&#160;</script>
-<c:url var="jQueryUIEditableUrl" value="/js/min/jqueryui-editable.min.js" />
+<c:url var="jQueryUIEditableUrl" value="/js/jqueryui-editable.js" />
 <script src='${jQueryUIEditableUrl}'>&#160;</script>
-<c:url var="jQueryGridsterUrl" value="/js/min/jquery.gridster.min.js" />
+<c:url var="jQueryGridsterUrl" value="/js/jquery.gridster.js" />
+<script src='${jQueryGridsterUrl}'>&#160;</script>
+
+<c:url var="jQueryGridsterUrl" value="/js/utils.js" />
+<script src='${jQueryGridsterUrl}'>&#160;</script>
+<c:url var="jQueryGridsterUrl" value="/js/jquery.draggable.js" />
+<script src='${jQueryGridsterUrl}'>&#160;</script>
+<c:url var="jQueryGridsterUrl" value="/js/jquery.coords.js" />
+<script src='${jQueryGridsterUrl}'>&#160;</script>
+<c:url var="jQueryGridsterUrl" value="/js/jquery.collision.js" />
+<script src='${jQueryGridsterUrl}'>&#160;</script>
+<c:url var="jQueryGridsterUrl" value="/js/jquery.gridster.extras.js" />
 <script src='${jQueryGridsterUrl}'>&#160;</script>
 
 <script>

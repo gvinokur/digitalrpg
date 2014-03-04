@@ -1,10 +1,12 @@
 package com.digitalrpg.domain.model;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.NavigableSet;
 import java.util.Set;
 import java.util.SortedSet;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;

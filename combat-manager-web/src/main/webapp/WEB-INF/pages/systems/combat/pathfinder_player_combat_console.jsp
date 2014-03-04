@@ -35,42 +35,56 @@
 				<c:set var="hiddenCount" value="0"> </c:set>
 				<c:forEach items="${combat.combatCharacters }" var="combatCharacter"
 					varStatus="index">
-					<c:if test="${combatCharacter.hidden}">
-						<c:set var="hiddenCount" value="${hiddenCount + 1 }"></c:set>
-					</c:if>
-					<li data-row="${index.count - hiddenCount }"
-						data-col="${combatCharacter.currentAction.ready ? '2' : combatCharacter.currentAction.delayed ? '3' : '1'  }"
-						data-sizex="3" data-sizey="1" character-id="${combatCharacter.id}"
-						class="${combatCharacter.id == combat.currentCharacter.id?'current selected':'' } combat-character ${combatCharacter.hidden?'hidden':''}">
-						
-						<c:choose>
-							<c:when
-								test="${combatCharacter.character.character['class'].simpleName == 'NonPlayerCharacter'  and combatCharacter.character.character.createdBy.name == pageContext.request.userPrincipal.principal.name }">
-								<c:set var="npc" value="true"></c:set>
-							</c:when>
-							<c:otherwise>
-								<c:set var="npc" value="false"></c:set>
-							</c:otherwise>
-						</c:choose>
-						<div class="selected-char" style="width: 10px">&#160;</div>
-						<div class="character-name">${combatCharacter.character.character.name }</div>
-						<div class="initiative">Initiative
-							${combatCharacter.initiative }</div>
-						<div
-							style="background-color:${combatCharacter.hitPointsStatus };color:${combatCharacter.hitPointsStatus };width:25px"
-							class="hp" data-type="text">
-							<!-- needed -->
-						</div>
-
-						<div class="conditions-and-effects"
-							title="${combatCharacter.conditionsAndEffectsString }">${combatCharacter.conditionsAndEffectsString }</div>
-					</li>
+					<c:choose>
+						<c:when test="${combatCharacter.hidden}">
+							<c:set var="hiddenCount" value="${hiddenCount + 1 }"></c:set>
+						</c:when>
+						<c:otherwise>
+							<li data-row="${index.count - hiddenCount }"
+								data-col="${combatCharacter.currentAction.ready ? '2' : combatCharacter.currentAction.delayed ? '3' : '1'  }"
+								data-sizex="3" data-sizey="1" character-id="${combatCharacter.id}"
+								class="${combatCharacter.id == combat.currentCharacter.id?'current':'' } combat-character ${combatCharacter.hidden?'hidden':''}">
+								
+								<div class="selected-char" style="width: 10px">&#160;</div>
+								<div class="character-name">${combatCharacter.character.character.name }</div>
+								<div class="initiative">Initiative
+									${combatCharacter.initiative }</div>
+								<div
+									style="background-color:${combatCharacter.hitPointsStatus };color:${combatCharacter.hitPointsStatus };width:25px"
+									class="hp" data-type="text">
+									<!-- needed -->
+								</div>
+		
+								<div class="conditions-and-effects"
+									title="${combatCharacter.conditionsAndEffectsString }">${combatCharacter.conditionsAndEffectsString }</div>
+							</li>
+						</c:otherwise>
+					</c:choose>
+					
 				</c:forEach>
 			</ul>
 		</div>
 	</div>
 	<div id="character-details" class="templatemo_content"
 		style="width: 390px;">
+		<div id="hitPoints">
+			<div class="generic_label">
+				<label for="current">Current Hit Points</label>
+			</div>
+		
+			<c:url var="postHpUrl" value="/combats/character/currentHitPoints"></c:url>
+			<div id="current_hp" class="generic_value micro editable" data-type="text"
+							data-pk="${playerCharacter.id }" data-url="${postHpUrl }">
+				${playerCharacter.currentHitPoints }
+			</div>
+			
+			<div class="generic_label micro">
+				<label for="Total">Of</label>
+			</div>
+			<div class="generic_value micro">
+				${playerCharacter.character.hp }
+			</div>
+		</div>
 		<div id="tabs">
 			<ul>
 				<li><a href="#image">Image</a></li>
@@ -102,38 +116,20 @@
             min_cols:5,
             max_cols:5
         }).data('gridster').disable();
-    	    	
-    	$(".combat-character").click(function(){
-    		$(".combat-character").removeClass("selected")
-    		$(this).addClass("selected")
-//     		showCharacter($(this).attr("character-id"))
+    
+    	$.fn.editable.defaults.ajaxOptions = {
+    		    beforeSend: beforePost
+    		};
+    	$.fn.editable.defaults.showbuttons = false;
+    	
+    	$("#current_hp").editable({
+    		success : function(response, newValue) {
+    		},
+    		inputclass : "narrow_input"
     	})
     	
     	poll();
     })	
-    
-    function buildSortAndStatusData() {
-    	var result = new Object();
-    	var currentPassed = false;
-    	$("li.combat-character").each(function(){
-    		id = $(this).attr("character-id")
-    		order = $(this).attr("data-row")
-    		col = $(this).attr("data-col")
-    		current = $(this).hasClass("current")
-    		if(current) currentPassed = true  
-    		action = col == 2 ? "Ready" : col == 3 ? "Delayed" : current ? "In Progress" : currentPassed ? "Pending" : "Taken"
-    		result[id] = {order : order, action: action }
-    	});
-    	return result
-    }
-    
-    function getAvailableActions() {
-    	var actions = []
-    	<c:forEach items="${items.actions}" var="action">
-    	actions.push({value: "${action.id }", text: "${action.label}"})
-    	</c:forEach>
-    	return actions;
-    } 
     
     <c:url var="combatCharacterDataUrl" value="/combats/characters/[id]"/>
     function showCharacter(id) {
@@ -191,7 +187,28 @@
 			dataType: "json",
 			type: "GET",
 			success : function(combatStatus) {
-				
+				//Update combat overall status
+				$(".combat-character.current").removeClass("current");
+				$(".combat-character[character-id=" + combatStatus.current_character_id + "]").addClass("current")
+				$("#round").text(combatStatus.current_round);
+				$("#turn").text(combatStatus.current_turn);
+				//Update character order and 
+				for(var i = 0; i &lt; combatStatus.combat_characters.length; i++) {
+					character = combatStatus.combat_characters[i];
+					characterWidget = $(".combat-character[character-id='"+ character.id +"']")
+					if(!character.hidden) {
+						if(characterWidget.size() == 1) {
+							characterWidget.attr("data-row", character.order)
+							characterWidget.attr("data-col", character.current_action == "Ready" ? '2' : character.current_action == "Delayed" ? '3' : '1')
+							$(".conditions-and-effects", characterWidget).text(character.conditions_and_effects)
+							$(".conditions-and-effects", characterWidget).attr("title", character.conditions_and_effects)
+							$(".hp", characterWidget).css('background-color',character.current_hit_point_status).css('color',character.current_hit_point_status)
+						} else {
+							// TODO: Create widget if doesn't exists
+						}
+					}
+					//Delete widgets that are now hidden or removed
+				}
 			},
 			complete: function() {
 				setTimeout(poll, 5000); 

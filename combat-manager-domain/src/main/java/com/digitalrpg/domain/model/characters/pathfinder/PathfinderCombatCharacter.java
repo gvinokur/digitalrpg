@@ -60,7 +60,7 @@ public class PathfinderCombatCharacter extends CombatCharacter<PathfinderAction>
 		this.currentAction = currentAction;
 	}
 
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "pathfinder_combat_character_conditions", 
 			joinColumns = {@JoinColumn(name="character_id")},
 			inverseJoinColumns = {@JoinColumn(name="condition_id")})
@@ -72,7 +72,7 @@ public class PathfinderCombatCharacter extends CombatCharacter<PathfinderAction>
 		this.conditions = conditions;
 	}
 
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "pathfinder_combat_character_magical_effects", 
 			joinColumns = {@JoinColumn(name="character_id")},
 			inverseJoinColumns = {@JoinColumn(name="magical_effect_id")})

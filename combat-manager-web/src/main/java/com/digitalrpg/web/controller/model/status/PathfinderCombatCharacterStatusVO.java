@@ -6,7 +6,7 @@ public class PathfinderCombatCharacterStatusVO extends CombatCharacterStatusVO {
 	
 	private String currentAction;
 	
-	private String conditionAndEffects;
+	private String conditionsAndEffects;
 
 	public String getCurrentHitPointStatus() {
 		return currentHitPointStatus;
@@ -24,12 +24,12 @@ public class PathfinderCombatCharacterStatusVO extends CombatCharacterStatusVO {
 		this.currentAction = currentAction;
 	}
 
-	public String getConditionAndEffects() {
-		return conditionAndEffects;
+	public String getConditionsAndEffects() {
+		return conditionsAndEffects;
 	}
 
-	public void setConditionAndEffects(String conditionAndEffects) {
-		this.conditionAndEffects = conditionAndEffects;
+	public void setConditionsAndEffects(String conditionAndEffects) {
+		this.conditionsAndEffects = conditionAndEffects;
 	}
 	
 	

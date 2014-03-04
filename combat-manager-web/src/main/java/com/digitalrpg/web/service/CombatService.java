@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableSet;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -258,6 +259,8 @@ public class CombatService {
 		default:
 			break;
 		}
+		vo.setName(combatCharacter.getCharacter().getCharacter().getName());
+		vo.setId(combatCharacter.getId());
 		vo.setOrder(combatCharacter.getOrder());
 		vo.setHidden(combatCharacter.getHidden());
 		return vo;
@@ -268,7 +271,7 @@ public class CombatService {
 		PathfinderCombatCharacterStatusVO vo = new PathfinderCombatCharacterStatusVO();
 		vo.setCurrentAction(combatCharacter.getCurrentAction().getLabel());
 		vo.setCurrentHitPointStatus(combatCharacter.getHitPointsStatus());
-		vo.setConditionAndEffects(combatCharacter.getConditionsAndEffectsString());
+		vo.setConditionsAndEffects(combatCharacter.getConditionsAndEffectsString());
 		return vo;
 	}
 
@@ -320,6 +323,36 @@ public class CombatService {
 			}
 		}
 		return null;
+	}
+
+	public Combat addCombatant(Combat combat, Long characterId) {
+		
+		SystemCharacter systemCharacter = characterService.get(characterId);
+		combatDao.createCharacter(combat, systemCharacter,
+				Boolean.FALSE, Long.valueOf(0), Long.valueOf(combat.getCombatCharactersAsNavigableSet().last().getOrder() + 1), null);
+		return this.getCombat(combat.getId());
+	}
+
+	public void deleteCombatant(Combat combat, Long characterId) {
+		
+		CombatCharacter combatCharacter = combatDao.getCombatCharacter(characterId);
+		if(combat.getCurrentCharacter() !=null && combat.getCurrentCharacter().getId().equals(combatCharacter.getId())) {
+			NavigableSet<CombatCharacter> navigableSet = combat.getCombatCharactersAsNavigableSet();
+			NavigableSet<CombatCharacter> tailSet = navigableSet.tailSet(combatCharacter, false);
+			if(!tailSet.isEmpty()) {
+				combat.setCurrentCharacter(tailSet.first());
+			} else {
+				NavigableSet<CombatCharacter> headSet = navigableSet.headSet(combatCharacter, false);
+				if(!headSet.isEmpty()) {
+					combat.setCurrentCharacter(headSet.last());
+				} else {
+					combat.setCurrentCharacter(null);
+				}
+			}
+		}
+		combatDao.update(combat);
+		combatDao.delete(combatCharacter);
+		
 	}
 
 
