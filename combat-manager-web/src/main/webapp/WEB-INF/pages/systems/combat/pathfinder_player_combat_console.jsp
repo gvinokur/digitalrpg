@@ -106,16 +106,19 @@
 	</div>
 
 	<script>
+	var gridster;
     $(document).ready(function() {
     	$("#tabs").tabs();
     
     	<c:url var="updateOrderAndActionUrl" value="/combats/${combat.id}/character/orderAndAction"/>
-    	$(".gridster ul").gridster({
+    	gridster = $(".gridster ul").gridster({
             widget_margins: [5, 5],
             widget_base_dimensions: [85, 40],
             min_cols:5,
             max_cols:5
-        }).data('gridster').disable();
+        }).data('gridster');
+    	
+        gridster.disable();
     
     	$.fn.editable.defaults.ajaxOptions = {
     		    beforeSend: beforePost
@@ -187,28 +190,60 @@
 			dataType: "json",
 			type: "GET",
 			success : function(combatStatus) {
-				//Update combat overall status
-				$(".combat-character.current").removeClass("current");
-				$(".combat-character[character-id=" + combatStatus.current_character_id + "]").addClass("current")
+				
 				$("#round").text(combatStatus.current_round);
 				$("#turn").text(combatStatus.current_turn);
 				//Update character order and 
+				
+				$(".combat-character").each(function() {
+					var found = false;
+					for(index in combatStatus.combat_characters) {
+						character = combatStatus.combat_characters[index]
+						if(character.id == $(this).attr("character-id") &amp;&amp; !character.hidden) {
+							found = true;
+						}
+					}
+					if(!found) {
+						//First hide as the remove happens asynchronously
+						$(this).css("display","none");
+						gridster.remove_widget($(this).get());
+					}
+				})
+				
+				var hiddenCount = 0;
 				for(var i = 0; i &lt; combatStatus.combat_characters.length; i++) {
 					character = combatStatus.combat_characters[i];
 					characterWidget = $(".combat-character[character-id='"+ character.id +"']")
 					if(!character.hidden) {
-						if(characterWidget.size() == 1) {
-							characterWidget.attr("data-row", character.order)
-							characterWidget.attr("data-col", character.current_action == "Ready" ? '2' : character.current_action == "Delayed" ? '3' : '1')
-							$(".conditions-and-effects", characterWidget).text(character.conditions_and_effects)
-							$(".conditions-and-effects", characterWidget).attr("title", character.conditions_and_effects)
-							$(".hp", characterWidget).css('background-color',character.current_hit_point_status).css('color',character.current_hit_point_status)
-						} else {
-							// TODO: Create widget if doesn't exists
+						if(characterWidget.size() == 0) {
+							newWidget = $(".combat-character").first().clone();
+							html = newWidget.attr("character-id", character.id).css("display","none").get();
+							gridster.add_widget( 
+									html, 3, 1, 
+									character.current_action == "Ready" ? '2' : character.current_action == "Delayed" ? '3' : '1', 
+											i-hiddenCount+1)
+							characterWidget = $(".combat-character[character-id='"+ character.id +"']")
+							$(".character-name",characterWidget).text(character.name)
+							$(".initiative",characterWidget).text("Initiative 0")
+							
 						}
+						characterWidget.attr("data-row", i-hiddenCount+1)
+						characterWidget.attr("data-col", character.current_action == "Ready" ? '2' : character.current_action == "Delayed" ? '3' : '1')
+						characterWidget.css("display","block")
+						$(".conditions-and-effects", characterWidget).text(character.conditions_and_effects)
+						$(".conditions-and-effects", characterWidget).attr("title", character.conditions_and_effects)
+						$(".hp", characterWidget).css('background-color',character.current_hit_point_status).css('color',character.current_hit_point_status)
+						
+					} else {
+						hiddenCount ++;
 					}
-					//Delete widgets that are now hidden or removed
+					
 				}
+
+				//Update combat overall status
+				$(".combat-character.current").removeClass("current");
+				$(".combat-character[character-id=" + combatStatus.current_character_id + "]").addClass("current")
+				
 			},
 			complete: function() {
 				setTimeout(poll, 5000); 

@@ -357,7 +357,6 @@
 						} else {
 							characterWidget.attr("data-row", parseInt(index)+1)
 						}
-						
 					}
 				}
 			})
