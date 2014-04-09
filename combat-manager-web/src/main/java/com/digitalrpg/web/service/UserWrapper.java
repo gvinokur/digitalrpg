@@ -1,11 +1,12 @@
 package com.digitalrpg.web.service;
 
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 
 import javax.persistence.Transient;
 
-import org.eclipse.jetty.util.security.Credential.MD5;
-import org.postgresql.util.MD5Digest;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -69,8 +70,17 @@ public class UserWrapper extends User implements UserDetails {
 	}
 	
 	@Transient
-	public String getMd5Hash() {
-		return MD5.digest(getEmail().toLowerCase()).substring(MD5.__TYPE.length());
+	public String getMd5Hash() throws NoSuchAlgorithmException, UnsupportedEncodingException {
+		return hex(MessageDigest.getInstance("MD5").digest(this.getEmail().getBytes("CP1252")));
 	}
 
+	public static String hex(byte[] array) {
+      StringBuffer sb = new StringBuffer();
+      for (int i = 0; i < array.length; ++i) {
+      sb.append(Integer.toHexString((array[i]
+          & 0xFF) | 0x100).substring(1,3));        
+      }
+      return sb.toString();
+  }
+	
 }
