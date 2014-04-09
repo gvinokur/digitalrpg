@@ -1,5 +1,6 @@
 package com.digitalrpg.domain.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -16,6 +17,7 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Where;
 
+import com.digitalrpg.domain.model.characters.PlayerCharacter;
 import com.digitalrpg.domain.model.characters.SystemCharacter;
 import com.digitalrpg.domain.model.messages.InviteToCampaignMessage;
 import com.digitalrpg.domain.model.messages.RequestJoinToCampaignMessage;
@@ -163,9 +165,30 @@ public class Campaign {
 		}
 		return activeCombat;
 	}
+	
+	@Transient
+	public Set<User> getMembers() {
+		Set<User> members = new HashSet<User>();
+		for(SystemCharacter character : this.getPlayerCharacters()) {
+			User owner = ((PlayerCharacter)character.getCharacter()).getOwner();
+			members.add(owner);
+		}
+		return members;
+	}
 
 	public void setActiveCombat(Combat activeCombat) {
 		this.activeCombat = activeCombat;
+	}
+
+	@Transient
+	public Object getUserCharacter(User user) {
+		for(SystemCharacter character : this.getPlayerCharacters()) {
+			User owner = ((PlayerCharacter)character.getCharacter()).getOwner();
+			if(owner.equals(user)) {
+				return character;
+			}
+		}
+		return null;
 	}
 	
 	

@@ -28,5 +28,7 @@ public interface CharacterDao {
 	public void save(SystemCharacter systemCharacter);
 
 	public void delete(Character oldCharacter);
+
+	public Boolean hasPlayerCharacter(Campaign campaign, User user);
 	
 }

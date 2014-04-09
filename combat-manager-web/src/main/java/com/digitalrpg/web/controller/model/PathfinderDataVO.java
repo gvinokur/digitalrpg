@@ -2,7 +2,7 @@ package com.digitalrpg.web.controller.model;
 
 import com.digitalrpg.domain.model.characters.pathfinder.PathfinderCharacterProperties;
 
-public class PathfinderDataVO {
+public class PathfinderDataVO implements SystemDataVO{
 
 	private String race;
 	
@@ -53,7 +53,7 @@ public class PathfinderDataVO {
 	public void setCharisma(int charisma) {
 		this.charisma = charisma;
 	}
-	public PathfinderCharacterProperties toPathfinderProperties() {
+	public PathfinderCharacterProperties toSystemProperties() {
 		PathfinderCharacterProperties properties = new PathfinderCharacterProperties();
 		properties.setCharacterClass(characterClass);
 		properties.setRace(race);

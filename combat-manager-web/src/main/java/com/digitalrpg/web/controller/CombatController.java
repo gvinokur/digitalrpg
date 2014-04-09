@@ -2,19 +2,16 @@ package com.digitalrpg.web.controller;
 
 import java.security.Principal;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.validation.Valid;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -42,11 +39,9 @@ import com.digitalrpg.web.service.CampaignService;
 import com.digitalrpg.web.service.CombatService;
 import com.digitalrpg.web.service.combat.ItemAction;
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
-import com.google.common.collect.Maps;
 
 @Controller
 @RequestMapping("/combats")
@@ -60,7 +55,7 @@ public class CombatController {
 	
 	@ModelAttribute("combats")
 	public List<Combat> getCombats(Principal principal) {
-		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+		User user = (User) ((AbstractAuthenticationToken)principal).getPrincipal();
 		return combatService.getCombats(user);
 	}
 	
@@ -106,7 +101,7 @@ public class CombatController {
 
 	@RequestMapping(value = "/{id}/start", method = RequestMethod.GET)
 	public ModelAndView startCombat(@PathVariable Long id, Principal principal, RedirectAttributes redirectAttributes) {
-		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+		User user = (User) ((AbstractAuthenticationToken)principal).getPrincipal();
 		Map<String, Object> modelMap = new HashMap<String, Object>();
 		Combat combat = combatService.getCombat(id);
 		if(combat.getCampaign().getActiveCombat() != null) {
@@ -126,7 +121,7 @@ public class CombatController {
 	
 	@RequestMapping(value = "/{id}/console/show", method = RequestMethod.GET)
 	public ModelAndView showCombatConsole(@PathVariable Long id, Principal principal) {
-		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+		User user = (User) ((AbstractAuthenticationToken)principal).getPrincipal();
 		Map<String, Object> modelMap = new HashMap<String, Object>();
 		Combat combat = combatService.getCombat(id);
 		SystemCombatItems items = combatService.getSystemCombatItems(combat.getCampaign().getSystem());
@@ -145,7 +140,7 @@ public class CombatController {
 	
 	@RequestMapping(value = "/{id}/end", method = RequestMethod.GET)
 	public ModelAndView endCombat(@PathVariable Long id, Principal principal, RedirectAttributes redirectAttributes) {
-		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+		User user = (User) ((AbstractAuthenticationToken)principal).getPrincipal();
 		Map<String, Object> modelMap = new HashMap<String, Object>();
 		Combat combat = combatService.getCombat(id);
 		String viewName = null;
@@ -162,7 +157,7 @@ public class CombatController {
 	
 	@RequestMapping(value = "/character/{attributeName}", method = RequestMethod.POST)
 	public ResponseEntity<?> updateCombatCharacterAttribute(@PathVariable String attributeName, @RequestParam("pk") Long id, @RequestParam("value") String value, Principal principal) {
-		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+		User user = (User) ((AbstractAuthenticationToken)principal).getPrincipal();
 		try {
 			CombatCharacterVO vo = combatService.updateCombatCharacter(id, attributeName, value, user);
 			return new ResponseEntity<CombatCharacterVO>(vo, HttpStatus.OK);	
@@ -174,7 +169,7 @@ public class CombatController {
 	@RequestMapping(value ="/character/{itemType}/{action}", method = RequestMethod.POST) 
 	public ResponseEntity<?> updateCombatCharacterItem(@PathVariable String itemType, @PathVariable ItemAction action,
 			@RequestParam("pk") Long id, @RequestParam("itemId") Long itemId, Principal principal){
-		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+		User user = (User) ((AbstractAuthenticationToken)principal).getPrincipal();
 		try {
 			CombatCharacterVO vo = combatService.updateCombatCharacterItem(id, itemType, action, itemId, user);
 			return new ResponseEntity<CombatCharacterVO>(vo, HttpStatus.OK);	
@@ -186,7 +181,7 @@ public class CombatController {
 	
 	@RequestMapping(value = "{id}/character/next", method = RequestMethod.POST)
 	public ResponseEntity<?> advanceCharacter(@PathVariable Long id, Principal principal) {
-		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+		User user = (User) ((AbstractAuthenticationToken)principal).getPrincipal();
 		Combat combat = combatService.getCombat(id);
 		if(combat.getCampaign().getGameMaster().equals(user)) {
 			combat = combatService.nextCharacter(id);
@@ -199,7 +194,7 @@ public class CombatController {
 	
 	@RequestMapping(value = "{id}/character/previous", method = RequestMethod.POST)
 	public ResponseEntity<?> previousCharacter(@PathVariable Long id, Principal principal) {
-		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+		User user = (User) ((AbstractAuthenticationToken)principal).getPrincipal();
 		Combat combat = combatService.getCombat(id);
 		if(combat.getCampaign().getGameMaster().equals(user)) {
 			combat = combatService.previousCharacter(id);
@@ -212,7 +207,7 @@ public class CombatController {
 	
 	@RequestMapping(value = "{id}/character/{characterId}/add", method = RequestMethod.POST)
 	public ResponseEntity<?> addCharacter(@PathVariable Long id, @PathVariable Long characterId, Principal principal) {
-		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+		User user = (User) ((AbstractAuthenticationToken)principal).getPrincipal();
 		Combat combat = combatService.getCombat(id);
 		if(combat.getCampaign().getGameMaster().equals(user)) {
 			combat = combatService.addCombatant(combat, characterId);
@@ -224,7 +219,7 @@ public class CombatController {
 	
 	@RequestMapping(value = "{id}/character/{characterId}/delete", method = RequestMethod.POST)
 	public ResponseEntity<?> deleteCharacter(@PathVariable Long id, @PathVariable Long characterId, Principal principal) {
-		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+		User user = (User) ((AbstractAuthenticationToken)principal).getPrincipal();
 		Combat combat = combatService.getCombat(id);
 		if(combat.getCampaign().getGameMaster().equals(user)) {
 			combatService.deleteCombatant(combat, characterId);
@@ -239,7 +234,7 @@ public class CombatController {
 	
 	@RequestMapping(value = "{id}/character/orderAndAction", method = RequestMethod.POST)
 	public ResponseEntity<?> updateOrderAndActions(@PathVariable Long id, @RequestBody Map<Long, OrderAndAction> charactersOrderAndActions, Principal principal) {
-		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+		User user = (User) ((AbstractAuthenticationToken)principal).getPrincipal();
 		Combat combat = combatService.getCombat(id);
 		if(combat.getCampaign().getGameMaster().equals(user)) {
 			combat = combatService.updateOrderAndActions(id, charactersOrderAndActions);

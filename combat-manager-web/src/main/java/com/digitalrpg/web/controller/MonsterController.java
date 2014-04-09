@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
@@ -22,11 +22,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.digitalrpg.domain.dao.CharacterDao;
 import com.digitalrpg.domain.model.Campaign;
-import com.digitalrpg.domain.model.SystemType;
 import com.digitalrpg.domain.model.User;
-import com.digitalrpg.domain.model.characters.NonPlayerCharacter;
 import com.digitalrpg.domain.model.characters.SystemCharacter;
 import com.digitalrpg.domain.model.characters.pathfinder.PathfinderCharacter;
 import com.digitalrpg.web.controller.model.CharacterVO;
@@ -43,9 +40,6 @@ import com.google.common.base.Function;
 @RequestMapping("/characters")
 public class MonsterController {
 
-	@Autowired
-	private CharacterDao characterDao;
-	
 	@Autowired
 	private CharacterService characterService;
 	
@@ -90,8 +84,8 @@ public class MonsterController {
 	
 	@ModelAttribute("characters")
 	public Collection<SystemCharacter> getUserCharacters(Principal principal) {
-		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
-		return characterDao.getUserMonsters(user.getName());
+		User user = (User) ((AbstractAuthenticationToken)principal).getPrincipal();
+		return characterService.getUserMonsters(user.getName());
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
@@ -116,13 +110,9 @@ public class MonsterController {
 			modelMap.put("createCharacter", character);
 			return new ModelAndView("monsters", modelMap);
 		}
-		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+		User user = (User) ((AbstractAuthenticationToken)principal).getPrincipal();
 		Campaign campaign = campaignService.get(character.getCampaignId());
-		NonPlayerCharacter playerCharacter = characterDao.createNonPlayerCharacter(character.getName(), character.getPictureUrl(), 
-				character.getDescription(), false, user);
-		if(SystemType.Pathfinder == campaign.getSystem()) {
-			characterDao.createPathfinderCharacter(playerCharacter, character.getPathfinder().toPathfinderProperties(), campaign);
-		}
+		characterService.createNonPlayerCharacter(campaign, character.getName(), character.getPictureUrl(), character.getDescription(), true, character.getSystemProperties(campaign.getSystem()), user);
 		attributes.addFlashAttribute("form_message", "Character " + character.getName() + " created!");
 		return new ModelAndView("redirect:/campaigns/"+campaign.getId()+"/show");
 	}
@@ -130,7 +120,7 @@ public class MonsterController {
 	@RequestMapping(value = "/{id}/show", method = RequestMethod.GET)
 	public ModelAndView showCharacter(@PathVariable Long id, Principal principal) {
 		Map<String, Object> modelMap = new HashMap<String, Object>();
-		SystemCharacter systemCharacter = characterDao.get(id);
+		SystemCharacter systemCharacter = characterService.get(id);
 		modelMap.put("character", characterToVOfunction.apply(systemCharacter));
 		modelMap.put("show_content", "view_character");
 		return new ModelAndView("/monsters", modelMap );
@@ -139,7 +129,7 @@ public class MonsterController {
 	@RequestMapping(value = "/{id}/invite/{email:.*}")
 	@ResponseBody
 	public Boolean invite(@PathVariable Long id, @PathVariable String email, Principal principal, HttpServletRequest request) {
-		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+		User user = (User) ((AbstractAuthenticationToken)principal).getPrincipal();
 		String contextPath = "http://" + request.getServerName() + 
 				(request.getContextPath()!=null && !request.getContextPath().isEmpty()? "/" + request.getContextPath(): "");
 		
@@ -149,7 +139,7 @@ public class MonsterController {
 	@RequestMapping(value = "/{id}/claim/{messageId}", method = RequestMethod.GET)
 	@Transactional(rollbackFor = Exception.class)
 	public String claimCharacter(@PathVariable Long id, @PathVariable Long messageId, Principal principal, RedirectAttributes attributes) {
-		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+		User user = (User) ((AbstractAuthenticationToken)principal).getPrincipal();
 		SystemCharacter character = characterService.get(id);
 		MessageVO message = messageService.getMessage(messageId);
 		if(message instanceof InviteClaimCharacterMessageVO && message.getTo().equals(user)) {
@@ -166,7 +156,7 @@ public class MonsterController {
 	@RequestMapping(value = "/{id}/take", method = RequestMethod.GET)
 	@Transactional(rollbackFor = Exception.class)
 	public String takeCharacter(@PathVariable Long id, Principal principal, RedirectAttributes attributes) {
-		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+		User user = (User) ((AbstractAuthenticationToken)principal).getPrincipal();
 		SystemCharacter character = characterService.get(id);
 		if(character.getCampaign().getGameMaster().equals(user)) {
 			characterService.transfer(character, user);

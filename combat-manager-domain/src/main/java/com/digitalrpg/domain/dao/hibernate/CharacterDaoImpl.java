@@ -102,4 +102,17 @@ public class CharacterDaoImpl extends HibernateDao implements CharacterDao {
 		sessionFactory.getCurrentSession().delete(oldCharacter);
 	}
 
+	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
+	public Boolean hasPlayerCharacter(Campaign campaign, User user) {
+		List<SystemCharacter> characters = sessionFactory
+				.getCurrentSession()
+				.createQuery(
+						"select sc from SystemCharacter sc, PlayerCharacter pc where sc.character = pc and pc.owner = :user and sc.campaign = :campaign")
+				.setParameter("user", user)
+				.setParameter("campaign", campaign).list();
+		
+		return !characters.isEmpty();
+	}
+
 }

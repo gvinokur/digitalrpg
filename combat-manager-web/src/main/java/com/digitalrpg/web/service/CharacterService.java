@@ -2,18 +2,24 @@ package com.digitalrpg.web.service;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.digitalrpg.domain.dao.CharacterDao;
+import com.digitalrpg.domain.model.Campaign;
+import com.digitalrpg.domain.model.SystemType;
 import com.digitalrpg.domain.model.User;
 import com.digitalrpg.domain.model.characters.Character;
 import com.digitalrpg.domain.model.characters.NonPlayerCharacter;
 import com.digitalrpg.domain.model.characters.PlayerCharacter;
 import com.digitalrpg.domain.model.characters.SystemCharacter;
+import com.digitalrpg.domain.model.characters.SystemProperties;
 import com.digitalrpg.domain.model.characters.pathfinder.PathfinderCharacter;
+import com.digitalrpg.domain.model.characters.pathfinder.PathfinderCharacterProperties;
 import com.digitalrpg.web.controller.model.CharacterVO;
 import com.digitalrpg.web.controller.model.MessageVO;
 import com.digitalrpg.web.controller.model.PathfinderCharacterVO;
@@ -82,24 +88,24 @@ public class CharacterService {
 		if(character !=null && character.getCharacter() instanceof NonPlayerCharacter) {
 			User userTo = userService.findByMail(emailTo);
 			MessageVO message = messageService.invite(id, from, emailTo, userTo, character);
-			sendMail(from.getName(), emailTo, contextPath, character, message);
+			sendMail(from, emailTo, contextPath, character, message);
 			return true;
 		}
 		return null;
 	}
 
-	private void sendMail(String name, String email, String contextPath,
+	private void sendMail(User from, String email, String contextPath,
 			SystemCharacter character, MessageVO message) {
 		Map<String, Object> model = new HashMap<String, Object>();
         model.put("email", email);
-        model.put("username", name);
+        model.put("username", from.getName());
         try {
 			model.put("contextPath", new URI(contextPath));
 		} catch (URISyntaxException ignore) { }
         model.put("character", character);
         model.put("message", message);
         
-        mailService.sendMail("Join Campaign on DigitalRPG", ImmutableList.of(email), model, MailType.CLAIM_CHARACTER);		
+        mailService.sendMail("Join Campaign on DigitalRPG", from, ImmutableList.of(email), model, MailType.CLAIM_CHARACTER);		
 	}
 
 	public void transfer(SystemCharacter systemCharacter, User user) {
@@ -113,6 +119,48 @@ public class CharacterService {
 		systemCharacter.setCharacter(newCharacter);
 		characterDao.save(systemCharacter);
 		characterDao.delete(oldCharacter);
+	}
+	
+	@Transactional
+	public SystemCharacter createPlayerCharacter(Campaign campaign, String name, String pictureUrl, String description, SystemProperties properties, User user ) {
+		PlayerCharacter playerCharacter = characterDao.createPlayerCharacter(name, pictureUrl, description, user);
+		SystemCharacter character = null;
+		if(SystemType.Pathfinder == campaign.getSystem()) {
+			character = characterDao.createPathfinderCharacter(playerCharacter, (PathfinderCharacterProperties) properties, campaign);
+		}
+		return character;
+	}
+
+	public void ceatePlaceholderCharacter(Campaign campaign, User user) {
+		PlayerCharacter playerCharacter = characterDao.createPlayerCharacter(null, null, null, user);
+		SystemCharacter character = null;
+		if(SystemType.Pathfinder == campaign.getSystem()) {
+			character = characterDao.createPathfinderCharacter(playerCharacter, null, campaign);
+		}
+	}
+
+	public Collection<SystemCharacter> getUserPlayerCharacters(String name) {
+		return characterDao.getUserPlayerCharacters(name);
+	}
+
+	public Collection<SystemCharacter> getUserMonsters(String name) {
+		return characterDao.getUserMonsters(name);
+	}
+
+	public Boolean hasPlayerCharacter(Campaign campaign, User user) {
+		return characterDao.hasPlayerCharacter(campaign, user);
+	}
+
+	@Transactional
+	public SystemCharacter createNonPlayerCharacter(Campaign campaign, String name,
+			String pictureUrl, String description, Boolean isPublic,
+			SystemProperties systemProperties, User user) {
+		NonPlayerCharacter nonPlayerCharacter = characterDao.createNonPlayerCharacter(name, pictureUrl, description, isPublic, user);
+		SystemCharacter character = null;
+		if(SystemType.Pathfinder == campaign.getSystem()) {
+			character = characterDao.createPathfinderCharacter(nonPlayerCharacter, (PathfinderCharacterProperties) systemProperties, campaign);
+		}
+		return character;
 	}
 	
 }

@@ -1,8 +1,9 @@
 <decorators defaultdir="/WEB-INF/decorators">
-    <decorator name="main" page="main.jsp">
+    <decorator name="main" page="bootstrap.jsp">
           <pattern>/*</pattern>
     </decorator>
-    <decorator name="dev" page="dev.jsp">
-          <pattern>/dev/*</pattern>
+    <decorator name="old" page="main.jsp">
+          <pattern>/old/*</pattern>
     </decorator>
+    
 </decorators>

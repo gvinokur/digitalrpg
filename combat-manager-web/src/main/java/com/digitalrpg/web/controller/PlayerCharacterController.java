@@ -8,7 +8,7 @@ import java.util.Map;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -19,11 +19,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.digitalrpg.domain.dao.CharacterDao;
 import com.digitalrpg.domain.model.Campaign;
-import com.digitalrpg.domain.model.SystemType;
 import com.digitalrpg.domain.model.User;
-import com.digitalrpg.domain.model.characters.PlayerCharacter;
 import com.digitalrpg.domain.model.characters.SystemCharacter;
 import com.digitalrpg.web.controller.model.CreateCharacterVO;
 import com.digitalrpg.web.controller.model.InviteClaimCharacterMessageVO;
@@ -37,18 +34,18 @@ import com.digitalrpg.web.service.MessageService;
 public class PlayerCharacterController {
 
 	@Autowired
-	private CharacterDao characterDao;
-	
-	@Autowired
 	private CampaignService campaignService;
 	
 	@Autowired 
 	private MessageService messageService;
 	
+	@Autowired
+	private CharacterService characterService;
+	
 	@ModelAttribute("characters")
 	public Collection<SystemCharacter> getUserCharacters(Principal principal) {
-		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
-		return characterDao.getUserPlayerCharacters(user.getName());
+		User user = (User) ((AbstractAuthenticationToken)principal).getPrincipal();
+		return characterService.getUserPlayerCharacters(user.getName());
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
@@ -58,7 +55,7 @@ public class PlayerCharacterController {
 	
 	@RequestMapping(value = "/create")
 	public ModelAndView showCreatePlayerCharacterPage(@RequestParam Long campaignId, @RequestParam Long messageId, Principal principal, RedirectAttributes attributes) {
-		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+		User user = (User) ((AbstractAuthenticationToken)principal).getPrincipal();
 		MessageVO message = messageService.getMessage(messageId);
 		Map<String, Object> modelMap = new HashMap<String, Object>();
 		modelMap.put("campaign", CampaignService.campaignToVOFunction.apply(campaignService.get(campaignId)));
@@ -81,13 +78,9 @@ public class PlayerCharacterController {
 			modelMap.put("createCharacter", character);
 			return new ModelAndView("player-characters", modelMap);
 		}
-		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+		User user = (User) ((AbstractAuthenticationToken)principal).getPrincipal();
 		Campaign campaign = campaignService.get(character.getCampaignId());
-		PlayerCharacter playerCharacter = characterDao.createPlayerCharacter(character.getName(), character.getPictureUrl(), 
-				character.getDescription(), user);
-		if(SystemType.Pathfinder == campaign.getSystem()) {
-			characterDao.createPathfinderCharacter(playerCharacter, character.getPathfinder().toPathfinderProperties(), campaign);
-		}
+		characterService.createPlayerCharacter(campaign, character.getName(), character.getPictureUrl(), character.getDescription(), character.getSystemProperties(campaign.getSystem()), user);
 		if(character.getMessageId() != null) {
 			messageService.deleteMessage(character.getMessageId());
 		}
@@ -97,9 +90,9 @@ public class PlayerCharacterController {
 	
 	@RequestMapping(value = "/{id}/show", method = RequestMethod.GET)
 	public ModelAndView showCharacter(@PathVariable Long id, @RequestParam(value="messageId", required=false) Long messageId, Principal principal) {
-		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+		User user = (User) ((AbstractAuthenticationToken)principal).getPrincipal();
 		Map<String, Object> modelMap = new HashMap<String, Object>();
-		SystemCharacter systemCharacter = characterDao.get(id);
+		SystemCharacter systemCharacter = characterService.get(id);
 		modelMap.put("systemCharacter", systemCharacter);
 		modelMap.put("show_content", "view_character");
 		if(messageId != null) {

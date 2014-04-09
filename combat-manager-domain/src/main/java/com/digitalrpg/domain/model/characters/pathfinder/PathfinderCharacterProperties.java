@@ -1,6 +1,8 @@
 package com.digitalrpg.domain.model.characters.pathfinder;
 
-public class PathfinderCharacterProperties {
+import com.digitalrpg.domain.model.characters.SystemProperties;
+
+public class PathfinderCharacterProperties implements SystemProperties{
 
 	/*
 	 * All pathfinder specific properties go here.

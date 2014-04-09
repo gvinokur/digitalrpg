@@ -24,6 +24,7 @@ public class PathfinderCharacter extends SystemCharacter {
 	private int charisma;
 	
 	public void fromProperties(PathfinderCharacterProperties properties) {
+		if(properties == null) return;
 		this.characterClass = properties.getCharacterClass();
 		this.race = properties.getRace();
 		this.hp = properties.getHp();

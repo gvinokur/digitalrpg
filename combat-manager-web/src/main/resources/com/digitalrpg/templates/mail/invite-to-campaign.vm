@@ -6,9 +6,11 @@
 <p>
 	You have been invited to join ${username}'s campaign, <strong>${campaign.name}</strong> on DigitalRPG!
 </p>
-
 <p>
-    <a href="${contextPath}/campaigns/${campaign.id}/join?messageId=${message.id}" target="_blank">Claim your spot and let the battle begin!</a>
+	${additionalMessage}
+</p>
+<p>
+    <a href="${contextPath}/campaigns/${campaign.id}/join?messageId=${message.id}&email=${email}" target="_blank">Claim your spot and let the battle begin!</a>
 </p>
 </body>
 

@@ -108,6 +108,22 @@ public class UserDaoImpl extends HibernateDao implements UserDao {
 		this.sessionFactory.getCurrentSession().update(user);
 	}
 
+	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
+	public User get(String username) {
+		List<User> list = sessionFactory.getCurrentSession()
+				.createQuery("from User where name = ?")
+				.setParameter(0, username)
+				.list();
+		
+		if(list.isEmpty()) {
+			return null;
+		} else {
+			return list.get(0);
+		}
+		
+	}
+
 
 
 }

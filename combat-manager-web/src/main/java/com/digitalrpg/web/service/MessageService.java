@@ -1,6 +1,7 @@
 package com.digitalrpg.web.service;
 
 import java.util.Collection;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -85,9 +86,9 @@ public class MessageService {
 		}
 	};
 
-	public Collection<MessageVO> getUserMessages(User user) {
-		Collection<Message> userMessages = messageDao.getUserMessages(user);
-		return Collections2.transform(userMessages, messageToVOFunction);
+	public Collection<MessageVO> getUserMessages(User user, Date date) {
+		Collection<Message> userMessages = messageDao.getUserMessages(user, date);
+		return userMessages == null ? null : Collections2.transform(userMessages, messageToVOFunction);
 	}
 
 	public void deleteMessage(Long id) {
@@ -112,9 +113,9 @@ public class MessageService {
 	 * @param campaign
 	 * @return
 	 */
-	public MessageVO invite(Long id, User from,
+	public MessageVO invite(User from,
 			String emailTo, User userTo, Campaign campaign) {
-		return messageToVOFunction.apply(messageDao.invite(id, from, emailTo, userTo, campaign));
+		return messageToVOFunction.apply(messageDao.invite(from, emailTo, userTo, campaign));
 	}
 
 	/**
@@ -125,11 +126,11 @@ public class MessageService {
 	 * @return
 	 */
 	@Transactional
-	public Boolean acceptRequest(Long requestId, Campaign campaign, User user) {
+	public MessageVO acceptRequest(Long requestId, Campaign campaign, User user) {
 		Message message = messageDao.get(requestId);
 		messageDao.acceptRequest(user, message.getFrom(), campaign);
 		messageDao.deleteMessage(requestId);
-		return true;
+		return messageToVOFunction.apply(message);
 	}
 
 	/**

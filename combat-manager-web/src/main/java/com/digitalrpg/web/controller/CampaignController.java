@@ -1,6 +1,5 @@
 package com.digitalrpg.web.controller;
 
-import java.security.Principal;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,8 +7,9 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -25,14 +25,14 @@ import com.digitalrpg.domain.dao.CharacterDao;
 import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.SystemType;
 import com.digitalrpg.domain.model.User;
-import com.digitalrpg.domain.model.characters.SystemCharacter;
 import com.digitalrpg.web.controller.model.CampaignVO;
 import com.digitalrpg.web.controller.model.CreateCampaignVO;
-import com.digitalrpg.web.controller.model.JoinCampaignVO;
 import com.digitalrpg.web.controller.model.MessageVO;
 import com.digitalrpg.web.service.CampaignService;
+import com.digitalrpg.web.service.CharacterService;
 import com.digitalrpg.web.service.MessageService;
 import com.digitalrpg.web.service.UserService;
+import com.digitalrpg.web.service.UserWrapper;
 import com.google.common.collect.Collections2;
 
 @Controller
@@ -48,14 +48,19 @@ public class CampaignController {
 	private MessageService messageService;
 	
 	@Autowired
-	private CharacterDao characterDao;
+	private CharacterService characterService;
 	
 	@Autowired
 	private UserService userService;
+
+	
+	@ModelAttribute("createCampaignVO") 
+	public CreateCampaignVO getCreateCampaignVO() {
+		return new CreateCampaignVO();
+	}
 	
 	@ModelAttribute("campaigns")
-	public Collection<CampaignVO> getUserCampaigns(Principal principal) {
-		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+	public Collection<CampaignVO> getUserCampaigns(@AuthenticationPrincipal User user) {
 		return Collections2.transform(campaignService.getCampaignsForUser(user.getName()), CampaignService.campaignToVOFunction);
 	}
 	
@@ -70,11 +75,10 @@ public class CampaignController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView createCampaign(@Valid @ModelAttribute("campaign") CreateCampaignVO createCampaignVO, BindingResult result, Principal principal, RedirectAttributes attributes ) {
-		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+	public ModelAndView createCampaign(@Valid @ModelAttribute("createCampaignVO") CreateCampaignVO createCampaignVO, BindingResult result, @AuthenticationPrincipal UserWrapper user, RedirectAttributes attributes ) {
 		if(!result.hasErrors()) {
-			Campaign campaign = campaignService.createCampaign(createCampaignVO.getName(), createCampaignVO.getDescription(), user, createCampaignVO.getIsPublic(), createCampaignVO.getSystemType());
-			userService.trackItem(user, String.format(SHOW_CAMPAIGN_URL, campaign.getId()), campaign.getName());
+			Campaign campaign = campaignService.createCampaign(createCampaignVO.getName(), createCampaignVO.getDescription(), user.unwrap(), createCampaignVO.getIsPublic(), createCampaignVO.getSystemType());
+			userService.trackItem(user.unwrap(), String.format(SHOW_CAMPAIGN_URL, campaign.getId()), campaign.getName());
 			attributes.addFlashAttribute("form_message", String.format("Campaign %s was created successfully", campaign.getName()));
 			return new ModelAndView("redirect:campaigns");
 		}
@@ -88,50 +92,67 @@ public class CampaignController {
 	}
 	
 	@RequestMapping(value = "/{id}/show", method = RequestMethod.GET)
-	public ModelAndView showCampaign(@PathVariable Long id, Principal principal) {
-		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+	public ModelAndView showCampaign(@PathVariable Long id, @AuthenticationPrincipal UserWrapper user) {
 		Campaign campaign = campaignService.get(id);
-		userService.trackItem(user, String.format(SHOW_CAMPAIGN_URL, campaign.getId()), campaign.getName());
+		userService.trackItem(user.unwrap(), String.format(SHOW_CAMPAIGN_URL, campaign.getId()), campaign.getName());
 		Map<String, Object> modelMap = new HashMap<String, Object>();
 		modelMap.put("show_content", "campaign_view");
 		modelMap.put("campaign", campaign);
+		modelMap.put("character", campaign.getUserCharacter(user.unwrap()));
 		return new ModelAndView("/campaigns", modelMap);
 	}
 	
-	@RequestMapping(value = "/{id}/invite/{email:.*}")
+	@RequestMapping(value = "/{id}/invite", method = RequestMethod.POST)
 	@ResponseBody
-	public Boolean invite(@PathVariable Long id, @PathVariable String email, Principal principal, HttpServletRequest request) {
-		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
+	public Map<String, Object> invite(@PathVariable Long id, @RequestParam String usernameOrEmail, @RequestParam String message, @AuthenticationPrincipal UserWrapper user, HttpServletRequest request) {
 		String contextPath = "http://" + request.getServerName() + 
 				(request.getContextPath()!=null && !request.getContextPath().isEmpty()? "/" + request.getContextPath(): "");
 		
-		return campaignService.invite(id, user, email, contextPath);
+		return campaignService.inviteWithUsernameOrEmai(id, user.unwrap(), usernameOrEmail, message, contextPath);
 	}
 	
-	@RequestMapping(value = "/{id}/join/request")
+	
+	@RequestMapping(value = "/{id}/invite/{email:.*}")
 	@ResponseBody
-	public MessageVO requestJoin(@PathVariable Long id, Principal principal) {
-		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
-		return campaignService.requestInvite(id, user);
+	public Boolean invite(@PathVariable Long id, @PathVariable String email, @AuthenticationPrincipal UserWrapper user, HttpServletRequest request) {
+		String contextPath = "http://" + request.getServerName() + 
+				(request.getContextPath()!=null && !request.getContextPath().isEmpty()? "/" + request.getContextPath(): "");
+		
+		return campaignService.invite(id, user.unwrap(), email, contextPath);
+	}
+	
+	@RequestMapping(value = "/{id}/join/request", method = RequestMethod.POST)
+	@ResponseBody
+	public MessageVO requestJoin(@PathVariable Long id, @AuthenticationPrincipal UserWrapper user) {
+		return campaignService.requestInvite(id, user.unwrap());
 	}
 	
 	@RequestMapping(value = "/{id}/join", method = RequestMethod.GET)
-	public ModelAndView showJoinCampaign(@PathVariable Long id, @RequestParam Long messageId, Principal principal) {
-		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
-		Map<String, Object> model = new HashMap<String, Object>();
-		Campaign campaign = campaignService.get(id);
+	public String showJoinCampaign(@PathVariable Long id, @RequestParam Long messageId, @AuthenticationPrincipal UserWrapper user, RedirectAttributes attributes) {
 		MessageVO message = messageService.getMessage(messageId);
-		model.put("campaign", campaign);
-		model.put("message", message);
-		model.put("show_content", "campaign_join");
-		return new ModelAndView("/campaigns", model );
+		Campaign campaign = campaignService.get(id);
+		if(message.getTo() == null || !message.getTo().equals(user.unwrap())) {
+			attributes.addFlashAttribute("error_message", "The invitation was sent to a different username/mail, make sure you logged in with the right one or request authorization again to the Game Master.");
+		} else if (characterService.hasPlayerCharacter(campaign, user.unwrap())) {
+			attributes.addFlashAttribute("warning_message", "You are already a member on this campaign.");
+		} else if(campaign.getGameMaster().equals(user.unwrap())){
+			attributes.addFlashAttribute("warning_message", "You are the Game master of this campaign, you cannot be a player also.");
+		} else {
+			this.campaignService.acceptRequest(id, messageId, user.unwrap());
+			this.characterService.ceatePlaceholderCharacter(campaign, user.unwrap());
+			attributes.addFlashAttribute("form_message", "Welcome to campaign, now you can create your character.");
+		}
+		
+		return "redirect:/campaigns/" + id + "/show";
 	}
 	
 	@RequestMapping(value = "/{id}/accept/{requestId}")
-	public String acceptRequest(@PathVariable Long id, @PathVariable Long requestId, Principal principal) {
-		User user = (User) ((UsernamePasswordAuthenticationToken)principal).getPrincipal();
-		this.campaignService.acceptRequest(id, requestId, user);
-		return "redirect:/campaigns/" + id + "/show";
+	@ResponseBody
+	public Boolean acceptRequest(@PathVariable Long id, @PathVariable Long requestId, @AuthenticationPrincipal UserWrapper user) {
+		MessageVO messageVO = this.campaignService.acceptRequest(id, requestId, user.unwrap());
+		Campaign campaign = campaignService.get(id);
+		this.characterService.ceatePlaceholderCharacter(campaign, messageVO.getFrom());
+		return true;
 	}
 	
 }

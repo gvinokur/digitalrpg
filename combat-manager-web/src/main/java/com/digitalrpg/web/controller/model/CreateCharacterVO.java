@@ -2,7 +2,9 @@ package com.digitalrpg.web.controller.model;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.digitalrpg.domain.model.SystemType;
 import com.digitalrpg.domain.model.User;
+import com.digitalrpg.domain.model.characters.SystemProperties;
 
 public class CreateCharacterVO {
 
@@ -85,6 +87,15 @@ public class CreateCharacterVO {
 
 	public void setMessageId(Long messageId) {
 		this.messageId = messageId;
+	}
+	
+	public SystemProperties getSystemProperties(SystemType systemType) {
+		switch (systemType) {
+		case Pathfinder:
+			return pathfinder.toSystemProperties();
+		default:
+			return null;
+		}
 	}
 	
 }

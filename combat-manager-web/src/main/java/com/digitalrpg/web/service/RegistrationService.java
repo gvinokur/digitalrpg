@@ -40,24 +40,25 @@ public class RegistrationService {
 	 * @param password
 	 * @return
 	 */
-	public void registerUser(String username, String email, String password,
+	public User registerUser(String username, String email, String password,
 			String contextPath) {
 		User user = userDao.createUser(username, password, email);
-		sendMail(username, email, user.getActivationToken(), contextPath);
+		sendMail(user, email, user.getActivationToken(), contextPath);
 		messageDao.assignOrphanMessages(user);
+		return user;
 	}
 
-	private void sendMail(String user, String email, String activationToken,
+	private void sendMail(User user, String email, String activationToken,
 			String contextPath) {
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("activationToken", activationToken);
 		model.put("email", email);
-		model.put("username", user);
+		model.put("username", user.getName());
 		try {
 			model.put("contextPath", new URI(contextPath));
 		} catch (URISyntaxException ignore) {
 		}
-		mailService.sendMail("Welcome to Digital RPG", ImmutableList.of(email),
+		mailService.sendMail("Welcome to Digital RPG", user, ImmutableList.of(email),
 				model, MailType.CONFIRM_REGISTRATION);
 	}
 

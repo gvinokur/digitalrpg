@@ -11,11 +11,14 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
+import org.apache.commons.codec.digest.Md5Crypt;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 import org.hibernate.annotations.Type;
+import org.postgresql.util.MD5Digest;
 
 @Entity
 @Table(name = "users")
@@ -120,5 +123,7 @@ public class User {
 	public void setRecentItems(SortedSet<RecentItem> recentItems) {
 		this.recentItems = recentItems;
 	}
+	
+	
 	
 }

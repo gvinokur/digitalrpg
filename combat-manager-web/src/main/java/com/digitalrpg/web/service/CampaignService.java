@@ -7,30 +7,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.mail.internet.MimeMessage;
-
-import org.apache.velocity.app.VelocityEngine;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.MailException;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.mail.javamail.MimeMessagePreparator;
-import org.springframework.ui.velocity.VelocityEngineUtils;
 
 import com.digitalrpg.domain.dao.CampaignDao;
-import com.digitalrpg.domain.dao.CharacterDao;
-import com.digitalrpg.domain.dao.MessageDao;
 import com.digitalrpg.domain.dao.UserDao;
 import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.SystemType;
 import com.digitalrpg.domain.model.User;
-import com.digitalrpg.domain.model.characters.SystemCharacter;
-import com.digitalrpg.domain.model.messages.Message;
 import com.digitalrpg.web.controller.model.CampaignVO;
 import com.digitalrpg.web.controller.model.MessageVO;
 import com.digitalrpg.web.service.MailService.MailType;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 
 public class CampaignService {
 
@@ -44,9 +35,6 @@ public class CampaignService {
 	private MessageService messageService;
 	
 	@Autowired
-	private CharacterDao characterDao;
-	
-	@Autowired
 	private MailService mailService;
 
 	public static Function<Campaign, CampaignVO> campaignToVOFunction = new Function<Campaign, CampaignVO>() {
@@ -56,32 +44,6 @@ public class CampaignService {
 			return out;
 		}
 	};
-	
-	public boolean invite(Long id, User from, String emailTo, String contextPath) {
-		Campaign campaign = campaignDao.get(id);
-		if(campaign != null) {
-			User userTo = userDao.findByMail(emailTo);
-			MessageVO message = messageService.invite(id, from, emailTo, userTo, campaign);
-			sendMail(from.getName(), emailTo, contextPath, campaign, message);
-			return true;
-		}
-		return false;
-	}
-	
-	
-	
-	private void sendMail(final String user, final String email, final String contextPath, final Campaign campaign, final MessageVO inviteMessage) {
-		Map<String, Object> model = new HashMap<String, Object>();
-        model.put("email", email);
-        model.put("username", user);
-        try {
-			model.put("contextPath", new URI(contextPath));
-		} catch (URISyntaxException ignore) { }
-        model.put("campaign", campaign);
-        model.put("message", inviteMessage);
-        
-        mailService.sendMail("Join Campaign on DigitalRPG", ImmutableList.of(email), model, MailType.INVITE_TO_CAMPAIGN);
-	}
 
 	public Campaign createCampaign(String name, String description, User gm,
 			Boolean isPublic, SystemType system) {
@@ -101,25 +63,69 @@ public class CampaignService {
 		return campaignDao.search(searchString, offset, limit);
 	}
 
-	public void addPlayerCharacter(Long campaignd, Long characterId) {
-		SystemCharacter character = characterDao.get(characterId);
-		campaignDao.addPlayerCharacter(campaignd,character);
-	}
-
-
-
 	public MessageVO requestInvite(Long id, User user) {
 		Campaign campaign = campaignDao.get(id);
 		MessageVO message =  messageService.requestJoin(user, campaign);
 		return message;
 	}
 
-
-
-	public Boolean acceptRequest(Long id, Long requestId, User user) {
+	public MessageVO acceptRequest(Long id, Long requestId, User user) {
 		Campaign campaign = campaignDao.get(id);
-		
 		return messageService.acceptRequest(requestId, campaign, user);
 	}
+
+
+
+	public Map<String, Object> inviteWithUsernameOrEmai(Long id, User user,
+			String usernameOrEmail, String customMessage, String contextPath) {
+		Campaign campaign = campaignDao.get(id);
+		Builder<String, Object> builder = ImmutableMap.builder();
+		boolean validEmail = EmailValidator.getInstance().isValid(usernameOrEmail);
+		User userTo;
+		if(!validEmail) {
+			userTo = userDao.get(usernameOrEmail);
+		} else {
+			userTo = userDao.findByMail(usernameOrEmail);
+		}
+		if(!validEmail && userTo == null) {
+			builder.put("valid", false).put("message", "Invalid mail or user doesn't exists.");
+		} else if (campaign == null) {
+			builder.put("valid", false).put("message", "Invalid campaign Id.");
+		} else {
+			MessageVO message = messageService.invite(user, validEmail ? usernameOrEmail : userTo.getEmail(), userTo, campaign);
+			sendMail(user, validEmail ? usernameOrEmail : userTo.getEmail(), contextPath, campaign, message, customMessage);
+			builder.put("valid", true);
+		}
+
+		return builder.build();
+	}
+	
+	public boolean invite(Long id, User from, String emailTo, String contextPath) {
+		Campaign campaign = campaignDao.get(id);
+		if(campaign != null) {
+			User userTo = userDao.findByMail(emailTo);
+			MessageVO message = messageService.invite( from, emailTo, userTo, campaign);
+			sendMail(from, emailTo, contextPath, campaign, message, null);
+			return true;
+		}
+		return false;
+	}
+	
+	
+	
+	private void sendMail(final User from, final String email, final String contextPath, final Campaign campaign, final MessageVO inviteMessage, final String additionalMessage) {
+		Map<String, Object> model = new HashMap<String, Object>();
+        model.put("email", email);
+        model.put("username", from.getName());
+        try {
+			model.put("contextPath", new URI(contextPath));
+		} catch (URISyntaxException ignore) { }
+        model.put("campaign", campaign);
+        model.put("message", inviteMessage);
+        model.put("additionalMessage", additionalMessage);
+        
+        mailService.sendMail(" [Digital RPG] Join my campaign:  \""+ campaign.getName() + "\".",  from, ImmutableList.of(email), model, MailType.INVITE_TO_CAMPAIGN);
+	}
+
 	
 }

@@ -13,6 +13,8 @@ import org.springframework.core.Ordered;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
+import org.springframework.security.web.bind.support.AuthenticationPrincipalArgumentResolver;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -32,6 +34,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
         registry.addResourceHandler("/css/**").addResourceLocations("/WEB-INF/css/").setCachePeriod(31556926);
         registry.addResourceHandler("/img/**").addResourceLocations("/WEB-INF/img/").setCachePeriod(31556926);
         registry.addResourceHandler("/js/**").addResourceLocations("/WEB-INF/js/").setCachePeriod(31556926);
+        registry.addResourceHandler("/fonts/**").addResourceLocations("/WEB-INF/fonts/").setCachePeriod(31556926);
     }
  
     @Override
@@ -42,7 +45,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
     @Bean
     public InternalResourceViewResolver getInternalResourceViewResolver() {
         InternalResourceViewResolver resolver = new InternalResourceViewResolver();
-        resolver.setPrefix("/WEB-INF/pages/");
+        resolver.setPrefix("/WEB-INF/bootstrap-pages/");
         resolver.setSuffix(".jsp");
         return resolver;
     }
@@ -78,5 +81,14 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
         converters.add(new FormHttpMessageConverter());
 		super.configureMessageConverters(converters);
 	}
+
+	@Override
+	public void addArgumentResolvers(
+			List<HandlerMethodArgumentResolver> argumentResolvers) {
+		argumentResolvers.add(new AuthenticationPrincipalArgumentResolver());
+		super.addArgumentResolvers(argumentResolvers);
+	}
+	
+	
 	
 }

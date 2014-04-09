@@ -16,6 +16,7 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.ui.velocity.VelocityEngineUtils;
 
 import com.digitalrpg.domain.model.Campaign;
+import com.digitalrpg.domain.model.User;
 import com.digitalrpg.web.controller.model.MessageVO;
 
 public class MailService {
@@ -42,13 +43,13 @@ public class MailService {
 	
 	private String from;
 	
-	public boolean sendMail(final String subject, final List<String> emails, final Map<String, Object> modelMap, final MailType type) {
+	public boolean sendMail(final String subject, final User fromUser, final List<String> emails, final Map<String, Object> modelMap, final MailType type) {
 		MimeMessagePreparator preparator = new MimeMessagePreparator() {
 	         public void prepare(MimeMessage mimeMessage) throws Exception {
 	            MimeMessageHelper message = new MimeMessageHelper(mimeMessage);
 	            message.setSubject(subject);
 	            message.setTo(emails.toArray(new String[0]));
-	            message.setFrom(from); // could be parameterized...
+	            message.setFrom(from, fromUser.getEmail() + " via DigitalRPG.net"); // could be parameterized...
 	            String text = VelocityEngineUtils.mergeTemplateIntoString(
 	               velocityEngine, type.getTemplateFile(), modelMap);
 	            message.setText(text, true);
