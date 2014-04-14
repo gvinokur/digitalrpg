@@ -67,28 +67,34 @@
 							</div>
 						</div>
 					</div>
+				</div>
 
-					<input type="button" value="New Campaign"
-						id="create_campaign_button"
-						class="btn btn-default btn-block btn-sm" />
+				<input type="button" value="New Campaign"
+					id="create_campaign_button"
+					class="btn btn-default btn-block btn-sm" />
 
-					<div class="horizontal_divider">
-						<!--  -->
+				<div class="horizontal_divider">
+					<!--  -->
+				</div>
+				<h4>Search Campaign</h4>
+				<div class="row search">
+					<div class="col-xs-9">
+						<input class="form-control" type="text" id="search_field"
+							name="campaign" placeholder="Enter keywords" />
 					</div>
-					<h4>Search Campaign</h4>
-					<div class="row search">
-						<div class="col-xs-12">
-							<input class="form-control" type="text" id="search_field"
-								name="campaign" placeholder="Enter keywords" />
-						</div>
-					</div>
-					<div class="row search">
-						<div class="col-xs-5 col-xs-offset-7">
-							<input type="button" value="Search" id="search_button"
-								class="btn btn-default btn-block btn-sm" />
-						</div>
+					<div class="col-xs-3">
+						<a role="button" id="search_button"
+							class="btn btn-default" data-loading-text="&lt;i class='fa fa-spinner fa-spin'/&gt;">
+							<span class="glyphicon glyphicon-search"></span>
+						</a>
 					</div>
 				</div>
+<!-- 					<div class="row search"> -->
+<!-- 						<div class="col-xs-5 col-xs-offset-7"> -->
+<!-- 							<input type="button" id="search_button" -->
+<!-- 								class="btn btn-default btn-block btn-sm glyphicon glyphicon-search" /> -->
+<!-- 						</div> -->
+<!-- 					</div> -->
 			</div>
 			<script type="text/javascript">
 				$(document)
@@ -318,9 +324,9 @@
 														<div class="scroll_list_150 nice_list">
 															<ul>
 															<c:forEach var="invite" items="${campaign.pendingInvitations }">
-																<li>
+																<li data-message-id="${invite.id }">
 																<button style="margin-right:5px;" class="tooltipable close glyphicon glyphicon-envelope" title="Resend Invitation" data-placement="top right"
-																	data-toggle="modal" data-target="#invite-form-dialog" data-to="${invite.to.name != null ? invite.to.name : invite.toMail }"><!--  --></button>
+																	data-toggle="modal" data-target="#invite-form-dialog"  data-to="${invite.to.name != null ? invite.to.name : invite.toMail }"><!--  --></button>
 																<a>
 																	<p class="overflown tooltipable" title="${invite.to.name != null ? invite.to.name : invite.toMail }">
 																		${invite.to.name != null ? invite.to.name : invite.toMail }
@@ -343,7 +349,7 @@
 														<div class="scroll_list_150 nice_list">
 															<ul>
 															<c:forEach var="request" items="${campaign.pendingRequest }">
-																<li>
+																<li data-message-id="${request.id }">
 																	<button data-request="${request.id }" style="margin-right:5px;" class="reject-message tooltipable close glyphicon glyphicon-remove" title="Reject" data-placement="top right"><!--  --></button>
 																	<button data-request="${request.id }" style="margin-right:5px;" class="accept-request tooltipable close glyphicon glyphicon-ok" title="Accept" data-placement="top right"><!--  --></button>
 																	<a>
@@ -355,6 +361,8 @@
 															</c:forEach>
 															</ul>
 															<script type="text/javascript">
+																
+																
 																$(document).ready(function() {
 																	$(".reject-message").click(function() {
 																		var item = $(this)
@@ -403,14 +411,82 @@
 						</div>
 					</div>
 
-				</div>
+					<div id="search-result" class="dynamic hidden col-xs-12 content-block center">
+						<h3>Search Result</h3>
+						<script type="text/javascript">
+						$(document).ready(function() {
+							$("#search_button").click(searchCampaign)
+							$("#search_field").keypress(function(e) {
+								if(e.which == 13) {
+									searchCampaign();
+									e.stopPropagation();
+							    }
+							});
+						})
+						
+						window.onpopstate = function(event) {
+							var state = event.state
+						  	if(event.state.action == "search") {
+						  		$("#search_field").val(event.state.searchValue)
+						  		searchCampaign(true);
+						  	}
+						};
+						<c:url var="searchUrl" value="/campaigns/search/"/>
+						<c:url var="showCampaignUrl" value="/campaigns/[id]/show"/>
+						function searchCampaign(ignoreHistory){
+							var searchValue = $("#search_field").val();
+							if(!searchValue) return;
+							$("#search_button").button('loading')
+							$("#search_field").block();
+							var url = "${searchUrl}" + searchValue
+							if(searchValue.length > 0) {
+								if(ignoreHistory != true) {
+									history.pushState({action: "search", searchValue : searchValue}, "Search Results", "?search_result")
+								}
+								$.ajax({
+									url: url
+								}).success(function(result) {
+									$(".search-result").not("[campaign-id=template]").remove();
+									for(i= 0; i &lt; result.length; i++) {
+										var newResult = $(".search-result[campaign-id=template]").clone().removeClass("hidden");
+										newResult.attr("campaign-id", result[i].id);
+										newResult.find(".panel-title").append(result[i].name);
+										var panelBody = newResult.find(".panel-body")
+										var url = "${showCampaignUrl}".replace("[id]",result[i].id)
+										$("<a/>").attr("href", url).attr('title','Open Campaign').appendTo(panelBody).addClass("tooltipable").addClass("close").addClass("wide").addClass("glyphicon")
+											.addClass("glyphicon-share-alt")
+										$("<div/>").addClass("campaign-description-short").append(result[i].description)
+											.appendTo(panelBody)
+										
+										newResult.appendTo($("#search-result"))
+									}
+									$(".dynamic").addClass("hidden")
+									$("#search-result").removeClass("hidden")
+								}).always(function(){
+									$("#search_button").button('reset')
+									$("#search_field").unblock();
+								})
+							}
+						}
+						</script>
+					</div>
 
+				</div>
 			</div>
 			<div class="col-sm-2 hidden-xs content-block">
 				ADS HERE
 				<!-- Ads not shown on the mobile version here. -->
 			</div>
 		</div>
+	</div>
+	
+	<!-- Search result template -->
+	<div campaign-id="template" class="hidden search-result panel panel-default">
+  		<div class="panel-heading">
+    		<h3 class="panel-title"></h3>
+  		</div>
+  		<div class="panel-body">
+  		</div>
 	</div>
 	
 	<!-- Modal -->
