@@ -4,22 +4,20 @@ import java.util.Collection;
 
 import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.User;
-import com.digitalrpg.domain.model.characters.NonPlayerCharacter;
-import com.digitalrpg.domain.model.characters.PlayerCharacter;
+import com.digitalrpg.domain.model.characters.Character;
 import com.digitalrpg.domain.model.characters.SystemCharacter;
 import com.digitalrpg.domain.model.characters.pathfinder.PathfinderCharacter;
 import com.digitalrpg.domain.model.characters.pathfinder.PathfinderCharacterProperties;
-import com.digitalrpg.domain.model.characters.Character;
 
 public interface CharacterDao {
 
-	public PlayerCharacter createPlayerCharacter(String name, String pictureUrl, String description, User owner);
+	public Character createPlayerCharacter(String name, String pictureUrl, String bio, User owner);
 	
-	public NonPlayerCharacter createNonPlayerCharacter(String name, String pictureUrl, String description, Boolean isPublic, User user);
+	public Character createNonPlayerCharacter(String name, String pictureUrl, String bio, Boolean isPublic, User user);
 	
 	public PathfinderCharacter createPathfinderCharacter(Character character, PathfinderCharacterProperties properties, Campaign campaign);
 
-	public Collection<SystemCharacter> getUserPlayerCharacters(String user);
+	public Collection<SystemCharacter> getUserCharacters(String user);
 	
 	public SystemCharacter get(Long id);
 
@@ -30,5 +28,7 @@ public interface CharacterDao {
 	public void delete(Character oldCharacter);
 
 	public Boolean hasPlayerCharacter(Campaign campaign, User user);
+
+	public void transfer(Long id, User user);
 	
 }

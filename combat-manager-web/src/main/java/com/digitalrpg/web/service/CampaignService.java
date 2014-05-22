@@ -2,6 +2,7 @@ package com.digitalrpg.web.service;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.sql.BatchUpdateException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -50,7 +51,7 @@ public class CampaignService {
 		return campaignDao.createCampaign(name, description, gm, isPublic, system);
 	}
 
-	public List<Campaign> getCampaignsForUser(String user) {
+	public List<Campaign> getCampaignsForUser(User user) {
 		return campaignDao.getCampaignsForUser(user);
 	}
 
@@ -71,6 +72,14 @@ public class CampaignService {
 
 	public MessageVO acceptRequest(Long id, Long requestId, User user) {
 		Campaign campaign = campaignDao.get(id);
+		try {
+			campaignDao.joinCampaign(id, user);
+		} catch (Exception e) {
+			if(e instanceof BatchUpdateException) {
+			((BatchUpdateException)e).getNextException().printStackTrace();
+			}
+			throw e;
+		}
 		return messageService.acceptRequest(requestId, campaign, user);
 	}
 

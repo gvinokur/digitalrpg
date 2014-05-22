@@ -1,6 +1,8 @@
 package com.digitalrpg.domain.model;
 
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -9,6 +11,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -17,7 +21,6 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Where;
 
-import com.digitalrpg.domain.model.characters.PlayerCharacter;
 import com.digitalrpg.domain.model.characters.SystemCharacter;
 import com.digitalrpg.domain.model.messages.InviteToCampaignMessage;
 import com.digitalrpg.domain.model.messages.RequestJoinToCampaignMessage;
@@ -36,9 +39,7 @@ public class Campaign {
 	
 	private SystemType system;
 	
-	private Set<SystemCharacter> playerCharacters;
-	
-	private Set<SystemCharacter> nonPlayerCharacters;
+	private Set<SystemCharacter> characters;
 	
 	private Set<InviteToCampaignMessage> pendingInvitations;
 	
@@ -49,6 +50,8 @@ public class Campaign {
 	private Combat activeCombat;
 	
 	private Boolean isPublic;
+	
+	private Set<User> members;
 
 	@Id
 	@GeneratedValue(generator="increment")
@@ -88,17 +91,10 @@ public class Campaign {
 	}
 
 	@OneToMany(mappedBy = "campaign",fetch = FetchType.EAGER)
-	@Where(clause = "type = 'PlayerCharacter'")
-	public Set<SystemCharacter> getPlayerCharacters() {
-		return playerCharacters;
+	public Set<SystemCharacter> getCharacters() {
+		return characters;
 	}
 	
-	@OneToMany(mappedBy = "campaign",fetch = FetchType.EAGER)
-	@Where(clause = "type = 'NonPlayerCharacter'")
-	public Set<SystemCharacter> getNonPlayerCharacters() {
-		return nonPlayerCharacters;
-	}
-
 	public Boolean getIsPublic() {
 		return isPublic;
 	}
@@ -107,14 +103,10 @@ public class Campaign {
 		this.isPublic = isPublic;
 	}
 
-	public void setPlayerCharacters(Set<SystemCharacter> playerCharacters) {
-		this.playerCharacters = playerCharacters;
+	public void setCharacters(Set<SystemCharacter> playerCharacters) {
+		this.characters = playerCharacters;
 	}
 
-	public void setNonPlayerCharacters(Set<SystemCharacter> nonPlayerCharacters) {
-		this.nonPlayerCharacters = nonPlayerCharacters;
-	}
-	
 	@OneToMany(cascade = CascadeType.PERSIST,
 			mappedBy = "campaign", fetch = FetchType.EAGER)
 	public Set<InviteToCampaignMessage> getPendingInvitations() {
@@ -166,14 +158,28 @@ public class Campaign {
 		return activeCombat;
 	}
 	
-	@Transient
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = User.class)
+	@JoinTable(name = "campaign_users",  
+			joinColumns = { @JoinColumn(name = "campaign_id", referencedColumnName = "id", nullable = false)},
+			inverseJoinColumns = { @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false) })
 	public Set<User> getMembers() {
-		Set<User> members = new HashSet<User>();
-		for(SystemCharacter character : this.getPlayerCharacters()) {
-			User owner = ((PlayerCharacter)character.getCharacter()).getOwner();
-			members.add(owner);
-		}
+//		Set<User> members = new HashSet<User>();
+//		for(SystemCharacter character : this.getPlayerCharacters()) {
+//			User owner = ((PlayerCharacter)character.getCharacter()).getOwner();
+//			members.add(owner);
+//		}
 		return members;
+	}
+	
+	public void setMembers(Set<User> members) {
+		this.members = members;
+	}
+	
+	public void addMember(User member) {
+		if(this.members == null) {
+			this.members = new HashSet<>();
+		}
+		this.members.add(member);
 	}
 
 	public void setActiveCombat(Combat activeCombat) {
@@ -181,15 +187,22 @@ public class Campaign {
 	}
 
 	@Transient
-	public Object getUserCharacter(User user) {
-		for(SystemCharacter character : this.getPlayerCharacters()) {
-			User owner = ((PlayerCharacter)character.getCharacter()).getOwner();
+	public List<SystemCharacter> getUserCharacters(User user) {
+		List<SystemCharacter> userCharacters = new LinkedList<>();
+		for(SystemCharacter character : this.getCharacters()) {
+			User owner = character.getCharacter().getOwner();
 			if(owner.equals(user)) {
-				return character;
+				userCharacters.add(character);
 			}
 		}
-		return null;
+		return userCharacters;
 	}
+
+	public boolean isMember(User user) {
+		return members.contains(user);
+	}
+
+
 	
 	
 }

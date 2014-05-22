@@ -1,6 +1,7 @@
 <jsp:root xmlns:jsp="http://java.sun.com/JSP/Page"
 	xmlns:spring="http://www.springframework.org/tags"
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:sec="http://www.springframework.org/security/tags"
 	xmlns:form="http://www.springframework.org/tags/form" version="2.0">
 
 	<jsp:directive.page contentType="text/html" pageEncoding="UTF-8" />
@@ -12,7 +13,7 @@
 <title>Campaigns</title>
 </head>
 <body>
-
+	<sec:authentication property="principal" var="user"/>
 	<div class="container main">
 		<div class="row">
 			<div class="col-xs-5 col-sm-3 content-block">
@@ -33,7 +34,7 @@
 								<ul class="campaigns">
 									<c:forEach items="${campaigns}" var="campaign">
 										<c:if
-											test="${campaign.gameMaster.name != pageContext.request.userPrincipal.principal.name }">
+											test="${campaign.gameMaster.name != user.name }">
 											<c:url value="/campaigns/${campaign.id }/show" var="url"></c:url>
 											<li><a class="campaign_list_item"
 												id="campaign_${campaign.id }" href="${url }">${campaign.name }</a></li>
@@ -47,8 +48,7 @@
 						<div class="">
 							<h5>
 								<a data-toggle="collapse" data-parent="#accordion"
-									href="#collapseGM"> I'm a GM of <span id="collapseGMIcon"
-									class="pull-right glyphicon glyphicon-chevron-down"></span>
+									href="#collapseGM"> I'm a GM of <span class="pull-right glyphicon glyphicon-chevron-down"></span>
 								</a>
 							</h5>
 						</div>
@@ -57,7 +57,7 @@
 								<ul class="campaigns">
 									<c:forEach items="${campaigns}" var="campaign">
 										<c:if
-											test="${campaign.gameMaster.name == pageContext.request.userPrincipal.principal.name }">
+											test="${campaign.gameMaster.name == user.name }">
 											<c:url value="/campaigns/${campaign.id }/show" var="url"></c:url>
 											<li><a class="campaign_list_item"
 												id="campaign_${campaign.id }" href="${url }">${campaign.name }</a></li>
@@ -100,49 +100,21 @@
 				$(document)
 						.ready(
 								function() {
-									$('#collapsePlayer')
-											.on(
-													'shown.bs.collapse',
-													function() {
-														$("#collapsePlayerIcon")
-																.removeClass(
-																		"glyphicon-chevron-down")
-																.addClass(
-																		"glyphicon-chevron-up");
-													});
-
-									$('#collapsePlayer')
-											.on(
-													'hidden.bs.collapse',
-													function() {
-														$("#collapsePlayerIcon")
-																.removeClass(
-																		"glyphicon-chevron-up")
-																.addClass(
-																		"glyphicon-chevron-down");
-													});
-
-									$('#collapseGM')
-											.on(
-													'shown.bs.collapse',
-													function() {
-														$("#collapseGMIcon")
-																.removeClass(
-																		"glyphicon-chevron-down")
-																.addClass(
-																		"glyphicon-chevron-up");
-													});
-
-									$('#collapseGM')
-											.on(
-													'hidden.bs.collapse',
-													function() {
-														$("#collapseGMIcon")
-																.removeClass(
-																		"glyphicon-chevron-up")
-																.addClass(
-																		"glyphicon-chevron-down");
-													});
+									$(".collapse")
+										.on('shown.bs.collapse', function() {
+											$("a[href=#" + $(this).attr("id") + "] span").removeClass(
+													"glyphicon-chevron-down")
+												.addClass(
+														"glyphicon-chevron-up");
+										})
+										
+									$(".collapse")
+										.on('hidden.bs.collapse', function() {
+											$("a[href=#" + $(this).attr("id") + "] span").removeClass(
+													"glyphicon-chevron-up")
+												.addClass(
+														"glyphicon-chevron-down");
+										})
 									
 									$("#create_campaign_button").click(function() {
 										$(".dynamic").addClass("hidden");
@@ -255,7 +227,7 @@
 												<div class="">
 													<h5>
 														<a data-toggle="collapse" data-parent="#rightBar"
-															href="#collapseMembers"> Members
+															href="#collapseMembers"> Members <span class="pull-right glyphicon glyphicon-chevron-up"></span>
 														</a>
 													</h5>
 												</div>
@@ -265,7 +237,7 @@
 														<ul>
 															<c:forEach items="${campaign.members}" var="member">
 																<li><a>${member.name }</a></li>
-																<c:if test="${member.name == pageContext.request.userPrincipal.principal.name  }">
+																<c:if test="${member.name == user.username  }">
 																	<c:set var="userIsMember" value="true"></c:set>
 																</c:if>
 															</c:forEach>
@@ -287,27 +259,37 @@
 													</div>
 												</div>
 											</div>
-											<c:if test="${(campaign.gameMaster.name != pageContext.request.userPrincipal.principal.name &amp;&amp; userIsMember == true) }"> 
+											<c:if test="${(campaign.gameMaster.name == user.username || userIsMember == true) }"> 
 												<div class="">
 													<div class="">
 														<h5>
 															<a data-toggle="collapse" data-parent="#rightBar"
-																href="#collapseCharacter"> My Character
+																href="#collapseCharacter"> My Characters <span class="pull-right glyphicon glyphicon-chevron-up"></span>
 															</a>
 														</h5>
 													</div>
 													<div id="collapseCharacter" class="collapse in">
-														<c:if test="${character.character.name == null }">
-															<!-- Placeholder, create character -->
-															<a role="button" class="btn btn-default btn-block btn-sm">Create</a>
-														</c:if>
-														<c:if test="${character.character.name != null }">
-															<p>${character.character.name}</p>
-															<c:if test="${character.character.pictureUrl != '' }">
-																<img alt="${character.character.name} Image" src="${character.character.pictureUrl}" 
-																	class="img-rounded img-responsive"/>
-															</c:if>
-														</c:if>
+														<div class="scroll_list_150 nice_list">
+															<ul>
+																<c:forEach var="character" items="${characters }">
+																	<c:url var="url" value="/characters/${character.id }/show"></c:url>
+																	<li>
+																		<a href="${url }">
+																			<c:if test="${character.character.pictureUrl != '' }">
+																				<img alt="${character.character.name} Image" src="${character.character.pictureUrl}" 
+																					class="img-height-responsive pull-right char-thumbnail" rel="popover"/>
+																			</c:if>
+																			<p class="overflown tooltipable" title="${character.character.name}">
+																				${character.character.name}
+																			</p>
+																		</a>
+																	</li>
+																</c:forEach>
+															</ul>
+														</div>
+														<!-- Placeholder, create character -->
+														<c:url var="createCharacterUrl" value="/characters/create?campaignId=${campaign.id }"/>
+														<a role="button" class="btn btn-default btn-block btn-sm" href="${createCharacterUrl }">Create</a>
 													</div>
 												</div>
 											</c:if>
@@ -316,7 +298,7 @@
 													<div class="">
 														<h5>
 															<a data-toggle="collapse" data-parent="#rightBar"
-																href="#collapsePendingInvites"> Pending Invitations
+																href="#collapsePendingInvites"> Pending Invitations <span class="pull-right glyphicon glyphicon-chevron-down"></span>
 															</a>
 														</h5>
 													</div>
@@ -341,7 +323,7 @@
 													<div class="">
 														<h5>
 															<a data-toggle="collapse" data-parent="#rightBar"
-																href="#collapsePendingRequests"> Pending Requests
+																href="#collapsePendingRequests"> Pending Requests <span class="pull-right glyphicon glyphicon-chevron-down"></span>
 															</a>
 														</h5>
 													</div>
@@ -526,6 +508,10 @@
 	  	$(document).ready(function(){
 	  		
 	  		$(".tooltipable").tooltip();
+	  		
+	  		$(".char-thumbnail").popover({
+				content: 'whatever',
+			})
 	  		
 	  		$("#invite-form-dialog").on('show.bs.modal', function (e) {
 	  		  var to = $(e.relatedTarget).attr('data-to');

@@ -10,6 +10,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.digitalrpg.domain.dao.CampaignDao;
@@ -36,13 +37,23 @@ public class CampaignDaoImpl extends HibernateDao implements CampaignDao {
 		sessionFactory.getCurrentSession().save(campaign);
 		return campaign;
 	}
+	
+	@Override
+	@Transactional(isolation = Isolation.REPEATABLE_READ)
+	public void joinCampaign(Long id, User user) {
+		user = (User) this.sessionFactory.getCurrentSession().merge(user);
+		Campaign campaign = this.get(id);
+		campaign.addMember(user);
+		this.sessionFactory.getCurrentSession().save(campaign);
+	}
 
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
-	public List<Campaign> getCampaignsForUser(final String user) {
-		List<Campaign> campaignsAsPlayer = sessionFactory.getCurrentSession().createQuery("select distinct c from Campaign c join c.playerCharacters psc, PlayerCharacter pc where psc!= null and psc.character = pc and pc.owner.name = :user")
+	public List<Campaign> getCampaignsForUser(User user) {
+//		user = (User) this.sessionFactory.getCurrentSession().merge(user);
+		List<Campaign> campaignsAsPlayer = sessionFactory.getCurrentSession().createQuery("select distinct c from Campaign c where :user in elements(c.members)")
 			.setParameter("user", user).list();
-		List<Campaign> campaignsAsGameMaster = sessionFactory.getCurrentSession().createQuery("select c from Campaign c where c.gameMaster.name = :user")
+		List<Campaign> campaignsAsGameMaster = sessionFactory.getCurrentSession().createQuery("select c from Campaign c where c.gameMaster = :user")
 				.setParameter("user", user).list();
 		List<Campaign> sorted = new LinkedList<Campaign>();
 		sorted.addAll(campaignsAsGameMaster);
@@ -80,10 +91,10 @@ public class CampaignDaoImpl extends HibernateDao implements CampaignDao {
 	@Transactional(isolation = Isolation.SERIALIZABLE)
 	public void addPlayerCharacter(Long id, SystemCharacter character) {
 		Campaign campaign = get(id);
-		Set<SystemCharacter> playerCharacters = campaign.getPlayerCharacters();
+		Set<SystemCharacter> playerCharacters = campaign.getCharacters();
 		if(playerCharacters == null) {
 			playerCharacters = new HashSet<SystemCharacter>();
-			campaign.setPlayerCharacters(playerCharacters);
+			campaign.setCharacters(playerCharacters);
 		}
 		playerCharacters.add(character);
 		sessionFactory.getCurrentSession().save(campaign);

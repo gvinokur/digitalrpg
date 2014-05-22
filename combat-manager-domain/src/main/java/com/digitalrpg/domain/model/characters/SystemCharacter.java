@@ -21,83 +21,73 @@ import com.digitalrpg.domain.model.User;
 @Table(name = "system_character")
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class SystemCharacter {
-	
-	private Long id;
-	
-	private Character character;
 
-	private Campaign campaign;
-	
-	private String type;
-	
-	@Id
-	@GeneratedValue(generator="increment")
-	@GenericGenerator(name="increment", strategy = "increment")
-	public Long getId() {
-		return id;
-	}
+    private Long id;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    private Character character;
 
-	@OneToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="character_id", referencedColumnName="id")
-	public Character getCharacter() {
-		return character;
-	}
+    private Campaign campaign;
 
-	public void setCharacter(Character character) {
-		this.character = character;
-		this.type = character.getClass().getSimpleName();
-	}
+    @Id
+    @GeneratedValue(generator = "increment")
+    @GenericGenerator(name = "increment", strategy = "increment")
+    public Long getId() {
+        return id;
+    }
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name="campaign_id", referencedColumnName="id")
-	public Campaign getCampaign() {
-		return campaign;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setCampaign(Campaign campaign) {
-		this.campaign = campaign;
-	}
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "character_id", referencedColumnName = "id")
+    public Character getCharacter() {
+        return character;
+    }
 
-	public String getType() {
-		return type;
-	}
+    public void setCharacter(Character character) {
+        this.character = character;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "campaign_id", referencedColumnName = "id")
+    public Campaign getCampaign() {
+        return campaign;
+    }
 
-	public boolean belongsTo(User user) {
-		return character.belongsTo(user);
-	}
+    public void setCampaign(Campaign campaign) {
+        this.campaign = campaign;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		return result;
-	}
+    public boolean belongsTo(User user) {
+        return character.belongsTo(user);
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		SystemCharacter other = (SystemCharacter) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		return true;
-	}
-	
-	
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        SystemCharacter other = (SystemCharacter) obj;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        return true;
+    }
+
+    public abstract void updateProperties(SystemProperties systemProperties);
+
 }

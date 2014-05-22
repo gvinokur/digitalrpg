@@ -27,7 +27,7 @@ public interface CampaignDao {
 	 * @param user
 	 * @return
 	 */
-	public List<Campaign> getCampaignsForUser(String user);
+	public List<Campaign> getCampaignsForUser(User user);
 	
 	/**
 	 * Get Campaign by id
@@ -52,5 +52,12 @@ public interface CampaignDao {
 	 * @param character
 	 */
 	public void addPlayerCharacter(Long campaignd, SystemCharacter character);
+
+	/**
+	 * Adds the user to the campaign member list
+	 * @param id
+	 * @param user
+	 */
+	public void joinCampaign(Long id, User user);
 	
 }

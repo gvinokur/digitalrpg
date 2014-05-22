@@ -34,6 +34,12 @@
 <c:url var="url" value="/css/extra.css" />
 <link href="${url}" rel="stylesheet">
 	<!--  --></link>
+<c:url var="url" value="/css/tagmanager.css" />
+<link href="${url}" rel="stylesheet">
+	<!--  --></link>
+
+<link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 	<c:url var="url" value="/js/jquery.min.js" />
 	<script src="${url}"><!-- --></script>
@@ -52,7 +58,11 @@
 	<script src="${url}"><!-- --></script>
 	<c:url var="jQueryBlockUIUrl" value="/js/jquery.blockUI.js" />
 	<script src='${jQueryBlockUIUrl}'><!-- --></script>
+	<c:url var="url" value="/js/tagmanager.js" />
+	<script src="${url}"><!-- --></script>
+
 	
+	<script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"><!-- --></script>
 
 	&lt;!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries --&gt;
     &lt;!-- WARNING: Respond.js doesn't work if you view the page via file:// --&gt;
@@ -65,8 +75,8 @@
 
 	<body>
 
-		
-		
+		<!-- Make user available for all pages if exists -->
+		<sec:authentication property="principal" var="user"/>
 		
 		
 		<div class="container banner-wrapper">
@@ -90,11 +100,11 @@
 					</button>
 				</div>
 				<div class="navbar-collapse collapse">
-					<ul class="nav navbar-nav">
+					<ul class="nav navbar-nav nav-pills">
 						<c:url var="homeUrl" value="/home" />
 						<c:url var="lobbyUrl" value="/lobby" />
 						<c:url var="campaignsUrl" value="/campaigns" />
-						<c:url var="pcsUrl" value="/player-characters" />
+						<c:url var="pcsUrl" value="/characters" />
 						<c:url var="combatsUrl" value="/combats" />
 						<c:if test="${pageContext.request.userPrincipal !=null }">
 							<li class="${fn:startsWith(pageContext.request.servletPath,homeUrl)?'active':' '}"><a href="${homeUrl}">Home</a></li>
@@ -110,7 +120,7 @@
 								<c:url var="logoutUrl" value="/logout" />
 								<li class="hidden-sm">
 									<p class="navbar-text">
-										Welcome <strong><sec:authentication property="principal.username"/></strong>
+										Welcome <strong>${user.username }</strong>
 									</p>
 								</li>
 								<li>

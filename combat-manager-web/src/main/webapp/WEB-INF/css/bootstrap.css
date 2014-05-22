@@ -4327,13 +4327,13 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
   padding: 3px 7px;
   font-size: 12px;
   font-weight: bold;
-  color: #ffffff;
+  color: #000000;
   line-height: 1;
   vertical-align: baseline;
   white-space: nowrap;
   text-align: center;
-  background-color: #999999;
-  border-radius: 10px;
+  background-color: #777777;
+  border-radius: 7px;
 }
 .badge:empty {
   display: none;
@@ -4348,13 +4348,13 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 }
 a.badge:hover,
 a.badge:focus {
-  color: #ffffff;
+  color: #333333;
   text-decoration: none;
   cursor: pointer;
 }
 a.list-group-item.active > .badge,
 .nav-pills > .active > a > .badge {
-  color: #b3b3b3;
+  color: #000000;
   background-color: #ffffff;
 }
 .nav-pills > li > a > .badge {

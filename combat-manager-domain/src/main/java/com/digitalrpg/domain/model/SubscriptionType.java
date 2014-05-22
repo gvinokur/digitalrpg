@@ -1,5 +1,7 @@
 package com.digitalrpg.domain.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -10,7 +12,9 @@ import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name = "subscription_types")
-public class SubscriptionType {
+public class SubscriptionType implements Serializable{
+
+	private static final long serialVersionUID = 1L;
 
 	private Long id;
 	

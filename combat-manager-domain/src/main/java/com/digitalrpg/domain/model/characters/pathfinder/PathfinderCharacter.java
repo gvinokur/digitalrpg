@@ -4,107 +4,110 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import com.digitalrpg.domain.model.characters.SystemCharacter;
+import com.digitalrpg.domain.model.characters.SystemProperties;
 
 @Entity
 @Table(name = "pathfinder_character")
 public class PathfinderCharacter extends SystemCharacter {
 
-	
-	/*
-	 *  All pathfinder specific information
-	 */
-	private String characterClass;
-	private String race;
-	private int hp;
-	private int strength;
-	private int dexterity;
-	private int constitution;
-	private int intelligence;
-	private int wisdom;
-	private int charisma;
-	
-	public void fromProperties(PathfinderCharacterProperties properties) {
-		if(properties == null) return;
-		this.characterClass = properties.getCharacterClass();
-		this.race = properties.getRace();
-		this.hp = properties.getHp();
-		this.strength = properties.getStrength();
-		this.constitution = properties.getConstitution();
-		this.dexterity = properties.getDexterity();
-		this.charisma = properties.getCharisma();
-		this.intelligence = properties.getWisdom();
-		this.wisdom = properties.getWisdom();
-	}
 
-	public int getStrength() {
-		return strength;
-	}
+    private Integer ac;
 
-	public void setStrength(int strength) {
-		this.strength = strength;
-	}
+    private Integer hp;
 
-	public int getDexterity() {
-		return dexterity;
-	}
+    private Integer ref;
 
-	public void setDexterity(int dexterity) {
-		this.dexterity = dexterity;
-	}
+    private Integer fort;
 
-	public int getConstitution() {
-		return constitution;
-	}
+    private Integer will;
 
-	public void setConstitution(int constitution) {
-		this.constitution = constitution;
-	}
+    private Integer cmb;
 
-	public int getIntelligence() {
-		return intelligence;
-	}
+    private Integer cmd;
 
-	public void setIntelligence(int intelligence) {
-		this.intelligence = intelligence;
-	}
 
-	public int getWisdom() {
-		return wisdom;
-	}
+    public void updateProperties(SystemProperties properties) {
+        if (properties == null || !(properties instanceof PathfinderCharacterProperties))
+            return;
+        PathfinderCharacterProperties pathfinderProperties =
+                (PathfinderCharacterProperties) properties;
+        this.setAc(pathfinderProperties.getAc());
+        this.setCmb(pathfinderProperties.getCmb());
+        this.setCmd(pathfinderProperties.getCmd());
+        this.setFort(pathfinderProperties.getFort());
+        this.setHp(pathfinderProperties.getHp());
+        this.setRef(pathfinderProperties.getRef());
+        this.setWill(pathfinderProperties.getWill());
+    }
 
-	public void setWisdom(int wisdom) {
-		this.wisdom = wisdom;
-	}
 
-	public int getCharisma() {
-		return charisma;
-	}
+    public Integer getAc() {
+        return ac;
+    }
 
-	public void setCharisma(int charisma) {
-		this.charisma = charisma;
-	}
 
-	public String getCharacterClass() {
-		return characterClass;
-	}
+    public void setAc(Integer ac) {
+        this.ac = ac;
+    }
 
-	public void setCharacterClass(String characterClass) {
-		this.characterClass = characterClass;
-	}
 
-	public String getRace() {
-		return race;
-	}
+    public Integer getRef() {
+        return ref;
+    }
 
-	public void setRace(String race) {
-		this.race = race;
-	}
 
-	public int getHp() {
-		return hp;
-	}
+    public void setRef(Integer ref) {
+        this.ref = ref;
+    }
 
-	public void setHp(int hp) {
-		this.hp = hp;
-	}
+
+    public Integer getFort() {
+        return fort;
+    }
+
+
+    public void setFort(Integer fort) {
+        this.fort = fort;
+    }
+
+
+    public Integer getWill() {
+        return will;
+    }
+
+
+    public void setWill(Integer will) {
+        this.will = will;
+    }
+
+
+    public Integer getCmb() {
+        return cmb;
+    }
+
+
+    public void setCmb(Integer cmb) {
+        this.cmb = cmb;
+    }
+
+
+    public Integer getCmd() {
+        return cmd;
+    }
+
+
+    public void setCmd(Integer cmd) {
+        this.cmd = cmd;
+    }
+
+
+    public void setHp(Integer hp) {
+        this.hp = hp;
+    }
+
+
+    public int getHp() {
+        return hp;
+    }
+
 }

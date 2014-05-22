@@ -275,16 +275,17 @@ public class CombatController {
 					}
 				});
 		Builder<Long, String> builder = ImmutableMap.builder();
-		for(SystemCharacter c : combat.getCampaign().getNonPlayerCharacters()) {
-			if(!playingCharacter.contains(c)) {
-				builder.put(c.getId(), c.getCharacter().getName());
-			}
-		}
-		for(SystemCharacter c : combat.getCampaign().getPlayerCharacters()) {
-			if(!playingCharacter.contains(c)) {
-				builder.put(c.getId(), c.getCharacter().getName());
-			}
-		}
+		//TODO: Check the best way to handle this
+//		for(SystemCharacter c : combat.getCampaign().getNonPlayerCharacters()) {
+//			if(!playingCharacter.contains(c)) {
+//				builder.put(c.getId(), c.getCharacter().getName());
+//			}
+//		}
+//		for(SystemCharacter c : combat.getCampaign().getPlayerCharacters()) {
+//			if(!playingCharacter.contains(c)) {
+//				builder.put(c.getId(), c.getCharacter().getName());
+//			}
+//		}
 		return builder.build();
 	}
 	

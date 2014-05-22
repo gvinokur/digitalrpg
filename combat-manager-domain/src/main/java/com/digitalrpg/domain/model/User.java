@@ -1,5 +1,6 @@
 package com.digitalrpg.domain.model;
 
+import java.io.Serializable;
 import java.util.SortedSet;
 
 import javax.persistence.CascadeType;
@@ -22,8 +23,10 @@ import org.postgresql.util.MD5Digest;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements Serializable{
 	
+	private static final long serialVersionUID = 1L;
+
 	private Long id;
 	
 	private String name;

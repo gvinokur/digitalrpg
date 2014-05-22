@@ -1,5 +1,6 @@
 package com.digitalrpg.domain.model;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -19,8 +20,10 @@ import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name = "recent_items")
-public class RecentItem implements Comparable<RecentItem>{
+public class RecentItem implements Comparable<RecentItem>, Serializable{
 	
+	private static final long serialVersionUID = 1L;
+
 	private Long id;
 	
 	private String url;

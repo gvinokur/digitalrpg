@@ -60,8 +60,8 @@ public class CampaignController {
 	}
 	
 	@ModelAttribute("campaigns")
-	public Collection<CampaignVO> getUserCampaigns(@AuthenticationPrincipal User user) {
-		return Collections2.transform(campaignService.getCampaignsForUser(user.getName()), CampaignService.campaignToVOFunction);
+	public Collection<CampaignVO> getUserCampaigns(@AuthenticationPrincipal UserWrapper user) {
+		return Collections2.transform(campaignService.getCampaignsForUser(user.unwrap()), CampaignService.campaignToVOFunction);
 	}
 	
 	@ModelAttribute("systems")
@@ -98,7 +98,7 @@ public class CampaignController {
 		Map<String, Object> modelMap = new HashMap<String, Object>();
 		modelMap.put("show_content", "campaign_view");
 		modelMap.put("campaign", campaign);
-		modelMap.put("character", campaign.getUserCharacter(user.unwrap()));
+		modelMap.put("characters", campaign.getUserCharacters(user.unwrap()));
 		return new ModelAndView("/campaigns", modelMap);
 	}
 	
@@ -133,13 +133,12 @@ public class CampaignController {
 		Campaign campaign = campaignService.get(id);
 		if(message.getTo() == null || !message.getTo().equals(user.unwrap())) {
 			attributes.addFlashAttribute("error_message", "The invitation was sent to a different username/mail, make sure you logged in with the right one or request authorization again to the Game Master.");
-		} else if (characterService.hasPlayerCharacter(campaign, user.unwrap())) {
+		} else if (campaign.isMember(user.unwrap())) {
 			attributes.addFlashAttribute("warning_message", "You are already a member on this campaign.");
 		} else if(campaign.getGameMaster().equals(user.unwrap())){
 			attributes.addFlashAttribute("warning_message", "You are the Game master of this campaign, you cannot be a player also.");
 		} else {
 			this.campaignService.acceptRequest(id, messageId, user.unwrap());
-			this.characterService.ceatePlaceholderCharacter(campaign, user.unwrap());
 			attributes.addFlashAttribute("form_message", "Welcome to campaign, now you can create your character.");
 		}
 		
@@ -149,9 +148,15 @@ public class CampaignController {
 	@RequestMapping(value = "/{id}/accept/{requestId}")
 	@ResponseBody
 	public Boolean acceptRequest(@PathVariable Long id, @PathVariable Long requestId, @AuthenticationPrincipal UserWrapper user) {
-		MessageVO messageVO = this.campaignService.acceptRequest(id, requestId, user.unwrap());
+		MessageVO message = messageService.getMessage(requestId);
 		Campaign campaign = campaignService.get(id);
-		this.characterService.ceatePlaceholderCharacter(campaign, messageVO.getFrom());
+		if(!message.getTo().equals(user.unwrap())
+			|| !campaign.getGameMaster().equals(user.unwrap())
+			|| campaign.isMember(message.getFrom())) {
+			return false;
+		}
+		//TODO: Get message and use message from as user to add.
+		this.campaignService.acceptRequest(id, requestId, message.getFrom());
 		return true;
 	}
 	

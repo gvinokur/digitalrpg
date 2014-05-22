@@ -46,314 +46,304 @@ import com.google.common.base.Function;
 
 public class CombatService {
 
-	public static final Function<CombatCharacter, CombatCharacterVO> combatCharacterToVOfunction = new Function<CombatCharacter, CombatCharacterVO>() {
+    public static final Function<CombatCharacter, CombatCharacterVO> combatCharacterToVOfunction =
+            new Function<CombatCharacter, CombatCharacterVO>() {
 
-		public CombatCharacterVO apply(CombatCharacter in) {
-			CombatCharacterVO out = null;
-			if (in instanceof PathfinderCombatCharacter) {
-				out = createPathfinderCombatCharacterVO((PathfinderCombatCharacter) in);
-			}
-			out.setInitiative(in.getInitiative());
-			out.setHidden(in.getHidden());
-			out.setId(in.getId());
-			out.setImageUrl(in.getCharacter().getCharacter().getPictureUrl());
-			return out;
-		}
+                public CombatCharacterVO apply(CombatCharacter in) {
+                    CombatCharacterVO out = null;
+                    if (in instanceof PathfinderCombatCharacter) {
+                        out = createPathfinderCombatCharacterVO((PathfinderCombatCharacter) in);
+                    }
+                    out.setInitiative(in.getInitiative());
+                    out.setHidden(in.getHidden());
+                    out.setId(in.getId());
+                    out.setImageUrl(in.getCharacter().getCharacter().getPictureUrl());
+                    return out;
+                }
 
-		private CombatCharacterVO createPathfinderCombatCharacterVO(
-				PathfinderCombatCharacter in) {
-			PathfinderCombatCharacterVO out = new PathfinderCombatCharacterVO();
-			out.setCurrentHitPoints(in.getCurrentHitPoints());
-			out.setCurrentAction(in.getCurrentAction());
-			out.setCurrentConditions(in.getConditions());
-			out.setCurrentMagicalEffects(in.getMagicalEffects());
-			out.setConditionsAndEffectsString(in
-					.getConditionsAndEffectsString());
-			out.setHitPointStatus(in.getHitPointsStatus());
-			
-			PathfinderCharacter character = (PathfinderCharacter) in.getCharacter();
-			out.setCharisma(character.getCharisma());
-			out.setConstitution(character.getConstitution());
-			out.setDexterity(character.getDexterity());
-			out.setHp(character.getHp());
-			out.setIntelligence(character.getIntelligence());
-			out.setStrength(character.getStrength());
-			out.setWisdom(character.getWisdom());
-			out.setCharacterClass(character.getCharacterClass());
-			out.setRace(character.getRace());
-			
-			return out;
-		}
-	};
+                private CombatCharacterVO createPathfinderCombatCharacterVO(
+                        PathfinderCombatCharacter in) {
+                    PathfinderCombatCharacterVO out = new PathfinderCombatCharacterVO();
+                    out.setCurrentHitPoints(in.getCurrentHitPoints());
+                    out.setCurrentAction(in.getCurrentAction());
+                    out.setCurrentConditions(in.getConditions());
+                    out.setCurrentMagicalEffects(in.getMagicalEffects());
+                    out.setConditionsAndEffectsString(in.getConditionsAndEffectsString());
+                    out.setHitPointStatus(in.getHitPointsStatus());
 
-	@Autowired
-	private CombatDao combatDao;
+                    PathfinderCharacter character = (PathfinderCharacter) in.getCharacter();
 
-	@Autowired
-	private SystemDao systemDao;
+                    return out;
+                }
+            };
 
-	@Autowired
-	private CampaignService campaignService;
+    @Autowired
+    private CombatDao combatDao;
 
-	@Autowired
-	private CharacterService characterService;
+    @Autowired
+    private SystemDao systemDao;
 
-	@Resource(name = "characterAttributeConvertersMap")
-	private Map<Class, CharacterAttributeConverter> converters;
+    @Autowired
+    private CampaignService campaignService;
 
-	@Transactional(rollbackFor = Exception.class)
-	public Combat createCombat(String name, String description,
-			List<Long> players,
-			Map<Long, PlayerExtraInfoVO> playersExtraInfoMap, Long campaignId,
-			SystemCombatProperties systemCombatProperties) {
-		Campaign campaign = campaignService.get(campaignId);
-		Combat combat = combatDao.createCombat(name, description, campaign,
-				systemCombatProperties);
-		Map<Long, Long> orderByPlayer = getOrdersByInitiative(playersExtraInfoMap);
-		for (Long playerId : players) {
-			SystemCharacter character = characterService.get(playerId);
-			PlayerExtraInfoVO extraInfoVO = playersExtraInfoMap.get(playerId);
-			combatDao.createCharacter(combat, character,
-					extraInfoVO.getHidden(), extraInfoVO.getInitative(), orderByPlayer.get(playerId), null);
-		}
-		return combat;
-	}
+    @Autowired
+    private CharacterService characterService;
 
-	private Map<Long, Long> getOrdersByInitiative(
-			Map<Long, PlayerExtraInfoVO> playersExtraInfoMap) {
-		SortedMap<Long, Long> playerByInititative = new TreeMap<Long, Long>();
-		for (Long pk : playersExtraInfoMap.keySet()) {
-			playerByInititative.put(playersExtraInfoMap.get(pk).getInitative(), pk);
-		}
-		Long i = Long.valueOf(playerByInititative.size());
-		Map<Long, Long> orderByInitiative = new HashMap<Long, Long>();
-		for(Long initiative : playerByInititative.keySet()) {
-			orderByInitiative.put(playerByInititative.get(initiative), i);
-			i--;
-		}
-		return orderByInitiative;
-	}
+    @Resource(name = "characterAttributeConvertersMap")
+    private Map<Class, CharacterAttributeConverter> converters;
 
-	public Combat getCombat(Long id) {
-		Combat combat = combatDao.get(id);
-		return combat;
-	}
+    @Transactional(rollbackFor = Exception.class)
+    public Combat createCombat(String name, String description, List<Long> players,
+            Map<Long, PlayerExtraInfoVO> playersExtraInfoMap, Long campaignId,
+            SystemCombatProperties systemCombatProperties) {
+        Campaign campaign = campaignService.get(campaignId);
+        Combat combat = combatDao.createCombat(name, description, campaign, systemCombatProperties);
+        Map<Long, Long> orderByPlayer = getOrdersByInitiative(playersExtraInfoMap);
+        for (Long playerId : players) {
+            SystemCharacter character = characterService.get(playerId);
+            PlayerExtraInfoVO extraInfoVO = playersExtraInfoMap.get(playerId);
+            combatDao.createCharacter(combat, character, extraInfoVO.getHidden(),
+                    extraInfoVO.getInitative(), orderByPlayer.get(playerId), null);
+        }
+        return combat;
+    }
 
-	public void startCombat(Combat combat) {
-		combatDao.startCombat(combat);
-		combat.getCampaign().setActiveCombat(combat);
-	}
+    private Map<Long, Long> getOrdersByInitiative(Map<Long, PlayerExtraInfoVO> playersExtraInfoMap) {
+        SortedMap<Long, Long> playerByInititative = new TreeMap<Long, Long>();
+        for (Long pk : playersExtraInfoMap.keySet()) {
+            playerByInititative.put(playersExtraInfoMap.get(pk).getInitative(), pk);
+        }
+        Long i = Long.valueOf(playerByInititative.size());
+        Map<Long, Long> orderByInitiative = new HashMap<Long, Long>();
+        for (Long initiative : playerByInititative.keySet()) {
+            orderByInitiative.put(playerByInititative.get(initiative), i);
+            i--;
+        }
+        return orderByInitiative;
+    }
 
-	@Transactional(rollbackFor = Exception.class, isolation = Isolation.SERIALIZABLE)
-	public CombatCharacterVO updateCombatCharacter(Long id,
-			String attributeName, String value, User user)
-			throws IllegalArgumentException, IllegalAccessException {
-		CombatCharacter combatCharacter = combatDao.getCombatCharacter(id);
-		Field field = ReflectionUtils.findField(combatCharacter.getClass(),
-				attributeName);
-		CharacterAttributeConverter<?> characterAttributeConverter = converters
-				.get(field.getType());
-		if (characterAttributeConverter != null) {
-			field.setAccessible(true);
-			field.set(combatCharacter,
-					characterAttributeConverter.convert(value));
-		}
-		return combatCharacterToVOfunction.apply(combatCharacter);
-	}
-	
-	@Transactional(rollbackFor = Exception.class, isolation = Isolation.SERIALIZABLE)
-	public CombatCharacterVO updateCombatCharacterItem(Long id,
-			String itemType, ItemAction action, Long itemId, User user) throws IllegalArgumentException, IllegalAccessException {
-		CombatCharacter combatCharacter = combatDao.getCombatCharacter(id);
-		SystemType system = combatCharacter.getCombat().getCampaign().getSystem();
-		SystemCombatItems systemCombatItems = combatDao.getSystemCombatItems(system);
-		SystemCombatItem item = getItem(systemCombatItems, itemType, itemId);
-		switch (action) {
-		case ADD:
-			combatCharacter.addItem(item);
-			break;
-		case REMOVE:
-			combatCharacter.removeItem(item);
-			break;
-		}
-		return combatCharacterToVOfunction.apply(combatCharacter);
-	}
+    public Combat getCombat(Long id) {
+        Combat combat = combatDao.get(id);
+        return combat;
+    }
 
-	private SystemCombatItem getItem(SystemCombatItems systemCombatItems, String itemType,
-			Long itemId) throws IllegalArgumentException, IllegalAccessException {
-		Field field = ReflectionUtils.findField(systemCombatItems.getClass(), itemType);
-		if(field != null) {
-			field.setAccessible(true);
-			List<? extends SystemCombatItem> items = (List<? extends SystemCombatItem>) field.get(systemCombatItems);
-			for (SystemCombatItem item : items) {
-				if(item.getId().equals(itemId)) {
-					return item;
-				}
-			}
-		}
-		return null;
-	}
+    public void startCombat(Combat combat) {
+        combatDao.startCombat(combat);
+        combat.getCampaign().setActiveCombat(combat);
+    }
 
-	@Transactional
-	public Combat nextCharacter(Long combatId) {
-		Combat combat = combatDao.get(combatId);
-		SystemCombatItems systemCombatItems = combatDao.getSystemCombatItems(combat.getCampaign().getSystem());
-		combat.advance(systemCombatItems.getActions());
-		return combat;
-	}
+    @Transactional(rollbackFor = Exception.class, isolation = Isolation.SERIALIZABLE)
+    public CombatCharacterVO updateCombatCharacter(Long id, String attributeName, String value,
+            User user) throws IllegalArgumentException, IllegalAccessException {
+        CombatCharacter combatCharacter = combatDao.getCombatCharacter(id);
+        Field field = ReflectionUtils.findField(combatCharacter.getClass(), attributeName);
+        CharacterAttributeConverter<?> characterAttributeConverter =
+                converters.get(field.getType());
+        if (characterAttributeConverter != null) {
+            field.setAccessible(true);
+            field.set(combatCharacter, characterAttributeConverter.convert(value));
+        }
+        return combatCharacterToVOfunction.apply(combatCharacter);
+    }
 
-	@Transactional
-	public Combat previousCharacter(Long combatId) {
-		Combat combat = combatDao.get(combatId);
-		SystemCombatItems systemCombatItems = combatDao.getSystemCombatItems(combat.getCampaign().getSystem());
-		combat.back(systemCombatItems.getActions());
-		return combat;
-	}
-	
-	public CombatCharacter getCombatCharacter(Long id) {
-		return combatDao.getCombatCharacter(id);
-	}
-	
-	public CombatStatusVO getStatus(Combat combat) {
-		return getStatus(combat, false);
-	}
-	
-	public CombatStatusVO getStatus(Combat combat, boolean includeCharacters) {
-		CombatStatusVO combatStatusVO = null;
-		switch (combat.getCampaign().getSystem()) {
-		case Pathfinder:
-			combatStatusVO = createPathfinderCombatStatusVO(combat);
-			break;
-		default:
-			break;
-		}
-		combatStatusVO
-				.setCurrentCharacterId(combat.getCurrentCharacter() != null ? combat
-						.getCurrentCharacter().getId() : null);
-		combatStatusVO.setFinished(combat.getCurrentCharacter() == null);
-		if(includeCharacters) {
-			SortedSet<CombatCharacterStatusVO> combatCharactersVO = new TreeSet<CombatCharacterStatusVO>();
-			for(CombatCharacter combatCharacter : combat.getCombatCharacters()) {
-				combatCharactersVO.add(getStatus(combatCharacter, combat.getCampaign().getSystem()));
-			}
-			combatStatusVO.setCombatCharacters(combatCharactersVO);
-		}
-		return combatStatusVO;
-	}
+    @Transactional(rollbackFor = Exception.class, isolation = Isolation.SERIALIZABLE)
+    public CombatCharacterVO updateCombatCharacterItem(Long id, String itemType, ItemAction action,
+            Long itemId, User user) throws IllegalArgumentException, IllegalAccessException {
+        CombatCharacter combatCharacter = combatDao.getCombatCharacter(id);
+        SystemType system = combatCharacter.getCombat().getCampaign().getSystem();
+        SystemCombatItems systemCombatItems = combatDao.getSystemCombatItems(system);
+        SystemCombatItem item = getItem(systemCombatItems, itemType, itemId);
+        switch (action) {
+            case ADD:
+                combatCharacter.addItem(item);
+                break;
+            case REMOVE:
+                combatCharacter.removeItem(item);
+                break;
+        }
+        return combatCharacterToVOfunction.apply(combatCharacter);
+    }
 
-	private CombatStatusVO createPathfinderCombatStatusVO(Combat combat) {
-		PathfinderCombatStatusVO combatStatusVO = new PathfinderCombatStatusVO();
-		combatStatusVO.setCurrentRound(((PathfinderCombat) combat)
-				.getCurrentRound());
-		combatStatusVO.setCurrentTurn(((PathfinderCombat) combat)
-				.getCurrentTurn());
-		return combatStatusVO;
-	}
+    private SystemCombatItem getItem(SystemCombatItems systemCombatItems, String itemType,
+            Long itemId) throws IllegalArgumentException, IllegalAccessException {
+        Field field = ReflectionUtils.findField(systemCombatItems.getClass(), itemType);
+        if (field != null) {
+            field.setAccessible(true);
+            List<? extends SystemCombatItem> items =
+                    (List<? extends SystemCombatItem>) field.get(systemCombatItems);
+            for (SystemCombatItem item : items) {
+                if (item.getId().equals(itemId)) {
+                    return item;
+                }
+            }
+        }
+        return null;
+    }
 
-	private CombatCharacterStatusVO getStatus(CombatCharacter combatCharacter, SystemType system) {
-		CombatCharacterStatusVO vo = null; 
-		switch (system) {
-		case Pathfinder:
-			vo = createPathfinderCombatCharacterStatusVO((PathfinderCombatCharacter) combatCharacter);
-			break;
-		default:
-			break;
-		}
-		vo.setName(combatCharacter.getCharacter().getCharacter().getName());
-		vo.setId(combatCharacter.getId());
-		vo.setOrder(combatCharacter.getOrder());
-		vo.setHidden(combatCharacter.getHidden());
-		return vo;
-	}
-	
-	private CombatCharacterStatusVO createPathfinderCombatCharacterStatusVO(
-			PathfinderCombatCharacter combatCharacter) {
-		PathfinderCombatCharacterStatusVO vo = new PathfinderCombatCharacterStatusVO();
-		vo.setCurrentAction(combatCharacter.getCurrentAction().getLabel());
-		vo.setCurrentHitPointStatus(combatCharacter.getHitPointsStatus());
-		vo.setConditionsAndEffects(combatCharacter.getConditionsAndEffectsString());
-		return vo;
-	}
+    @Transactional
+    public Combat nextCharacter(Long combatId) {
+        Combat combat = combatDao.get(combatId);
+        SystemCombatItems systemCombatItems =
+                combatDao.getSystemCombatItems(combat.getCampaign().getSystem());
+        combat.advance(systemCombatItems.getActions());
+        return combat;
+    }
 
-	public SystemCombatItems getSystemCombatItems(SystemType system) {
-		return combatDao.getSystemCombatItems(system);
-	}
+    @Transactional
+    public Combat previousCharacter(Long combatId) {
+        Combat combat = combatDao.get(combatId);
+        SystemCombatItems systemCombatItems =
+                combatDao.getSystemCombatItems(combat.getCampaign().getSystem());
+        combat.back(systemCombatItems.getActions());
+        return combat;
+    }
 
-	public List<Combat> getCombats(User user) {
-		return combatDao.getCombatsForUser(user.getName());
-	}
+    public CombatCharacter getCombatCharacter(Long id) {
+        return combatDao.getCombatCharacter(id);
+    }
 
-	@Transactional
-	public Combat updateOrderAndActions(Long id,
-			Map<Long, OrderAndAction> charactersOrderAndActions) {
-		Combat combat = combatDao.get(id);
-		List<? extends SystemAction> actions = combatDao.getSystemCombatItems(combat.getCampaign().getSystem()).getActions();
-		for(CombatCharacter character : combat.getCombatCharacters()) {
-			OrderAndAction orderAndAction = charactersOrderAndActions.get(character.getId());
-			character.setOrder(orderAndAction.getOrder());
-			character.setCurrentAction(getCurrentAction(actions, orderAndAction.getAction()));
-		}
-		return combat;
-	}
+    public CombatStatusVO getStatus(Combat combat) {
+        return getStatus(combat, false);
+    }
 
-	private <T extends SystemAction> T getCurrentAction(List<T> actions,
-			String actionString) {
-		T currentAction = null;
-		for(T action : actions) {
-			if(action.getLabel().equalsIgnoreCase(actionString)) {
-				currentAction = action;
-			}
-			if(currentAction == null && action.getInitial()) {
-				currentAction = action;
-			}
-		}
-		return currentAction;
-	}
+    public CombatStatusVO getStatus(Combat combat, boolean includeCharacters) {
+        CombatStatusVO combatStatusVO = null;
+        switch (combat.getCampaign().getSystem()) {
+            case Pathfinder:
+                combatStatusVO = createPathfinderCombatStatusVO(combat);
+                break;
+            default:
+                break;
+        }
+        combatStatusVO.setCurrentCharacterId(combat.getCurrentCharacter() != null ? combat
+                .getCurrentCharacter().getId() : null);
+        combatStatusVO.setFinished(combat.getCurrentCharacter() == null);
+        if (includeCharacters) {
+            SortedSet<CombatCharacterStatusVO> combatCharactersVO =
+                    new TreeSet<CombatCharacterStatusVO>();
+            for (CombatCharacter combatCharacter : combat.getCombatCharacters()) {
+                combatCharactersVO
+                        .add(getStatus(combatCharacter, combat.getCampaign().getSystem()));
+            }
+            combatStatusVO.setCombatCharacters(combatCharactersVO);
+        }
+        return combatStatusVO;
+    }
 
-	@Transactional
-	public void endCombat(Combat combat) {
-		combat = this.getCombat(combat.getId());
-		combat.setActive(Boolean.FALSE);
-	}
+    private CombatStatusVO createPathfinderCombatStatusVO(Combat combat) {
+        PathfinderCombatStatusVO combatStatusVO = new PathfinderCombatStatusVO();
+        combatStatusVO.setCurrentRound(((PathfinderCombat) combat).getCurrentRound());
+        combatStatusVO.setCurrentTurn(((PathfinderCombat) combat).getCurrentTurn());
+        return combatStatusVO;
+    }
 
-	public CombatCharacter<SystemAction> getPlayerCharacter(Combat combat, User user) {
-		for(CombatCharacter character : combat.getCombatCharacters()) {
-			if(character.getCharacter().belongsTo(user)) {
-				return character;
-			}
-		}
-		return null;
-	}
+    private CombatCharacterStatusVO getStatus(CombatCharacter combatCharacter, SystemType system) {
+        CombatCharacterStatusVO vo = null;
+        switch (system) {
+            case Pathfinder:
+                vo =
+                        createPathfinderCombatCharacterStatusVO((PathfinderCombatCharacter) combatCharacter);
+                break;
+            default:
+                break;
+        }
+        vo.setName(combatCharacter.getCharacter().getCharacter().getName());
+        vo.setId(combatCharacter.getId());
+        vo.setOrder(combatCharacter.getOrder());
+        vo.setHidden(combatCharacter.getHidden());
+        return vo;
+    }
 
-	public Combat addCombatant(Combat combat, Long characterId) {
-		
-		SystemCharacter systemCharacter = characterService.get(characterId);
-		combatDao.createCharacter(combat, systemCharacter,
-				Boolean.FALSE, Long.valueOf(0), Long.valueOf(combat.getCombatCharactersAsNavigableSet().last().getOrder() + 1), null);
-		return this.getCombat(combat.getId());
-	}
+    private CombatCharacterStatusVO createPathfinderCombatCharacterStatusVO(
+            PathfinderCombatCharacter combatCharacter) {
+        PathfinderCombatCharacterStatusVO vo = new PathfinderCombatCharacterStatusVO();
+        vo.setCurrentAction(combatCharacter.getCurrentAction().getLabel());
+        vo.setCurrentHitPointStatus(combatCharacter.getHitPointsStatus());
+        vo.setConditionsAndEffects(combatCharacter.getConditionsAndEffectsString());
+        return vo;
+    }
 
-	public void deleteCombatant(Combat combat, Long characterId) {
-		
-		CombatCharacter combatCharacter = combatDao.getCombatCharacter(characterId);
-		if(combat.getCurrentCharacter() !=null && combat.getCurrentCharacter().getId().equals(combatCharacter.getId())) {
-			NavigableSet<CombatCharacter> navigableSet = combat.getCombatCharactersAsNavigableSet();
-			NavigableSet<CombatCharacter> tailSet = navigableSet.tailSet(combatCharacter, false);
-			if(!tailSet.isEmpty()) {
-				combat.setCurrentCharacter(tailSet.first());
-			} else {
-				NavigableSet<CombatCharacter> headSet = navigableSet.headSet(combatCharacter, false);
-				if(!headSet.isEmpty()) {
-					combat.setCurrentCharacter(headSet.last());
-				} else {
-					combat.setCurrentCharacter(null);
-				}
-			}
-		}
-		combatDao.update(combat);
-		combatDao.delete(combatCharacter);
-		
-	}
+    public SystemCombatItems getSystemCombatItems(SystemType system) {
+        return combatDao.getSystemCombatItems(system);
+    }
+
+    public List<Combat> getCombats(User user) {
+        return combatDao.getCombatsForUser(user.getName());
+    }
+
+    @Transactional
+    public Combat updateOrderAndActions(Long id, Map<Long, OrderAndAction> charactersOrderAndActions) {
+        Combat combat = combatDao.get(id);
+        List<? extends SystemAction> actions =
+                combatDao.getSystemCombatItems(combat.getCampaign().getSystem()).getActions();
+        for (CombatCharacter character : combat.getCombatCharacters()) {
+            OrderAndAction orderAndAction = charactersOrderAndActions.get(character.getId());
+            character.setOrder(orderAndAction.getOrder());
+            character.setCurrentAction(getCurrentAction(actions, orderAndAction.getAction()));
+        }
+        return combat;
+    }
+
+    private <T extends SystemAction> T getCurrentAction(List<T> actions, String actionString) {
+        T currentAction = null;
+        for (T action : actions) {
+            if (action.getLabel().equalsIgnoreCase(actionString)) {
+                currentAction = action;
+            }
+            if (currentAction == null && action.getInitial()) {
+                currentAction = action;
+            }
+        }
+        return currentAction;
+    }
+
+    @Transactional
+    public void endCombat(Combat combat) {
+        combat = this.getCombat(combat.getId());
+        combat.setActive(Boolean.FALSE);
+    }
+
+    public CombatCharacter<SystemAction> getPlayerCharacter(Combat combat, User user) {
+        for (CombatCharacter character : combat.getCombatCharacters()) {
+            if (character.getCharacter().belongsTo(user)) {
+                return character;
+            }
+        }
+        return null;
+    }
+
+    public Combat addCombatant(Combat combat, Long characterId) {
+
+        SystemCharacter systemCharacter = characterService.get(characterId);
+        combatDao.createCharacter(combat, systemCharacter, Boolean.FALSE, Long.valueOf(0),
+                Long.valueOf(combat.getCombatCharactersAsNavigableSet().last().getOrder() + 1),
+                null);
+        return this.getCombat(combat.getId());
+    }
+
+    public void deleteCombatant(Combat combat, Long characterId) {
+
+        CombatCharacter combatCharacter = combatDao.getCombatCharacter(characterId);
+        if (combat.getCurrentCharacter() != null
+                && combat.getCurrentCharacter().getId().equals(combatCharacter.getId())) {
+            NavigableSet<CombatCharacter> navigableSet = combat.getCombatCharactersAsNavigableSet();
+            NavigableSet<CombatCharacter> tailSet = navigableSet.tailSet(combatCharacter, false);
+            if (!tailSet.isEmpty()) {
+                combat.setCurrentCharacter(tailSet.first());
+            } else {
+                NavigableSet<CombatCharacter> headSet =
+                        navigableSet.headSet(combatCharacter, false);
+                if (!headSet.isEmpty()) {
+                    combat.setCurrentCharacter(headSet.last());
+                } else {
+                    combat.setCurrentCharacter(null);
+                }
+            }
+        }
+        combatDao.update(combat);
+        combatDao.delete(combatCharacter);
+
+    }
 
 
 

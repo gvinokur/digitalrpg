@@ -4,14 +4,14 @@ import java.util.Collection;
 import java.util.List;
 
 import org.hibernate.SessionFactory;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.digitalrpg.domain.dao.CharacterDao;
 import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.User;
 import com.digitalrpg.domain.model.characters.Character;
-import com.digitalrpg.domain.model.characters.NonPlayerCharacter;
-import com.digitalrpg.domain.model.characters.PlayerCharacter;
+import com.digitalrpg.domain.model.characters.Character.CharacterType;
 import com.digitalrpg.domain.model.characters.SystemCharacter;
 import com.digitalrpg.domain.model.characters.pathfinder.PathfinderCharacter;
 import com.digitalrpg.domain.model.characters.pathfinder.PathfinderCharacterProperties;
@@ -23,26 +23,29 @@ public class CharacterDaoImpl extends HibernateDao implements CharacterDao {
 	}
 
 	@Transactional
-	public PlayerCharacter createPlayerCharacter(String name,
-			String pictureUrl, String description, User owner) {
-		PlayerCharacter playerCharacter = new PlayerCharacter();
+	public Character createPlayerCharacter(String name,
+			String pictureUrl, String bio, User owner) {
+		Character playerCharacter = new Character();
+		playerCharacter.setCharacterType(CharacterType.PC);
 		playerCharacter.setName(name);
 		playerCharacter.setPictureUrl(pictureUrl);
-		playerCharacter.setDescription(description);
+		playerCharacter.setBio(bio);
+		playerCharacter.setCreatedBy(owner);
 		playerCharacter.setOwner(owner);
 		sessionFactory.getCurrentSession().save(playerCharacter);
 		return playerCharacter;
 	}
 
 	@Transactional
-	public NonPlayerCharacter createNonPlayerCharacter(String name,
-			String pictureUrl, String description, Boolean isPublic, User createdBy) {
-		NonPlayerCharacter nonPlayerCharacter = new NonPlayerCharacter();
+	public Character createNonPlayerCharacter(String name,
+			String pictureUrl, String bio, Boolean isPublic, User owner) {
+		Character nonPlayerCharacter = new Character();
+		nonPlayerCharacter.setCharacterType(CharacterType.NPC);
 		nonPlayerCharacter.setName(name);
-		nonPlayerCharacter.setDescription(description);
+		nonPlayerCharacter.setBio(bio);
 		nonPlayerCharacter.setPictureUrl(pictureUrl);
-		nonPlayerCharacter.setIsPublic(isPublic);
-		nonPlayerCharacter.setCreatedBy(createdBy);
+		nonPlayerCharacter.setCreatedBy(owner);
+		nonPlayerCharacter.setOwner(owner);
 		sessionFactory.getCurrentSession().save(nonPlayerCharacter);
 		return nonPlayerCharacter;
 	}
@@ -52,7 +55,7 @@ public class CharacterDaoImpl extends HibernateDao implements CharacterDao {
 			PathfinderCharacterProperties properties, Campaign campaign) {
 		PathfinderCharacter pathfinderCharacter = new PathfinderCharacter();
 		pathfinderCharacter.setCharacter(character);
-		pathfinderCharacter.fromProperties(properties);
+		pathfinderCharacter.updateProperties(properties);
 		pathfinderCharacter.setCampaign(campaign);
 		sessionFactory.getCurrentSession().save(pathfinderCharacter);
 		return pathfinderCharacter;
@@ -60,11 +63,11 @@ public class CharacterDaoImpl extends HibernateDao implements CharacterDao {
 
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
-	public Collection<SystemCharacter> getUserPlayerCharacters(String user) {
+	public Collection<SystemCharacter> getUserCharacters(String user) {
 		List<SystemCharacter> characters = sessionFactory
 				.getCurrentSession()
 				.createQuery(
-						"select sc from SystemCharacter sc, PlayerCharacter pc where sc.character = pc and pc.owner.name = :user")
+						"select sc from SystemCharacter sc, Character pc where sc.character = pc and pc.owner.name = :user")
 				.setParameter("user", user).list();
 		return characters;
 	}
@@ -113,6 +116,13 @@ public class CharacterDaoImpl extends HibernateDao implements CharacterDao {
 				.setParameter("campaign", campaign).list();
 		
 		return !characters.isEmpty();
+	}
+
+	@Transactional(isolation = Isolation.REPEATABLE_READ)
+	public void transfer(Long id, User user) {
+		Character character = this.get(id).getCharacter();
+		character.setOwner(user);
+		this.sessionFactory.getCurrentSession().update(character);
 	}
 
 }

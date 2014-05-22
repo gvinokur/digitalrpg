@@ -1,90 +1,105 @@
 package com.digitalrpg.web.controller.model;
 
+import com.digitalrpg.domain.model.characters.pathfinder.PathfinderCharacter;
 import com.digitalrpg.domain.model.characters.pathfinder.PathfinderCharacterProperties;
 
-public class PathfinderDataVO implements SystemDataVO{
+public class PathfinderDataVO implements SystemDataVO {
 
-	private String race;
-	
-	private String characterClass;
-	
-	private int hp;
-	
-	private int strength;
-	private int dexterity;
-	private int constitution;
-	private int intelligence;
-	private int wisdom;
-	private int charisma;
-	
-	public int getStrength() {
-		return strength;
-	}
-	public void setStrength(int strength) {
-		this.strength = strength;
-	}
-	public int getDexterity() {
-		return dexterity;
-	}
-	public void setDexterity(int dexterity) {
-		this.dexterity = dexterity;
-	}
-	public int getConstitution() {
-		return constitution;
-	}
-	public void setConstitution(int constitution) {
-		this.constitution = constitution;
-	}
-	public int getIntelligence() {
-		return intelligence;
-	}
-	public void setIntelligence(int intelligence) {
-		this.intelligence = intelligence;
-	}
-	public int getWisdom() {
-		return wisdom;
-	}
-	public void setWisdom(int wisdom) {
-		this.wisdom = wisdom;
-	}
-	public int getCharisma() {
-		return charisma;
-	}
-	public void setCharisma(int charisma) {
-		this.charisma = charisma;
-	}
-	public PathfinderCharacterProperties toSystemProperties() {
-		PathfinderCharacterProperties properties = new PathfinderCharacterProperties();
-		properties.setCharacterClass(characterClass);
-		properties.setRace(race);
-		properties.setHp(hp);
-		properties.setCharisma(charisma);
-		properties.setConstitution(constitution);
-		properties.setDexterity(dexterity);
-		properties.setIntelligence(intelligence);
-		properties.setStrength(strength);
-		properties.setWisdom(wisdom);
-		return properties;
-	}
-	public String getRace() {
-		return race;
-	}
-	public void setRace(String race) {
-		this.race = race;
-	}
-	public String getCharacterClass() {
-		return characterClass;
-	}
-	public void setCharacterClass(String characterClass) {
-		this.characterClass = characterClass;
-	}
-	public int getHp() {
-		return hp;
-	}
-	public void setHp(int hp) {
-		this.hp = hp;
-	}
-	
-	
-	
+    private Integer ac;
+
+    private Integer hp;
+
+    private Integer ref;
+
+    private Integer fort;
+
+    private Integer will;
+
+    private Integer cmb;
+
+    private Integer cmd;
+
+    public PathfinderDataVO() {
+
+    }
+
+    public PathfinderDataVO(PathfinderCharacter systemCharacter) {
+        this.ac = systemCharacter.getAc();
+        this.hp = systemCharacter.getHp();
+        this.ref = systemCharacter.getRef();
+        this.fort = systemCharacter.getFort();
+        this.will = systemCharacter.getWill();
+        this.cmb = systemCharacter.getCmb();
+        this.cmd = systemCharacter.getCmd();
+    }
+
+    public PathfinderCharacterProperties toSystemProperties() {
+        PathfinderCharacterProperties properties = new PathfinderCharacterProperties();
+        properties.setAc(this.getAc());
+        properties.setCmb(this.getCmb());
+        properties.setCmd(this.getCmd());
+        properties.setFort(this.getFort());
+        properties.setHp(this.getHp());
+        properties.setRef(this.getRef());
+        properties.setWill(this.getWill());
+        return properties;
+    }
+
+    public Integer getAc() {
+        return ac;
+    }
+
+    public void setAc(Integer ac) {
+        this.ac = ac;
+    }
+
+    public Integer getHp() {
+        return hp;
+    }
+
+    public void setHp(Integer hp) {
+        this.hp = hp;
+    }
+
+    public Integer getRef() {
+        return ref;
+    }
+
+    public void setRef(Integer ref) {
+        this.ref = ref;
+    }
+
+    public Integer getFort() {
+        return fort;
+    }
+
+    public void setFort(Integer fort) {
+        this.fort = fort;
+    }
+
+    public Integer getWill() {
+        return will;
+    }
+
+    public void setWill(Integer will) {
+        this.will = will;
+    }
+
+    public Integer getCmb() {
+        return cmb;
+    }
+
+    public void setCmb(Integer cmb) {
+        this.cmb = cmb;
+    }
+
+    public Integer getCmd() {
+        return cmd;
+    }
+
+    public void setCmd(Integer cmd) {
+        this.cmd = cmd;
+    }
+
+
 }

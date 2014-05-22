@@ -198,7 +198,7 @@
 			
 		}
 		
-		<c:url var="inviteUrl" value="/player-characters/[id]/show?messageId=[message_id]"/>
+		<c:url var="inviteUrl" value="/characters/[id]/show?messageId=[message_id]"/>
 		function drawMessageInviteCharacter(messageDiv, message) {
 			var url = "${inviteUrl}".replace("[id]",message.character_id).replace("[message_id]", message.id)
 			var deleteUrl = "${deleteUrl}".replace("[id]", message.id)
