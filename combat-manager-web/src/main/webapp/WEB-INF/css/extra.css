@@ -307,3 +307,8 @@ textarea {
 .right-pane {
 	border-left: #363434 1px solid;
 }
+
+a:focus {
+	outline: 0px;
+	text-decoration: none;
+}

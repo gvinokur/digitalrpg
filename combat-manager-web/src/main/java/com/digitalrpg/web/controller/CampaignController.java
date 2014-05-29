@@ -1,7 +1,9 @@
 package com.digitalrpg.web.controller;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +27,7 @@ import com.digitalrpg.domain.dao.CharacterDao;
 import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.SystemType;
 import com.digitalrpg.domain.model.User;
+import com.digitalrpg.domain.model.characters.SystemCharacter;
 import com.digitalrpg.web.controller.model.CampaignVO;
 import com.digitalrpg.web.controller.model.CreateCampaignVO;
 import com.digitalrpg.web.controller.model.MessageVO;
@@ -34,130 +37,168 @@ import com.digitalrpg.web.service.MessageService;
 import com.digitalrpg.web.service.UserService;
 import com.digitalrpg.web.service.UserWrapper;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Lists;
 
 @Controller
 @RequestMapping("/campaigns")
 public class CampaignController {
 
-	private final static String SHOW_CAMPAIGN_URL = "/campaigns/%s/show";
-	
-	@Autowired
-	private CampaignService campaignService;
+    private final static String SHOW_CAMPAIGN_URL = "/campaigns/%s/show";
 
-	@Autowired
-	private MessageService messageService;
-	
-	@Autowired
-	private CharacterService characterService;
-	
-	@Autowired
-	private UserService userService;
+    @Autowired
+    private CampaignService campaignService;
 
-	
-	@ModelAttribute("createCampaignVO") 
-	public CreateCampaignVO getCreateCampaignVO() {
-		return new CreateCampaignVO();
-	}
-	
-	@ModelAttribute("campaigns")
-	public Collection<CampaignVO> getUserCampaigns(@AuthenticationPrincipal UserWrapper user) {
-		return Collections2.transform(campaignService.getCampaignsForUser(user.unwrap()), CampaignService.campaignToVOFunction);
-	}
-	
-	@ModelAttribute("systems")
-	public SystemType[] getSystemTypes() {
-		return SystemType.values();
-	}
-	
-	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView showCampaigns(@RequestParam(required = false, value="show_content") String showContent) {
-		return new ModelAndView("campaigns");
-	}
-	
-	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView createCampaign(@Valid @ModelAttribute("createCampaignVO") CreateCampaignVO createCampaignVO, BindingResult result, @AuthenticationPrincipal UserWrapper user, RedirectAttributes attributes ) {
-		if(!result.hasErrors()) {
-			Campaign campaign = campaignService.createCampaign(createCampaignVO.getName(), createCampaignVO.getDescription(), user.unwrap(), createCampaignVO.getIsPublic(), createCampaignVO.getSystemType());
-			userService.trackItem(user.unwrap(), String.format(SHOW_CAMPAIGN_URL, campaign.getId()), campaign.getName());
-			attributes.addFlashAttribute("form_message", String.format("Campaign %s was created successfully", campaign.getName()));
-			return new ModelAndView("redirect:campaigns");
-		}
-		return new ModelAndView("campaigns", "show_content", "create_campaign");
-	}
-	
-	@RequestMapping(value = "/search/{searchString}", method = RequestMethod.GET)
-	@ResponseBody
-	public Collection<CampaignVO> searchCampaigns(@PathVariable String searchString) {
-		return Collections2.transform(campaignService.search(searchString, 0, Integer.MAX_VALUE), CampaignService.campaignToVOFunction);
-	}
-	
-	@RequestMapping(value = "/{id}/show", method = RequestMethod.GET)
-	public ModelAndView showCampaign(@PathVariable Long id, @AuthenticationPrincipal UserWrapper user) {
-		Campaign campaign = campaignService.get(id);
-		userService.trackItem(user.unwrap(), String.format(SHOW_CAMPAIGN_URL, campaign.getId()), campaign.getName());
-		Map<String, Object> modelMap = new HashMap<String, Object>();
-		modelMap.put("show_content", "campaign_view");
-		modelMap.put("campaign", campaign);
-		modelMap.put("characters", campaign.getUserCharacters(user.unwrap()));
-		return new ModelAndView("/campaigns", modelMap);
-	}
-	
-	@RequestMapping(value = "/{id}/invite", method = RequestMethod.POST)
-	@ResponseBody
-	public Map<String, Object> invite(@PathVariable Long id, @RequestParam String usernameOrEmail, @RequestParam String message, @AuthenticationPrincipal UserWrapper user, HttpServletRequest request) {
-		String contextPath = "http://" + request.getServerName() + 
-				(request.getContextPath()!=null && !request.getContextPath().isEmpty()? "/" + request.getContextPath(): "");
-		
-		return campaignService.inviteWithUsernameOrEmai(id, user.unwrap(), usernameOrEmail, message, contextPath);
-	}
-	
-	
-	@RequestMapping(value = "/{id}/invite/{email:.*}")
-	@ResponseBody
-	public Boolean invite(@PathVariable Long id, @PathVariable String email, @AuthenticationPrincipal UserWrapper user, HttpServletRequest request) {
-		String contextPath = "http://" + request.getServerName() + 
-				(request.getContextPath()!=null && !request.getContextPath().isEmpty()? "/" + request.getContextPath(): "");
-		
-		return campaignService.invite(id, user.unwrap(), email, contextPath);
-	}
-	
-	@RequestMapping(value = "/{id}/join/request", method = RequestMethod.POST)
-	@ResponseBody
-	public MessageVO requestJoin(@PathVariable Long id, @AuthenticationPrincipal UserWrapper user) {
-		return campaignService.requestInvite(id, user.unwrap());
-	}
-	
-	@RequestMapping(value = "/{id}/join", method = RequestMethod.GET)
-	public String showJoinCampaign(@PathVariable Long id, @RequestParam Long messageId, @AuthenticationPrincipal UserWrapper user, RedirectAttributes attributes) {
-		MessageVO message = messageService.getMessage(messageId);
-		Campaign campaign = campaignService.get(id);
-		if(message.getTo() == null || !message.getTo().equals(user.unwrap())) {
-			attributes.addFlashAttribute("error_message", "The invitation was sent to a different username/mail, make sure you logged in with the right one or request authorization again to the Game Master.");
-		} else if (campaign.isMember(user.unwrap())) {
-			attributes.addFlashAttribute("warning_message", "You are already a member on this campaign.");
-		} else if(campaign.getGameMaster().equals(user.unwrap())){
-			attributes.addFlashAttribute("warning_message", "You are the Game master of this campaign, you cannot be a player also.");
-		} else {
-			this.campaignService.acceptRequest(id, messageId, user.unwrap());
-			attributes.addFlashAttribute("form_message", "Welcome to campaign, now you can create your character.");
-		}
-		
-		return "redirect:/campaigns/" + id + "/show";
-	}
-	
-	@RequestMapping(value = "/{id}/accept/{requestId}")
-	@ResponseBody
-	public Boolean acceptRequest(@PathVariable Long id, @PathVariable Long requestId, @AuthenticationPrincipal UserWrapper user) {
-		MessageVO message = messageService.getMessage(requestId);
-		Campaign campaign = campaignService.get(id);
-		if(!message.getTo().equals(user.unwrap())
-			|| !campaign.getGameMaster().equals(user.unwrap())
-			|| campaign.isMember(message.getFrom())) {
-			return false;
-		}
-		//TODO: Get message and use message from as user to add.
-		this.campaignService.acceptRequest(id, requestId, message.getFrom());
-		return true;
-	}
-	
+    @Autowired
+    private MessageService messageService;
+
+    @Autowired
+    private CharacterService characterService;
+
+    @Autowired
+    private UserService userService;
+
+
+    @ModelAttribute("createCampaignVO")
+    public CreateCampaignVO getCreateCampaignVO() {
+        return new CreateCampaignVO();
+    }
+
+    @ModelAttribute("campaigns")
+    public Collection<CampaignVO> getUserCampaigns(@AuthenticationPrincipal UserWrapper user) {
+        return Collections2.transform(campaignService.getCampaignsForUser(user.unwrap()),
+                CampaignService.campaignToVOFunction);
+    }
+
+    @ModelAttribute("systems")
+    public SystemType[] getSystemTypes() {
+        return SystemType.values();
+    }
+
+    @RequestMapping(method = RequestMethod.GET)
+    public ModelAndView showCampaigns(
+            @RequestParam(required = false, value = "show_content") String showContent) {
+        return new ModelAndView("campaigns");
+    }
+
+    @RequestMapping(method = RequestMethod.POST)
+    public ModelAndView createCampaign(
+            @Valid @ModelAttribute("createCampaignVO") CreateCampaignVO createCampaignVO,
+            BindingResult result, @AuthenticationPrincipal UserWrapper user,
+            RedirectAttributes attributes) {
+        if (!result.hasErrors()) {
+            Campaign campaign =
+                    campaignService.createCampaign(createCampaignVO.getName(),
+                            createCampaignVO.getDescription(), user.unwrap(),
+                            createCampaignVO.getIsPublic(), createCampaignVO.getSystemType());
+            userService.trackItem(user.unwrap(),
+                    String.format(SHOW_CAMPAIGN_URL, campaign.getId()), campaign.getName());
+            attributes.addFlashAttribute("form_message",
+                    String.format("Campaign %s was created successfully", campaign.getName()));
+            return new ModelAndView("redirect:campaigns");
+        }
+        return new ModelAndView("campaigns", "show_content", "create_campaign");
+    }
+
+    @RequestMapping(value = "/search/{searchString}", method = RequestMethod.GET)
+    @ResponseBody
+    public Collection<CampaignVO> searchCampaigns(@PathVariable String searchString) {
+        return Collections2.transform(campaignService.search(searchString, 0, Integer.MAX_VALUE),
+                CampaignService.campaignToVOFunction);
+    }
+
+    @RequestMapping(value = "/{id}/show", method = RequestMethod.GET)
+    public ModelAndView showCampaign(@PathVariable Long id,
+            @AuthenticationPrincipal UserWrapper user) {
+        Campaign campaign = campaignService.get(id);
+        userService.trackItem(user.unwrap(), String.format(SHOW_CAMPAIGN_URL, campaign.getId()),
+                campaign.getName());
+        Map<String, Object> modelMap = new HashMap<String, Object>();
+        modelMap.put("show_content", "campaign_view");
+        modelMap.put("campaign", campaign);
+        List<SystemCharacter> userCharacters = campaign.getUserCharacters(user.unwrap());
+        modelMap.put("characters", userCharacters);
+        List<SystemCharacter> otherCharacters = Lists.newArrayList(campaign.getCharacters());
+        otherCharacters.removeAll(userCharacters);
+        modelMap.put("otherCharacters", otherCharacters);
+        return new ModelAndView("/campaigns", modelMap);
+    }
+
+    @RequestMapping(value = "/{id}/invite", method = RequestMethod.POST)
+    @ResponseBody
+    public Map<String, Object> invite(@PathVariable Long id, @RequestParam String usernameOrEmail,
+            @RequestParam String message, @AuthenticationPrincipal UserWrapper user,
+            HttpServletRequest request) {
+        String contextPath =
+                "http://"
+                        + request.getServerName()
+                        + (request.getContextPath() != null && !request.getContextPath().isEmpty() ? "/"
+                                + request.getContextPath()
+                                : "");
+
+        return campaignService.inviteWithUsernameOrEmai(id, user.unwrap(), usernameOrEmail,
+                message, contextPath);
+    }
+
+
+    @RequestMapping(value = "/{id}/invite/{email:.*}")
+    @ResponseBody
+    public Boolean invite(@PathVariable Long id, @PathVariable String email,
+            @AuthenticationPrincipal UserWrapper user, HttpServletRequest request) {
+        String contextPath =
+                "http://"
+                        + request.getServerName()
+                        + (request.getContextPath() != null && !request.getContextPath().isEmpty() ? "/"
+                                + request.getContextPath()
+                                : "");
+
+        return campaignService.invite(id, user.unwrap(), email, contextPath);
+    }
+
+    @RequestMapping(value = "/{id}/join/request", method = RequestMethod.POST)
+    @ResponseBody
+    public MessageVO requestJoin(@PathVariable Long id, @AuthenticationPrincipal UserWrapper user) {
+        return campaignService.requestInvite(id, user.unwrap());
+    }
+
+    @RequestMapping(value = "/{id}/join", method = RequestMethod.GET)
+    public String showJoinCampaign(@PathVariable Long id, @RequestParam Long messageId,
+            @AuthenticationPrincipal UserWrapper user, RedirectAttributes attributes) {
+        MessageVO message = messageService.getMessage(messageId);
+        Campaign campaign = campaignService.get(id);
+        if (message.getTo() == null || !message.getTo().equals(user.unwrap())) {
+            attributes
+                    .addFlashAttribute(
+                            "error_message",
+                            "The invitation was sent to a different username/mail, make sure you logged in with the right one or request authorization again to the Game Master.");
+        } else if (campaign.isMember(user.unwrap())) {
+            attributes.addFlashAttribute("warning_message",
+                    "You are already a member on this campaign.");
+        } else if (campaign.getGameMaster().equals(user.unwrap())) {
+            attributes.addFlashAttribute("warning_message",
+                    "You are the Game master of this campaign, you cannot be a player also.");
+        } else {
+            this.campaignService.acceptRequest(id, messageId, user.unwrap());
+            attributes.addFlashAttribute("form_message",
+                    "Welcome to campaign, now you can create your character.");
+        }
+
+        return "redirect:/campaigns/" + id + "/show";
+    }
+
+    @RequestMapping(value = "/{id}/accept/{requestId}")
+    @ResponseBody
+    public Boolean acceptRequest(@PathVariable Long id, @PathVariable Long requestId,
+            @AuthenticationPrincipal UserWrapper user) {
+        MessageVO message = messageService.getMessage(requestId);
+        Campaign campaign = campaignService.get(id);
+        if (!message.getTo().equals(user.unwrap())
+                || !campaign.getGameMaster().equals(user.unwrap())
+                || campaign.isMember(message.getFrom())) {
+            return false;
+        }
+        // TODO: Get message and use message from as user to add.
+        this.campaignService.acceptRequest(id, requestId, message.getFrom());
+        return true;
+    }
+
 }

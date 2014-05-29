@@ -292,6 +292,35 @@
 														<a role="button" class="btn btn-default btn-block btn-sm" href="${createCharacterUrl }">Create</a>
 													</div>
 												</div>
+												<div class="">
+													<div class="">
+														<h5>
+															<a data-toggle="collapse" data-parent="#rightBar"
+																href="#collapseOtherCharacter"> Other Characters <span class="pull-right glyphicon glyphicon-chevron-up"></span>
+															</a>
+														</h5>
+													</div>
+													<div id="collapseOtherCharacter" class="collapse in">
+														<div class="scroll_list_150 nice_list">
+															<ul>
+																<c:forEach var="character" items="${otherCharacters }">
+																	<c:url var="url" value="/characters/${character.id }/show"></c:url>
+																	<li>
+																		<a href="${url }">
+																			<c:if test="${character.character.pictureUrl != '' }">
+																				<img alt="${character.character.name} Image" src="${character.character.pictureUrl}" 
+																					class="img-height-responsive pull-right char-thumbnail" rel="popover"/>
+																			</c:if>
+																			<p class="overflown tooltipable" title="${character.character.name}">
+																				${character.character.name}
+																			</p>
+																		</a>
+																	</li>
+																</c:forEach>
+															</ul>
+														</div>
+													</div>
+												</div>
 											</c:if>
 											<c:if test="${(campaign.gameMaster.name == pageContext.request.userPrincipal.principal.name) }">
 												<div class="">
@@ -307,8 +336,8 @@
 															<ul>
 															<c:forEach var="invite" items="${campaign.pendingInvitations }">
 																<li data-message-id="${invite.id }">
-																<button style="margin-right:5px;" class="tooltipable close glyphicon glyphicon-envelope" title="Resend Invitation" data-placement="top right"
-																	data-toggle="modal" data-target="#invite-form-dialog"  data-to="${invite.to.name != null ? invite.to.name : invite.toMail }"><!--  --></button>
+																<a style="padding-right:10px;" class="tooltipable pull-right" title="Resend Invitation" data-placement="top right"
+																	data-toggle="modal" data-target="#invite-form-dialog"  data-to="${invite.to.name != null ? invite.to.name : invite.toMail }"><i class="fa fa-envelope-o"><!--  --></i></a>
 																<a>
 																	<p class="overflown tooltipable" title="${invite.to.name != null ? invite.to.name : invite.toMail }">
 																		${invite.to.name != null ? invite.to.name : invite.toMail }

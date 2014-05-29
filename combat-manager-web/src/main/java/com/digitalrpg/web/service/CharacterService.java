@@ -174,6 +174,11 @@ public class CharacterService {
         return character;
     }
 
+    @Transactional
+    public void delete(Long id) {
+        characterDao.deleteSystemCharacter(id);
+    }
+
 
 
 }

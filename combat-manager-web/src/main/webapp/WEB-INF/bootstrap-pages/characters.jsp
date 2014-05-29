@@ -145,6 +145,8 @@
 										output: "#additionalResources",
 										validator: validateURL
 									});
+									
+									$('.dropdown-toggle').dropdown()
 								})
 								
 								function validateURL(textval) {
@@ -168,13 +170,39 @@
 								class="col-xs-12 content-block center dynamic ${show_content == 'view_character'? '' : 'hidden' }">
 						<div class="row">
 							<div class="col-xs-8 left-pane">
-								<h3>
+								<p>
 									<c:if test="${character.character.owner.name == user.username || character.campaign.gameMaster.name == user.username }">
-										<c:url var="url" value="/characters/${character.id }/edit"></c:url>
-										<a href="${url }" class="tooltipable pull-right fa fa-pencil-square-o fa-lg" title="Edit Character" data-placement="top righ"><!--  --></a>
+										
+										<div class="dropdown pull-right">
+											<a data-toggle="dropdown" data-target="#" href="#" class="tooltipable fa fa-cogs fa-lg" title="Options" data-placement="top righ"><!--  --></a>
+											<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+												<li>
+													<c:url var="url" value="/characters/${character.id }/edit"></c:url>
+													<a class="" href="${url }"><i class="fa fa-pencil-square-o fa-fw"><!--  --></i>&#160; Edit Character</a>
+												</li>
+    											<li>
+    												<a href="#" data-toggle="modal" data-target="#send-character"><i class="fa fa-hand-o-right fa-fw"><!--  --></i>&#160; Send Character</a>
+    											</li>
+    											<c:if test="${character.campaign.gameMaster.name == user.username }">
+    											<li>
+    												<a href="#" data-toggle="modal" data-target="#confirm-take"><i class="fa fa-hand-o-left fa-fw"><!--  --></i>&#160; Take Character</a>
+    											</li>
+    											</c:if>
+    											<li>
+    												<c:url var="url" value="/characters/${character.id }/clone"></c:url>
+    												<a href="${url }"><i class="fa fa-users fa-fw"><!--  --></i>&#160; Clone Character</a>
+    											</li>
+    											<li>
+    												<a href="#" data-toggle="modal" data-target="#confirm-delete"><i class="fa fa-trash-o fa-fw"><!--  --></i>&#160; Delete Character</a>
+    											</li>
+    										</ul>
+										</div>
+										
 									</c:if>
-									${character.character.name }
-								</h3>
+									<h3>
+										${character.character.name }
+									</h3>
+								</p>
 								<div class="form-group">
 									<label class="form-text" for="bio">Campaign</label> 
 									<p class="form-control-static">
@@ -236,7 +264,78 @@
 			
 		</div>
 	</div>
-
+	
+	<div class="modal fade" id="confirm-delete">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&#215;</button>
+	        <h4 class="modal-title">Delete Character?</h4>
+	      </div>
+	      <div class="modal-body">
+	        <p>This will delete this character for ever, are you sure?</p>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	        <c:url var="url" value="/characters/${character.id }/delete"></c:url>
+	        <a href="${url }" class="btn btn-primary">Delete</a>
+	      </div>
+	    </div><!-- /.modal-content -->
+	  </div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+	
+	<div class="modal fade" id="confirm-take">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&#215;</button>
+	        <h4 class="modal-title">Take Character?</h4>
+	      </div>
+	      <div class="modal-body">
+	        <p>This will assign the character to you, removing current owner's ability to use it.</p>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	        <c:url var="url" value="/characters/${character.id }/take"></c:url>
+	        <a href="${url }" class="btn btn-primary">Take</a>
+	      </div>
+	    </div><!-- /.modal-content -->
+	  </div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+	
+	<div class="modal fade" id="send-character">
+	  <div class="modal-dialog">
+	  	<c:url var="url" value="/characters/${character.id }/send"></c:url>
+	  	<form:form action="${url }" modelAttribute="sendCharacter"  method="POST">
+	  		<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+		    <div class="modal-content">
+		      <div class="modal-header">
+		        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&#215;</button>
+		        <h4 class="modal-title">Send Character?</h4>
+		      </div>
+		      <div class="modal-body">
+		        <p>Assign this character to a different member of the campaign.</p>
+		        <select name="userToUsername" class="form-control">
+		        	<c:if test="${user.username != character.campaign.gameMaster.name }">
+		        		<option value="${character.campaign.gameMaster.name }">${character.campaign.gameMaster.name }</option>
+		        	</c:if>
+		        	<c:forEach items="${character.campaign.members }" var="member">
+		        		<c:if test="${user.username != member.name &amp;&amp; member.name != character.character.owner.name }">
+		        			<option value="${member.name }">${member.name }</option>
+		        		</c:if>
+		        	</c:forEach>
+		        </select>
+		      </div>
+		      <div class="modal-footer">
+		        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		        <input type="submit" class="btn btn-primary" value="Send"/>
+		      </div>
+		    </div><!-- /.modal-content -->
+	    </form:form>
+	  </div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+	
+	
 </body>
 </html>
 </jsp:root>

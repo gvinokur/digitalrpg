@@ -33,6 +33,7 @@ import com.digitalrpg.web.controller.model.MessageVO;
 import com.digitalrpg.web.service.CampaignService;
 import com.digitalrpg.web.service.CharacterService;
 import com.digitalrpg.web.service.MessageService;
+import com.digitalrpg.web.service.UserService;
 import com.digitalrpg.web.service.UserWrapper;
 import com.google.common.collect.ImmutableList;
 
@@ -48,6 +49,9 @@ public class CharacterController {
 
     @Autowired
     private CharacterService characterService;
+
+    @Autowired
+    private UserService userService;
 
     @ModelAttribute("createCharacterVO")
     public CreateCharacterVO getCreateCharacterVO(@RequestParam(required = false) Long campaignId) {
@@ -82,19 +86,33 @@ public class CharacterController {
             @AuthenticationPrincipal UserWrapper user, RedirectAttributes attributes) {
 
         Campaign campaign = campaignService.get(campaignId);
-        return showCreateOrEditPage(user, attributes, campaign, null);
+        return showCreateEditOrClonePage(user, attributes, campaign, null, false);
     }
 
-    private ModelAndView showCreateOrEditPage(UserWrapper user, RedirectAttributes attributes,
+    /**
+     * @deprecated Use
+     *             {@link #showCreateEditOrClonePage(UserWrapper,RedirectAttributes,Campaign,SystemCharacter,boolean)}
+     *             instead
+     */
+    private ModelAndView showCreateEditOrClonePage(UserWrapper user, RedirectAttributes attributes,
             Campaign campaign, SystemCharacter systemCharacter) {
+        return showCreateEditOrClonePage(user, attributes, campaign, systemCharacter, false);
+    }
+
+    private ModelAndView showCreateEditOrClonePage(UserWrapper user, RedirectAttributes attributes,
+            Campaign campaign, SystemCharacter systemCharacter, boolean clone) {
         Map<String, Object> modelMap = new HashMap<String, Object>();
         modelMap.put("campaign", campaign);
         if (campaign.isMember(user.unwrap()) || campaign.getGameMaster().equals(user.unwrap())) {
             modelMap.put("show_content", "create_character");
             if (systemCharacter != null) {
-                modelMap.put("createCharacterVO", makeCreateCharacteVO(systemCharacter));
+                CreateCharacterVO createCharacterVO = makeCreateCharacteVO(systemCharacter);
+                if (clone) {
+                    createCharacterVO.setId(null);
+                }
+                modelMap.put("createCharacterVO", createCharacterVO);
             }
-        } else if (systemCharacter == null) {
+        } else if (systemCharacter == null || clone) {
             attributes.addFlashAttribute("error_message",
                     "Only the Game Master or Members of the campaign can create Characters");
             return new ModelAndView("redirect:/campaigns/" + campaign.getId() + "/show");
@@ -118,8 +136,16 @@ public class CharacterController {
     public ModelAndView showEditPlayerCharacterPage(@PathVariable Long id,
             @AuthenticationPrincipal UserWrapper user, RedirectAttributes attributes) {
         SystemCharacter systemCharacter = characterService.get(id);
-        return showCreateOrEditPage(user, attributes, systemCharacter.getCampaign(),
-                systemCharacter);
+        return showCreateEditOrClonePage(user, attributes, systemCharacter.getCampaign(),
+                systemCharacter, false);
+    }
+
+    @RequestMapping(value = "/{id}/clone")
+    public ModelAndView clonePlayerCharacter(@PathVariable Long id,
+            @AuthenticationPrincipal UserWrapper user, RedirectAttributes attributes) {
+        SystemCharacter systemCharacter = characterService.get(id);
+        return showCreateEditOrClonePage(user, attributes, systemCharacter.getCampaign(),
+                systemCharacter, true);
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -181,5 +207,55 @@ public class CharacterController {
         return new ModelAndView("/characters", modelMap);
     }
 
+    @RequestMapping(value = "/{id}/take")
+    public ModelAndView takeCharacter(@PathVariable Long id,
+            @AuthenticationPrincipal UserWrapper user, RedirectAttributes attributes) {
+        SystemCharacter systemCharacter = characterService.get(id);
+        if (systemCharacter.getCampaign().getGameMaster().equals(user.unwrap())) {
+            characterService.transfer(systemCharacter, user.unwrap());
+            attributes.addFlashAttribute("form_message", "Character "
+                    + systemCharacter.getCharacter().getName() + " was transfered to you.");
+        } else {
+            attributes.addFlashAttribute("error_message",
+                    "Only the Game Master can take this character from the owner");
+        }
+        return new ModelAndView("redirect:/characters/" + systemCharacter.getId() + "/show");
+    }
+
+    @RequestMapping(value = "/{id}/send")
+    public ModelAndView sendCharacter(@PathVariable Long id,
+            @AuthenticationPrincipal UserWrapper user, @RequestParam String userToUsername,
+            RedirectAttributes attributes) {
+        SystemCharacter systemCharacter = characterService.get(id);
+        if (systemCharacter.getCampaign().getGameMaster().equals(user.unwrap())
+                || systemCharacter.getCharacter().getOwner().equals(user.unwrap())) {
+            User userTo = userService.get(userToUsername);
+            characterService.transfer(systemCharacter, userTo);
+            attributes.addFlashAttribute("form_message", "Character "
+                    + systemCharacter.getCharacter().getName() + " was transfered to "
+                    + userToUsername);
+        } else {
+            attributes.addFlashAttribute("error_message",
+                    "Only the Owner or the Game Master can send this character to other user");
+        }
+        return new ModelAndView("redirect:/characters/" + systemCharacter.getId() + "/show");
+    }
+
+    @RequestMapping(value = "/{id}/delete")
+    public ModelAndView deleteCharacter(@PathVariable Long id,
+            @AuthenticationPrincipal UserWrapper user, RedirectAttributes attributes) {
+        SystemCharacter systemCharacter = characterService.get(id);
+        if (systemCharacter.getCampaign().getGameMaster().equals(user.unwrap())
+                || systemCharacter.getCharacter().getOwner().equals(user.unwrap())) {
+            characterService.delete(systemCharacter.getId());
+            attributes.addFlashAttribute("form_message", "Character "
+                    + systemCharacter.getCharacter().getName() + " was deleted");
+        } else {
+            attributes.addFlashAttribute("error_message",
+                    "Only the Owner or the Game Master can delete this character");
+        }
+        return new ModelAndView("redirect:/campaigns/" + systemCharacter.getCampaign().getId()
+                + "/show");
+    }
 
 }

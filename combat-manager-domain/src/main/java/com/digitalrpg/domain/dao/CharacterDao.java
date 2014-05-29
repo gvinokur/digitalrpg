@@ -11,24 +11,28 @@ import com.digitalrpg.domain.model.characters.pathfinder.PathfinderCharacterProp
 
 public interface CharacterDao {
 
-	public Character createPlayerCharacter(String name, String pictureUrl, String bio, User owner);
-	
-	public Character createNonPlayerCharacter(String name, String pictureUrl, String bio, Boolean isPublic, User user);
-	
-	public PathfinderCharacter createPathfinderCharacter(Character character, PathfinderCharacterProperties properties, Campaign campaign);
+    public Character createPlayerCharacter(String name, String pictureUrl, String bio, User owner);
 
-	public Collection<SystemCharacter> getUserCharacters(String user);
-	
-	public SystemCharacter get(Long id);
+    public Character createNonPlayerCharacter(String name, String pictureUrl, String bio,
+            Boolean isPublic, User user);
 
-	public Collection<SystemCharacter> getUserMonsters(String name);
+    public PathfinderCharacter createPathfinderCharacter(Character character,
+            PathfinderCharacterProperties properties, Campaign campaign);
 
-	public void save(SystemCharacter systemCharacter);
+    public Collection<SystemCharacter> getUserCharacters(String user);
 
-	public void delete(Character oldCharacter);
+    public SystemCharacter get(Long id);
 
-	public Boolean hasPlayerCharacter(Campaign campaign, User user);
+    public Collection<SystemCharacter> getUserMonsters(String name);
 
-	public void transfer(Long id, User user);
-	
+    public void save(SystemCharacter systemCharacter);
+
+    public void delete(Character oldCharacter);
+
+    public Boolean hasPlayerCharacter(Campaign campaign, User user);
+
+    public void transfer(Long id, User user);
+
+    public void deleteSystemCharacter(Long id);
+
 }
