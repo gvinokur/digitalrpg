@@ -12,113 +12,114 @@ import com.digitalrpg.domain.model.SystemAction;
 
 @Entity
 @Table(name = "pathfinder_combats")
-public class PathfinderCombat extends Combat {
+public class PathfinderCombat extends Combat<PathfinderAction> {
 
-	private Integer turns;
-	
-	private Integer roundsPerTurn;
+    private Integer turns;
 
-	private Integer currentTurn = 1;
-	
-	private Integer currentRound = 1;
-	
-	public Integer getCurrentTurn() {
-		return currentTurn;
-	}
+    private Integer roundsPerTurn;
 
-	public void setCurrentTurn(Integer currentTurn) {
-		this.currentTurn = currentTurn;
-	}
+    private Integer currentTurn = 1;
 
-	public Integer getCurrentRound() {
-		return currentRound;
-	}
+    private Integer currentRound = 1;
 
-	public void setCurrentRound(Integer currentRound) {
-		this.currentRound = currentRound;
-	}
+    public Integer getCurrentTurn() {
+        return currentTurn;
+    }
 
-	public Integer getTurns() {
-		return turns;
-	}
+    public void setCurrentTurn(Integer currentTurn) {
+        this.currentTurn = currentTurn;
+    }
 
-	public void setTurns(Integer turns) {
-		this.turns = turns;
-	}
+    public Integer getCurrentRound() {
+        return currentRound;
+    }
 
-	public Integer getRoundsPerTurn() {
-		return roundsPerTurn;
-	}
+    public void setCurrentRound(Integer currentRound) {
+        this.currentRound = currentRound;
+    }
 
-	public void setRoundsPerTurn(Integer roundsPerTurn) {
-		this.roundsPerTurn = roundsPerTurn;
-	}
+    public Integer getTurns() {
+        return turns;
+    }
 
-	@Override
-	public void advance(List<? extends SystemAction> availableActions) {
-		boolean end = true;
-		CombatCharacter currentCharacter = this.getCurrentCharacter();
-		CombatCharacter nextCharacter = null;
-		NavigableSet<CombatCharacter> combatCharacters = this.getCombatCharactersAsNavigableSet();
-		nextCharacter = combatCharacters.higher(currentCharacter);
-		if (nextCharacter == null) {
-			end = this.advanceTurn();
-			if (!end) {
-				nextCharacter = combatCharacters.first();
-			}
-		}
-		currentCharacter.played(availableActions);
-		if(nextCharacter != null) nextCharacter.startPlaying(availableActions);
-		this.setCurrentCharacter(nextCharacter);
-	}
-	
-	public boolean advanceTurn() {
-		if(currentTurn < turns || currentRound<roundsPerTurn) {
-			currentRound++;
-			if(currentRound > roundsPerTurn) {
-				currentTurn++;
-				currentRound = 1;
-			}
-			return false;
-		}
-		return true;
-	}
-	
-	@Override
-	public void back(List<? extends SystemAction> availableActions) {
-		CombatCharacter currentCharacter = getCurrentCharacter();
-		CombatCharacter nextCharacter = null;
-		NavigableSet<CombatCharacter> combatCharacters = getCombatCharactersAsNavigableSet();
-		if(currentCharacter == null) {
-			nextCharacter = combatCharacters.last();
-		} else {
-			nextCharacter = combatCharacters.lower(currentCharacter);
-			if (nextCharacter == null) {
-				boolean end = backTurn();
-				if (!end) {
-					nextCharacter = combatCharacters.last();
-				} else {
-					nextCharacter = currentCharacter;
-				}
-			}	
-		}
-		if(currentCharacter != nextCharacter) {
-			currentCharacter.notPlayed(availableActions);
-			nextCharacter.restartPlaying(availableActions);
-		}
-		setCurrentCharacter(nextCharacter);
-	}
-	
-	private boolean backTurn() {
-		if(currentTurn > 1 || currentRound > 1) {
-			currentRound--;
-			if(currentRound == 0) {
-				currentRound = roundsPerTurn;
-				currentTurn--;
-			}
-			return false;
-		}
-		return true;
-	}
-	
+    public void setTurns(Integer turns) {
+        this.turns = turns;
+    }
+
+    public Integer getRoundsPerTurn() {
+        return roundsPerTurn;
+    }
+
+    public void setRoundsPerTurn(Integer roundsPerTurn) {
+        this.roundsPerTurn = roundsPerTurn;
+    }
+
+    @Override
+    public void advance(List<PathfinderAction> availableActions) {
+        boolean end = true;
+        CombatCharacter<PathfinderAction> currentCharacter = this.getCurrentCharacter();
+        CombatCharacter<PathfinderAction> nextCharacter = null;
+        NavigableSet<CombatCharacter<PathfinderAction>> combatCharacters = this.getCombatCharactersAsNavigableSet();
+        nextCharacter = combatCharacters.higher(currentCharacter);
+        if (nextCharacter == null) {
+            end = this.advanceTurn();
+            if (!end) {
+                nextCharacter = combatCharacters.first();
+            }
+        }
+        currentCharacter.played(availableActions);
+        if (nextCharacter != null)
+            nextCharacter.startPlaying(availableActions);
+        this.setCurrentCharacter(nextCharacter);
+    }
+
+    public boolean advanceTurn() {
+        if (currentTurn < turns || currentRound < roundsPerTurn) {
+            currentRound++;
+            if (currentRound > roundsPerTurn) {
+                currentTurn++;
+                currentRound = 1;
+            }
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public void back(List<PathfinderAction> availableActions) {
+        CombatCharacter<PathfinderAction> currentCharacter = getCurrentCharacter();
+        CombatCharacter<PathfinderAction> nextCharacter = null;
+        NavigableSet<CombatCharacter<PathfinderAction>> combatCharacters = getCombatCharactersAsNavigableSet();
+        if (currentCharacter == null) {
+            nextCharacter = combatCharacters.last();
+        } else {
+            nextCharacter = combatCharacters.lower(currentCharacter);
+            if (nextCharacter == null) {
+                boolean end = backTurn();
+                if (!end) {
+                    nextCharacter = combatCharacters.last();
+                } else {
+                    nextCharacter = currentCharacter;
+                }
+            }
+        }
+        if (currentCharacter != nextCharacter) {
+            currentCharacter.notPlayed(availableActions);
+            nextCharacter.restartPlaying(availableActions);
+        }
+        setCurrentCharacter(nextCharacter);
+    }
+
+    private boolean backTurn() {
+        if (currentTurn > 1 || currentRound > 1) {
+            currentRound--;
+            if (currentRound == 0) {
+                currentRound = roundsPerTurn;
+                currentTurn--;
+            }
+            return false;
+        }
+        return true;
+    }
+
 }

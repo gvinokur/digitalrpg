@@ -157,9 +157,10 @@
 				.appendTo(panelBody)
 		}
 		
-		<c:url var="showCampaignUrl" value="/campaigns/[id]/show"/>
+		
+		<c:url var="acceptRequestUrl" value="/campaigns/[id]/accept/[message_id]"/>
 		function drawMessageRequestJoin(messageDiv, message) {
-			var url = "${showCampaignUrl}".replace("[id]",message.campaign_id)
+			var url = "${acceptRequestUrl}".replace("[id]",message.campaign_id).replace("[message_id]", message.id)
 			var deleteUrl = "${deleteUrl}".replace("[id]", message.id)
 			var title = $("<a/>").attr("href",url).append( message.from.name + " request")
 			
@@ -178,7 +179,7 @@
 			
 		}
 		
-		
+		<c:url var="showCampaignUrl" value="/campaigns/[id]/show"/>
 		function drawMessageAcceptRequestJoin(messageDiv, message) {
 			var url = "${showCampaignUrl}".replace("[id]",message.campaign_id)
 			var deleteUrl = "${deleteUrl}".replace("[id]", message.id)

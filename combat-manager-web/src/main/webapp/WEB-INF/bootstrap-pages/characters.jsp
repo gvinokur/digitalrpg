@@ -75,7 +75,15 @@
 									<label class="control-label" for="characterType">Type</label> 
 									<select name="characterType" class="form-control">
 										<c:forEach items="${characterTypes }" var="characterType">
-											<option value="${characterType }" selected="${createCharacterVO.characterType == characterType ? 'selected' : '' }">${characterType }</option>
+											<c:choose>
+												<c:when test="${createCharacterVO.characterType == characterType}">
+													<option value="${characterType }" selected="selected"> ${characterType }</option>
+												</c:when>
+												<c:otherwise>
+													<option value="${characterType }"> ${characterType }</option>
+												</c:otherwise>
+											</c:choose>
+											
 										</c:forEach>
 									</select>
 								</div>
@@ -199,7 +207,7 @@
 										</div>
 										
 									</c:if>
-									<h3>
+									<h3 class="overflown tooltipable">
 										${character.character.name }
 									</h3>
 								</p>
@@ -222,10 +230,9 @@
 								</c:if>
 								<c:if test="${character.character.publicWebBio == true || character.character.owner.name == user.username || character.campaign.gameMaster.name == user.username }">
 									<div class="form-group">
-										<label class="form-text" for="bio">External Bio</label> 
-										<p class="form-control-static">
-											<a href="${character.character.webBioUrl }" target="_new">${character.character.webBioUrl }</a>
-										</p>
+										<label class="form-text" for="bio">
+											<a href="${character.character.webBioUrl }" target="_new">External Bio</a>
+										</label>
 									</div>
 								</c:if>
 								<div class="form-group">

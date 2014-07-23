@@ -6,6 +6,7 @@ import com.digitalrpg.domain.dao.SystemDao;
 import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.Combat;
 import com.digitalrpg.domain.model.CombatCharacter;
+import com.digitalrpg.domain.model.CombatState;
 import com.digitalrpg.domain.model.SystemCombatCharacterProperties;
 import com.digitalrpg.domain.model.SystemCombatProperties;
 import com.digitalrpg.domain.model.SystemType;
@@ -16,37 +17,37 @@ import com.digitalrpg.domain.model.pathfinder.PathfinderCombatProperties;
 
 public class CombatFactory {
 
-	@Autowired
-	SystemDao systemDao;
-	
-	public Combat createCombat(String name, String description,
-			Campaign campaign, SystemCombatProperties systemCombatProperties) {
-		if(campaign.getSystem() == SystemType.Pathfinder) {
-			PathfinderCombat combat = new PathfinderCombat();
-			PathfinderCombatProperties combatProperties = (PathfinderCombatProperties) systemCombatProperties;
-			combat.setName(name);
-			combat.setDescription(description);
-			combat.setCampaign(campaign);
-			combat.setTurns(combatProperties.getTurns());
-			combat.setRoundsPerTurn(combatProperties.getRoundsPerTurn());
-			return combat;
-		}
-		return null;
-	}
-	
-	public CombatCharacter createCombatCharacter(Combat combat, SystemCharacter character,
-			Boolean hidden, Long initiative, Long order, SystemCombatCharacterProperties properties) {
-		if(combat.getCampaign().getSystem() == SystemType.Pathfinder) {
-			PathfinderCombatCharacter combatCharacter = new PathfinderCombatCharacter();
-			combatCharacter.setCharacter(character);
-			combatCharacter.setHidden(hidden);
-			combatCharacter.setInitiative(initiative);
-			combatCharacter.setCombat(combat);
-			combatCharacter.setOrder(order);
-			combatCharacter.setCurrentAction(systemDao.getPathfinderInitialAction());
-			return combatCharacter;
-		}
-		return null;
-	}
-	
+    @Autowired
+    SystemDao systemDao;
+
+    public Combat createCombat(String name, String description, Campaign campaign, SystemCombatProperties systemCombatProperties) {
+        if (campaign.getSystem() == SystemType.Pathfinder) {
+            PathfinderCombat combat = new PathfinderCombat();
+            PathfinderCombatProperties combatProperties = (PathfinderCombatProperties) systemCombatProperties;
+            combat.setName(name);
+            combat.setDescription(description);
+            combat.setCampaign(campaign);
+            combat.setTurns(combatProperties.getTurns());
+            combat.setRoundsPerTurn(combatProperties.getRoundsPerTurn());
+            combat.setState(CombatState.STAGING);
+            return combat;
+        }
+        return null;
+    }
+
+    public CombatCharacter createCombatCharacter(Combat combat, SystemCharacter character, Boolean hidden, Long initiative, Long order,
+            SystemCombatCharacterProperties properties) {
+        if (combat.getCampaign().getSystem() == SystemType.Pathfinder) {
+            PathfinderCombatCharacter combatCharacter = new PathfinderCombatCharacter();
+            combatCharacter.setCharacter(character);
+            combatCharacter.setHidden(hidden);
+            combatCharacter.setInitiative(initiative);
+            combatCharacter.setCombat(combat);
+            combatCharacter.setOrder(order);
+            combatCharacter.setCurrentAction(systemDao.getPathfinderInitialAction());
+            return combatCharacter;
+        }
+        return null;
+    }
+
 }

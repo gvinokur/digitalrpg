@@ -6,10 +6,10 @@ import java.util.List;
  * For now is just a placeholder for specific data needed in the view for the different systems.
  * 
  * @author gvinokur
- *
+ * 
  */
-public interface SystemCombatItems {
+public interface SystemCombatItems<ACTION_TYPE extends SystemAction> {
 
-	public List<? extends SystemAction> getActions();
-	
+    public List<ACTION_TYPE> getActions();
+
 }

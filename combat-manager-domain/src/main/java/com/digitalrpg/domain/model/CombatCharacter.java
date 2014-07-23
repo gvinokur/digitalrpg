@@ -23,99 +23,100 @@ import com.digitalrpg.domain.model.characters.SystemCharacter;
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class CombatCharacter<ACTION_TYPE extends SystemAction> {
 
-	private Long id;
-	
-	private Combat combat;
-	
-	private SystemCharacter character;
-	
-	private Long initiative;
-	
-	private Long order;
-	
-	private Boolean hidden;
-	
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name="combat_id", referencedColumnName="id")
-	public Combat getCombat() {
-		return combat;
-	}
+    private Long id;
 
-	public void setCombat(Combat combat) {
-		this.combat = combat;
-	}
+    private Combat<ACTION_TYPE> combat;
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name="character_id", referencedColumnName="id")
-	public SystemCharacter getCharacter() {
-		return character;
-	}
+    private SystemCharacter character;
 
-	public void setCharacter(SystemCharacter character) {
-		this.character = character;
-	}
+    private Long initiative;
 
-	public Long getInitiative() {
-		return initiative;
-	}
+    private Long order;
 
-	public void setInitiative(Long initiative) {
-		this.initiative = initiative;
-	}
+    private Boolean hidden;
 
-	public Boolean getHidden() {
-		return hidden;
-	}
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "combat_id", referencedColumnName = "id")
+    public Combat<ACTION_TYPE> getCombat() {
+        return combat;
+    }
 
-	public void setHidden(Boolean hidden) {
-		this.hidden = hidden;
-	}
+    public void setCombat(Combat<ACTION_TYPE> combat) {
+        this.combat = combat;
+    }
 
-	@Id
-	@Type(type = "long")
-	@GeneratedValue(generator="increment")
-	@GenericGenerator(name="increment", strategy = "increment")
-	public Long getId() {
-		return id;
-	}
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "character_id", referencedColumnName = "id")
+    public SystemCharacter getCharacter() {
+        return character;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setCharacter(SystemCharacter character) {
+        this.character = character;
+    }
 
-	@Column(name = "CHARACTER_ORDER")
-	public Long getOrder() {
-		return order;
-	}
+    public Long getInitiative() {
+        return initiative;
+    }
 
-	public void setOrder(Long order) {
-		this.order = order;
-	}
-	
-	public abstract void addItem(SystemCombatItem item);
+    public void setInitiative(Long initiative) {
+        this.initiative = initiative;
+    }
 
-	public abstract void removeItem(SystemCombatItem item);
+    public Boolean getHidden() {
+        return hidden;
+    }
 
-	/**
-	 * The current character has finished playing, if it can be done, automatically mark as played
-	 */
-	public abstract void played(List<ACTION_TYPE> availableActions);
-	
-	/**
-	 * The current character has become the active player, if it can be done, mark automatically as playing
-	 */
-	public abstract void startPlaying(List<ACTION_TYPE> availableActions);
+    public void setHidden(Boolean hidden) {
+        this.hidden = hidden;
+    }
 
-	/**
-	 * Used when rolling back, if the user was the active payer, mark it as not played.
-	 */
-	public abstract void notPlayed(List<ACTION_TYPE> availableActions);
+    @Id
+    @Type(type = "long")
+    @GeneratedValue(generator = "increment")
+    @GenericGenerator(name = "increment", strategy = "increment")
+    public Long getId() {
+        return id;
+    }
 
-	/**
-	 * Used when rolling back, if the user had finished playing, restart playing.
-	 */
-	public abstract void restartPlaying(List<ACTION_TYPE> availableActions) ;
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public abstract void setCurrentAction(ACTION_TYPE action);
-	
+    @Column(name = "CHARACTER_ORDER")
+    public Long getOrder() {
+        return order;
+    }
+
+    public void setOrder(Long order) {
+        this.order = order;
+    }
+
+    public abstract void addItem(SystemCombatItem item);
+
+    public abstract void removeItem(SystemCombatItem item);
+
+    /**
+     * The current character has finished playing, if it can be done, automatically mark as played
+     */
+    public abstract void played(List<ACTION_TYPE> availableActions);
+
+    /**
+     * The current character has become the active player, if it can be done, mark automatically as
+     * playing
+     */
+    public abstract void startPlaying(List<ACTION_TYPE> availableActions);
+
+    /**
+     * Used when rolling back, if the user was the active payer, mark it as not played.
+     */
+    public abstract void notPlayed(List<ACTION_TYPE> availableActions);
+
+    /**
+     * Used when rolling back, if the user had finished playing, restart playing.
+     */
+    public abstract void restartPlaying(List<ACTION_TYPE> availableActions);
+
+    public abstract void setCurrentAction(ACTION_TYPE action);
+
 }

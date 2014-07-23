@@ -13,24 +13,27 @@ import com.digitalrpg.domain.model.characters.SystemCharacter;
 
 public interface CombatDao {
 
-	public Combat createCombat(String name, String description, Campaign campaign, SystemCombatProperties properties);
-	
-	public CombatCharacter createCharacter(Combat combat, SystemCharacter character, Boolean hidden, Long initiative, Long order, SystemCombatCharacterProperties properties);
+    public Combat createCombat(String name, String description, Campaign campaign, SystemCombatProperties properties);
 
-	public Combat get(Long id);
+    public CombatCharacter createCharacter(Combat combat, SystemCharacter character, Boolean hidden, Long initiative, Long order,
+            SystemCombatCharacterProperties properties);
 
-	public void startCombat(Combat combat);
+    public Combat get(Long id);
 
-	public CombatCharacter getCombatCharacter(Long id);
-	
-	public SystemCombatItems getSystemCombatItems(SystemType system);
+    public void startCombat(Combat combat);
 
-	public <T> T getCombatItem(Class<T> clazz, Long id);
+    public CombatCharacter getCombatCharacter(Long id);
 
-	public List<Combat> getCombatsForUser(final String user);
+    public SystemCombatItems getSystemCombatItems(SystemType system);
 
-	public void delete(CombatCharacter combatCharacter);
-	
-	public void update(Combat combat);
-	
+    public <T> T getCombatItem(Class<T> clazz, Long id);
+
+    public List<Combat> getCombatsForUser(final String user);
+
+    public void delete(CombatCharacter combatCharacter);
+
+    public void update(Combat combat);
+
+    public void delete(Long id);
+
 }

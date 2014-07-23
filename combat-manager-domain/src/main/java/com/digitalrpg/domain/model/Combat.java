@@ -1,6 +1,6 @@
 package com.digitalrpg.domain.model;
 
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.List;
 import java.util.NavigableSet;
 import java.util.Set;
@@ -20,117 +20,150 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.apache.commons.lang3.BooleanUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 import org.hibernate.annotations.Type;
 
+import com.digitalrpg.domain.model.characters.SystemCharacter;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSortedSet;
 
 @Entity
 @Table(name = "combats")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Combat {
+public abstract class Combat<ACTION_TYPE extends SystemAction> {
 
-	private Long id;
+    private Long id;
 
-	private Boolean active;
+    private CombatState state;
 
-	private String name;
+    private String name;
 
-	private String description;
+    private String description;
 
-	private Campaign campaign;
+    private Campaign campaign;
 
-	private Set<CombatCharacter> combatCharacters;
+    private Set<CombatCharacter<ACTION_TYPE>> combatCharacters;
 
-	private CombatCharacter currentCharacter;
+    private CombatCharacter<ACTION_TYPE> currentCharacter;
 
-	@OneToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "current_character_id", referencedColumnName = "id")
-	public CombatCharacter getCurrentCharacter() {
-		return currentCharacter;
-	}
+    private List<CombatLog> combatLogs;
 
-	public void setCurrentCharacter(CombatCharacter currentCharacter) {
-		this.currentCharacter = currentCharacter;
-	}
+    @OneToOne(fetch = FetchType.EAGER, targetEntity = CombatCharacter.class)
+    @JoinColumn(name = "current_character_id", referencedColumnName = "id")
+    public CombatCharacter<ACTION_TYPE> getCurrentCharacter() {
+        return currentCharacter;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setCurrentCharacter(CombatCharacter<ACTION_TYPE> currentCharacter) {
+        this.currentCharacter = currentCharacter;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "campaign_id", referencedColumnName = "id")
-	public Campaign getCampaign() {
-		return campaign;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setCampaign(Campaign campaign) {
-		this.campaign = campaign;
-	}
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "campaign_id", referencedColumnName = "id")
+    public Campaign getCampaign() {
+        return campaign;
+    }
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "combat")
-	@Sort(comparator  =CombatCharacterComparator.class, type = SortType.COMPARATOR)
-	public Set<CombatCharacter> getCombatCharacters() {
-		return this.combatCharacters;
-	}
+    public void setCampaign(Campaign campaign) {
+        this.campaign = campaign;
+    }
 
-	public void setCombatCharacters(Set<CombatCharacter> combatCharacters) {
-		this.combatCharacters = combatCharacters;
-	}
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "combat", targetEntity = CombatCharacter.class, cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    @Sort(comparator = CombatCharacterComparator.class, type = SortType.COMPARATOR)
+    public Set<CombatCharacter<ACTION_TYPE>> getCombatCharacters() {
+        return this.combatCharacters;
+    }
 
-	@Id
-	@Type(type = "long")
-	@GeneratedValue(generator = "increment")
-	@GenericGenerator(name = "increment", strategy = "increment")
-	public Long getId() {
-		return id;
-	}
+    public void setCombatCharacters(Set<CombatCharacter<ACTION_TYPE>> combatCharacters) {
+        this.combatCharacters = combatCharacters;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Id
+    @Type(type = "long")
+    @GeneratedValue(generator = "increment")
+    @GenericGenerator(name = "increment", strategy = "increment")
+    public Long getId() {
+        return id;
+    }
 
-	public Boolean getActive() {
-		return BooleanUtils.isTrue(active);
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public void setActive(Boolean active) {
-		this.active = active;
-	}
 
-	/**
-	 * This method should advance turns, rounds or whatever the system uses and make sure the state
-	 * of the combat is updated (current character, character status, etc)
-	 * @return
-	 */
-	public abstract void advance(List<? extends SystemAction> availableActions);
+    /**
+     * This method should advance turns, rounds or whatever the system uses and make sure the state
+     * of the combat is updated (current character, character status, etc)
+     * 
+     * @return
+     */
+    public abstract void advance(List<ACTION_TYPE> availableActions);
 
-	/**
-	 * This method should undo turns, rounds or whatever the system uses and make sure the state
-	 * of the combat is updated (current character, character status, etc)
-	 * @return
-	 */
-	public abstract void back(List<? extends SystemAction> list);
+    /**
+     * This method should undo turns, rounds or whatever the system uses and make sure the state of
+     * the combat is updated (current character, character status, etc)
+     * 
+     * @return
+     */
+    public abstract void back(List<ACTION_TYPE> list);
 
-	@Transient
-	public NavigableSet<CombatCharacter> getCombatCharactersAsNavigableSet() {
-		SortedSet<CombatCharacter> ss = (SortedSet<CombatCharacter>) this.combatCharacters;
-		return ImmutableSortedSet.copyOfSorted(ss);
-	}
+    @Transient
+    public NavigableSet<CombatCharacter<ACTION_TYPE>> getCombatCharactersAsNavigableSet() {
+        SortedSet<CombatCharacter<ACTION_TYPE>> ss = (SortedSet<CombatCharacter<ACTION_TYPE>>) this.combatCharacters;
+        return ImmutableSortedSet.copyOfSorted(ss);
+    }
+
+    public CombatState getState() {
+        return state;
+    }
+
+    public void setState(CombatState state) {
+        this.state = state;
+    }
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "combat")
+    @Sort(comparator = CombatLogComparator.class, type = SortType.COMPARATOR)
+    public List<CombatLog> getCombatLogs() {
+        return combatLogs;
+    }
+
+    public void setCombatLogs(List<CombatLog> combatLogs) {
+        this.combatLogs = combatLogs;
+    }
+
+    @Transient
+    public Collection<SystemCharacter> getRemainingCharacters() {
+        return Collections2.filter(campaign.getCharacters(), new Predicate<SystemCharacter>() {
+            @Override
+            public boolean apply(SystemCharacter input) {
+                for (CombatCharacter<ACTION_TYPE> cc : Combat.this.combatCharacters) {
+                    if (cc.getCharacter().equals(input)) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        });
+    }
 
 }

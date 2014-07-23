@@ -7,83 +7,92 @@ import javax.validation.Valid;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
-import com.digitalrpg.domain.model.SystemCombatProperties;
-import com.digitalrpg.domain.model.pathfinder.PathfinderCombatProperties;
+import com.digitalrpg.domain.model.Combat;
+import com.digitalrpg.domain.model.CombatCharacter;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class CreateCombatVO {
 
-	private Long campaignId;
-	
-	@NotEmpty
-	private String name;
-	
-	private String description;
-	
-	private List<Long> players;
-	
-	@Valid
-	private Map<Long, PlayerExtraInfoVO> extraInfo;
-	
-	@Valid
-	private CreateCombatPathfinderPropertiesVO pathfinder;
+    private Long campaignId;
 
-	public CreateCombatPathfinderPropertiesVO getPathfinder() {
-		return pathfinder;
-	}
+    private Long id;
 
-	public void setPathfinder(CreateCombatPathfinderPropertiesVO pathfinder) {
-		this.pathfinder = pathfinder;
-	}
+    @NotEmpty
+    private String name;
 
-	public String getName() {
-		return name;
-	}
+    private String description;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    private List<Long> players;
 
-	public String getDescription() {
-		return description;
-	}
+    @Valid
+    private Map<Long, PlayerExtraInfoVO> extraInfo;
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public CreateCombatVO(Combat<?> combat) {
+        this.campaignId = combat.getCampaign().getId();
+        this.id = combat.getId();
+        this.name = combat.getName();
+        this.description = combat.getDescription();
+        this.players = Lists.newArrayList();
+        this.extraInfo = Maps.newHashMap();
+        for (CombatCharacter<?> cc : combat.getCombatCharacters()) {
+            players.add(cc.getCharacter().getId());
+            PlayerExtraInfoVO playerExtraInfoVO = new PlayerExtraInfoVO();
+            playerExtraInfoVO.setHidden(cc.getHidden());
+            extraInfo.put(cc.getCharacter().getId(), playerExtraInfoVO);
+        }
+    }
 
-	public List<Long> getPlayers() {
-		return players;
-	}
+    public CreateCombatVO() {
+        // TODO Auto-generated constructor stub
+    }
 
-	public void setPlayers(List<Long> players) {
-		this.players = players;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public Map<Long, PlayerExtraInfoVO> getExtraInfo() {
-		return extraInfo;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setExtraInfo(Map<Long, PlayerExtraInfoVO> extraInfo) {
-		this.extraInfo = extraInfo;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public Long getCampaignId() {
-		return campaignId;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setCampaignId(Long campaignId) {
-		this.campaignId = campaignId;
-	}
+    public List<Long> getPlayers() {
+        return players;
+    }
 
-	public SystemCombatProperties getSystemCombatProperties() {
-		if(pathfinder != null) {
-			PathfinderCombatProperties properties = new PathfinderCombatProperties();
-			properties.setTurns(pathfinder.getTurns());
-			properties.setRoundsPerTurn(pathfinder.getRoundsPerTurn());
-			return properties;
-		}
-		//Do the same with other system combat properties
-		return null;
-	}
-	
+    public void setPlayers(List<Long> players) {
+        this.players = players;
+    }
+
+    public Map<Long, PlayerExtraInfoVO> getExtraInfo() {
+        return extraInfo;
+    }
+
+    public void setExtraInfo(Map<Long, PlayerExtraInfoVO> extraInfo) {
+        this.extraInfo = extraInfo;
+    }
+
+    public Long getCampaignId() {
+        return campaignId;
+    }
+
+    public void setCampaignId(Long campaignId) {
+        this.campaignId = campaignId;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
 }

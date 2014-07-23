@@ -186,19 +186,23 @@ public class CampaignController {
     }
 
     @RequestMapping(value = "/{id}/accept/{requestId}")
-    @ResponseBody
-    public Boolean acceptRequest(@PathVariable Long id, @PathVariable Long requestId,
-            @AuthenticationPrincipal UserWrapper user) {
+    public String acceptRequest(@PathVariable Long id, @PathVariable Long requestId,
+            @AuthenticationPrincipal UserWrapper user, RedirectAttributes attributes) {
         MessageVO message = messageService.getMessage(requestId);
         Campaign campaign = campaignService.get(id);
         if (!message.getTo().equals(user.unwrap())
-                || !campaign.getGameMaster().equals(user.unwrap())
-                || campaign.isMember(message.getFrom())) {
-            return false;
+                || !campaign.getGameMaster().equals(user.unwrap())) {
+            attributes.addFlashAttribute("error_message",
+                    "Only the Game master can accept a request.");
+            return "redirect:/lobby";
+        } else if (campaign.isMember(message.getFrom())) {
+            attributes.addFlashAttribute("warning_message",
+                    "The user is already a member on this campaign.");
+            this.messageService.deleteMessage(requestId);
+        } else {
+            this.campaignService.acceptRequest(id, requestId, message.getFrom());
         }
-        // TODO: Get message and use message from as user to add.
-        this.campaignService.acceptRequest(id, requestId, message.getFrom());
-        return true;
+        return "redirect:/campaigns/" + id + "/show";
     }
 
 }

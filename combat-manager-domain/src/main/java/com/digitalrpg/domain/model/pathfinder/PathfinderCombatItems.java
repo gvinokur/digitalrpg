@@ -4,36 +4,36 @@ import java.util.List;
 
 import com.digitalrpg.domain.model.SystemCombatItems;
 
-public class PathfinderCombatItems implements SystemCombatItems{
+public class PathfinderCombatItems implements SystemCombatItems<PathfinderAction> {
 
-	private List<PathfinderAction> actions;
-	
-	private List<PathfinderCondition> conditions;
-	
-	private List<PathfinderMagicalEffect> magicalEffects;
+    private List<PathfinderAction> actions;
 
-	public List<PathfinderAction> getActions() {
-		return actions;
-	}
+    private List<PathfinderCondition> conditions;
 
-	public void setActions(List<PathfinderAction> actions) {
-		this.actions = actions;
-	}
+    private List<PathfinderMagicalEffect> magicalEffects;
 
-	public List<PathfinderCondition> getConditions() {
-		return conditions;
-	}
+    public List<PathfinderAction> getActions() {
+        return actions;
+    }
 
-	public void setConditions(List<PathfinderCondition> conditions) {
-		this.conditions = conditions;
-	}
+    public void setActions(List<PathfinderAction> actions) {
+        this.actions = actions;
+    }
 
-	public List<PathfinderMagicalEffect> getMagicalEffects() {
-		return magicalEffects;
-	}
+    public List<PathfinderCondition> getConditions() {
+        return conditions;
+    }
 
-	public void setMagicalEffects(List<PathfinderMagicalEffect> magicalEffects) {
-		this.magicalEffects = magicalEffects;
-	}
-	
+    public void setConditions(List<PathfinderCondition> conditions) {
+        this.conditions = conditions;
+    }
+
+    public List<PathfinderMagicalEffect> getMagicalEffects() {
+        return magicalEffects;
+    }
+
+    public void setMagicalEffects(List<PathfinderMagicalEffect> magicalEffects) {
+        this.magicalEffects = magicalEffects;
+    }
+
 }

@@ -29,180 +29,175 @@ import com.digitalrpg.domain.model.messages.RequestJoinToCampaignMessage;
 @Table(name = "campaigns")
 public class Campaign {
 
-	private Long id;
-	
-	private String name;
-	
-	private String description;
-	
-	private User gameMaster;
-	
-	private SystemType system;
-	
-	private Set<SystemCharacter> characters;
-	
-	private Set<InviteToCampaignMessage> pendingInvitations;
-	
-	private Set<RequestJoinToCampaignMessage> pendingRequest;
-	
-	private Set<Combat> combats;
-	
-	private Combat activeCombat;
-	
-	private Boolean isPublic;
-	
-	private Set<User> members;
+    private Long id;
 
-	@Id
-	@GeneratedValue(generator="increment")
-	@GenericGenerator(name="increment", strategy = "increment")
-	public Long getId() {
-		return id;
-	}
+    private String name;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    private String description;
 
-	public String getName() {
-		return name;
-	}
+    private User gameMaster;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    private SystemType system;
 
-	public String getDescription() {
-		return description;
-	}
+    private Set<SystemCharacter> characters;
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    private Set<InviteToCampaignMessage> pendingInvitations;
 
-	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="game_master_id", referencedColumnName="id")
-	public User getGameMaster() {
-		return gameMaster;
-	}
+    private Set<RequestJoinToCampaignMessage> pendingRequest;
 
-	public void setGameMaster(User gameMaster) {
-		this.gameMaster = gameMaster;
-	}
+    private Set<Combat> combats;
 
-	@OneToMany(mappedBy = "campaign",fetch = FetchType.EAGER)
-	public Set<SystemCharacter> getCharacters() {
-		return characters;
-	}
-	
-	public Boolean getIsPublic() {
-		return isPublic;
-	}
+    private Combat activeCombat;
 
-	public void setIsPublic(Boolean isPublic) {
-		this.isPublic = isPublic;
-	}
+    private Boolean isPublic;
 
-	public void setCharacters(Set<SystemCharacter> playerCharacters) {
-		this.characters = playerCharacters;
-	}
+    private Set<User> members;
 
-	@OneToMany(cascade = CascadeType.PERSIST,
-			mappedBy = "campaign", fetch = FetchType.EAGER)
-	public Set<InviteToCampaignMessage> getPendingInvitations() {
-		return pendingInvitations;
-	}
+    @Id
+    @GeneratedValue(generator = "increment")
+    @GenericGenerator(name = "increment", strategy = "increment")
+    public Long getId() {
+        return id;
+    }
 
-	public void setPendingInvitations(
-			Set<InviteToCampaignMessage> pendingInvitations) {
-		this.pendingInvitations = pendingInvitations;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	@OneToMany(cascade = CascadeType.PERSIST,
-			mappedBy = "campaign", fetch = FetchType.EAGER)
-	public Set<RequestJoinToCampaignMessage> getPendingRequest() {
-		return pendingRequest;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setPendingRequest(Set<RequestJoinToCampaignMessage> pendingRequest) {
-		this.pendingRequest = pendingRequest;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public SystemType getSystem() {
-		return system;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setSystem(SystemType system) {
-		this.system = system;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	@OneToMany(mappedBy = "campaign", fetch = FetchType.EAGER)
-	public Set<Combat> getCombats() {
-		return combats;
-	}
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "game_master_id", referencedColumnName = "id")
+    public User getGameMaster() {
+        return gameMaster;
+    }
 
-	public void setCombats(Set<Combat> combats) {
-		this.combats = combats;
-		
-	}
+    public void setGameMaster(User gameMaster) {
+        this.gameMaster = gameMaster;
+    }
 
-	@Transient
-	public Combat getActiveCombat() {
-		if(activeCombat == null && combats != null) {
-			for (Combat combat : combats) {
-				if(combat.getActive()) {
-					setActiveCombat(combat);
-				}
-			}
-		}
-		return activeCombat;
-	}
-	
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = User.class)
-	@JoinTable(name = "campaign_users",  
-			joinColumns = { @JoinColumn(name = "campaign_id", referencedColumnName = "id", nullable = false)},
-			inverseJoinColumns = { @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false) })
-	public Set<User> getMembers() {
-//		Set<User> members = new HashSet<User>();
-//		for(SystemCharacter character : this.getPlayerCharacters()) {
-//			User owner = ((PlayerCharacter)character.getCharacter()).getOwner();
-//			members.add(owner);
-//		}
-		return members;
-	}
-	
-	public void setMembers(Set<User> members) {
-		this.members = members;
-	}
-	
-	public void addMember(User member) {
-		if(this.members == null) {
-			this.members = new HashSet<>();
-		}
-		this.members.add(member);
-	}
+    @OneToMany(mappedBy = "campaign", fetch = FetchType.EAGER)
+    public Set<SystemCharacter> getCharacters() {
+        return characters;
+    }
 
-	public void setActiveCombat(Combat activeCombat) {
-		this.activeCombat = activeCombat;
-	}
+    public Boolean getIsPublic() {
+        return isPublic;
+    }
 
-	@Transient
-	public List<SystemCharacter> getUserCharacters(User user) {
-		List<SystemCharacter> userCharacters = new LinkedList<>();
-		for(SystemCharacter character : this.getCharacters()) {
-			User owner = character.getCharacter().getOwner();
-			if(owner.equals(user)) {
-				userCharacters.add(character);
-			}
-		}
-		return userCharacters;
-	}
+    public void setIsPublic(Boolean isPublic) {
+        this.isPublic = isPublic;
+    }
 
-	public boolean isMember(User user) {
-		return members.contains(user);
-	}
+    public void setCharacters(Set<SystemCharacter> playerCharacters) {
+        this.characters = playerCharacters;
+    }
+
+    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "campaign", fetch = FetchType.EAGER)
+    public Set<InviteToCampaignMessage> getPendingInvitations() {
+        return pendingInvitations;
+    }
+
+    public void setPendingInvitations(Set<InviteToCampaignMessage> pendingInvitations) {
+        this.pendingInvitations = pendingInvitations;
+    }
+
+    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "campaign", fetch = FetchType.EAGER)
+    public Set<RequestJoinToCampaignMessage> getPendingRequest() {
+        return pendingRequest;
+    }
+
+    public void setPendingRequest(Set<RequestJoinToCampaignMessage> pendingRequest) {
+        this.pendingRequest = pendingRequest;
+    }
+
+    public SystemType getSystem() {
+        return system;
+    }
+
+    public void setSystem(SystemType system) {
+        this.system = system;
+    }
+
+    @OneToMany(mappedBy = "campaign", fetch = FetchType.EAGER)
+    public Set<Combat> getCombats() {
+        return combats;
+    }
+
+    public void setCombats(Set<Combat> combats) {
+        this.combats = combats;
+
+    }
+
+    @Transient
+    public Combat getActiveCombat() {
+        if (activeCombat == null && combats != null) {
+            for (Combat combat : combats) {
+                if (combat.getState() == CombatState.STARTED) {
+                    setActiveCombat(combat);
+                }
+            }
+        }
+        return activeCombat;
+    }
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = User.class)
+    @JoinTable(name = "campaign_users", joinColumns = {@JoinColumn(name = "campaign_id", referencedColumnName = "id", nullable = false)},
+            inverseJoinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)})
+    public Set<User> getMembers() {
+        // Set<User> members = new HashSet<User>();
+        // for(SystemCharacter character : this.getPlayerCharacters()) {
+        // User owner = ((PlayerCharacter)character.getCharacter()).getOwner();
+        // members.add(owner);
+        // }
+        return members;
+    }
+
+    public void setMembers(Set<User> members) {
+        this.members = members;
+    }
+
+    public void addMember(User member) {
+        if (this.members == null) {
+            this.members = new HashSet<>();
+        }
+        this.members.add(member);
+    }
+
+    public void setActiveCombat(Combat activeCombat) {
+        this.activeCombat = activeCombat;
+    }
+
+    @Transient
+    public List<SystemCharacter> getUserCharacters(User user) {
+        List<SystemCharacter> userCharacters = new LinkedList<>();
+        for (SystemCharacter character : this.getCharacters()) {
+            User owner = character.getCharacter().getOwner();
+            if (owner.equals(user)) {
+                userCharacters.add(character);
+            }
+        }
+        return userCharacters;
+    }
+
+    public boolean isMember(User user) {
+        return members.contains(user);
+    }
 
 
-	
-	
+
 }
