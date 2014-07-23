@@ -37,6 +37,7 @@ public abstract class CombatCharacter<ACTION_TYPE extends SystemAction> {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "combat_id", referencedColumnName = "id")
+    @Type(type = "Combat")
     public Combat<ACTION_TYPE> getCombat() {
         return combat;
     }
