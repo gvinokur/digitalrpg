@@ -2,36 +2,47 @@ package com.digitalrpg.web.controller.model.status;
 
 public class PathfinderCombatCharacterStatusVO extends CombatCharacterStatusVO {
 
-	private String currentHitPointStatus;
-	
-	private String currentAction;
-	
-	private String conditionsAndEffects;
+    private int maxHp;
 
-	public String getCurrentHitPointStatus() {
-		return currentHitPointStatus;
-	}
+    private int hp;
 
-	public void setCurrentHitPointStatus(String currentHitPointStatus) {
-		this.currentHitPointStatus = currentHitPointStatus;
-	}
+    @Deprecated
+    private String currentHitPointStatus;
 
-	public String getCurrentAction() {
-		return currentAction;
-	}
+    private String conditionsAndEffects;
 
-	public void setCurrentAction(String currentAction) {
-		this.currentAction = currentAction;
-	}
+    public String getCurrentHitPointStatus() {
+        return currentHitPointStatus;
+    }
 
-	public String getConditionsAndEffects() {
-		return conditionsAndEffects;
-	}
+    public void setCurrentHitPointStatus(String currentHitPointStatus) {
+        this.currentHitPointStatus = currentHitPointStatus;
+    }
 
-	public void setConditionsAndEffects(String conditionAndEffects) {
-		this.conditionsAndEffects = conditionAndEffects;
-	}
-	
-	
-	
+    public String getConditionsAndEffects() {
+        return conditionsAndEffects;
+    }
+
+    public void setConditionsAndEffects(String conditionAndEffects) {
+        this.conditionsAndEffects = conditionAndEffects;
+    }
+
+    public int getHp() {
+        return hp;
+    }
+
+    public void setHp(int hp) {
+        this.hp = hp;
+    }
+
+    public int getMaxHp() {
+        return maxHp;
+    }
+
+    public void setMaxHp(int maxHp) {
+        this.maxHp = maxHp;
+    }
+
+
+
 }

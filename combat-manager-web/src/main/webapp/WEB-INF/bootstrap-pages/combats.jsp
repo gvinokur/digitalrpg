@@ -168,7 +168,7 @@
 					</div>
 				</c:if>
 				<div id="combat_view"
-							class="col-xs-12 content-block center dynamic ${show_content == 'combat_view'? '' : 'hidden' }">
+							class="col-xs-12 content-block dynamic ${show_content == 'combat_view'? '' : 'hidden' }">
 						<!--  -->
 						<div class="row">
 							<div class="col-xs-8 left-pane ">

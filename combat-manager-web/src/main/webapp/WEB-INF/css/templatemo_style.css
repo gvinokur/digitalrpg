@@ -869,8 +869,9 @@ div.lane {
 	display: inline-block;
 }
 
-.gridster li.preview-holder {
+li.preview-holder {
 	opacity: 0;
+	list-style: none;
 }
 
 div.right {

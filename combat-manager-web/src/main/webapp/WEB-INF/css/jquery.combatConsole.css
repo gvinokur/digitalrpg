@@ -1,0 +1,77 @@
+li.combat-character {
+	list-style: none;
+}
+
+.combat-character {
+	border-radius: 5px;
+	border: thin solid #FFF;
+}
+
+.combat-character.current {
+	border-radius: 5px;
+	border: thin solid #FF4040;
+}
+
+.combat-character.current div:first-child {
+	background: transparent url(../img/play.png) no-repeat center;
+	background-position-x: 0px;
+	background-size: contain;
+}
+
+.combat-character.selected {
+	background-color: #999;
+	color: #fff;
+	border-radius: 5px;
+}
+
+.combat-character {
+	cursor: pointer;
+}
+
+.combat-character-header td {
+	padding: 5px 2px 5px 2px;
+	font-weight: bold;
+	color: #c0c0c0;
+	border-bottom: 1px solid #c0c0c0;
+}
+
+.combat-character div {
+	padding: 2px;
+	display: inline-block;
+	float: left;
+	line-height: 1;
+}
+
+.combat-character .conditions-and-effects {
+	text-overflow: ellipsis;
+	width: 50%;
+	white-space: nowrap;
+	overflow: hidden;
+	color: #FF9900;
+}
+
+
+.combat-character .character-name {
+	text-overflow: ellipsis;
+	width: 80%;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.combat-character div.hp {
+	float: right;
+	margin-top: 5px;
+	margin-right: 5px;
+	height: 25px;
+	border-radius: 5px;
+	border: 1px solid white;
+}
+
+.combat-character .selected-char {
+	height: 100%;
+}
+
+.gridster li.preview-holder {
+	opacity: 0;
+	list-style: none;
+}

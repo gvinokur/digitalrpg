@@ -33,6 +33,7 @@ import com.digitalrpg.domain.model.User;
 import com.digitalrpg.domain.model.characters.SystemCharacter;
 import com.digitalrpg.domain.model.characters.pathfinder.PathfinderCharacter;
 import com.digitalrpg.domain.model.characters.pathfinder.PathfinderCombatCharacter;
+import com.digitalrpg.domain.model.pathfinder.PathfinderAction;
 import com.digitalrpg.domain.model.pathfinder.PathfinderCombat;
 import com.digitalrpg.web.controller.model.CombatCharacterVO;
 import com.digitalrpg.web.controller.model.OrderAndAction;
@@ -48,10 +49,10 @@ import com.google.common.base.Function;
 
 public class CombatService {
 
-    public static final Function<CombatCharacter, CombatCharacterVO> combatCharacterToVOfunction =
-            new Function<CombatCharacter, CombatCharacterVO>() {
+    public static final Function<CombatCharacter<?>, CombatCharacterVO> combatCharacterToVOfunction =
+            new Function<CombatCharacter<?>, CombatCharacterVO>() {
 
-                public CombatCharacterVO apply(CombatCharacter in) {
+                public CombatCharacterVO apply(CombatCharacter<?> in) {
                     CombatCharacterVO out = null;
                     if (in instanceof PathfinderCombatCharacter) {
                         out = createPathfinderCombatCharacterVO((PathfinderCombatCharacter) in);
@@ -71,8 +72,6 @@ public class CombatService {
                     out.setCurrentMagicalEffects(in.getMagicalEffects());
                     out.setConditionsAndEffectsString(in.getConditionsAndEffectsString());
                     out.setHitPointStatus(in.getHitPointsStatus());
-
-                    PathfinderCharacter character = (PathfinderCharacter) in.getCharacter();
 
                     return out;
                 }
@@ -204,11 +203,11 @@ public class CombatService {
         return combatDao.getCombatCharacter(id);
     }
 
-    public CombatStatusVO getStatus(Combat combat) {
-        return getStatus(combat, false);
+    public CombatStatusVO getStatus(Combat<?> combat) {
+        return getStatus(combat, false, null);
     }
 
-    public CombatStatusVO getStatus(Combat<? extends SystemAction> combat, boolean includeCharacters) {
+    public CombatStatusVO getStatus(Combat<? extends SystemAction> combat, boolean includeCharacters, User user) {
         CombatStatusVO combatStatusVO = null;
         switch (combat.getCampaign().getSystem()) {
             case Pathfinder:
@@ -222,21 +221,21 @@ public class CombatService {
         if (includeCharacters) {
             SortedSet<CombatCharacterStatusVO> combatCharactersVO = new TreeSet<CombatCharacterStatusVO>();
             for (CombatCharacter<? extends SystemAction> combatCharacter : combat.getCombatCharacters()) {
-                combatCharactersVO.add(getStatus(combatCharacter, combat.getCampaign().getSystem()));
+                combatCharactersVO.add(getStatus(combatCharacter, combat.getCampaign().getSystem(), user));
             }
             combatStatusVO.setCombatCharacters(combatCharactersVO);
         }
         return combatStatusVO;
     }
 
-    private CombatStatusVO createPathfinderCombatStatusVO(Combat combat) {
+    private CombatStatusVO createPathfinderCombatStatusVO(Combat<?> combat) {
         PathfinderCombatStatusVO combatStatusVO = new PathfinderCombatStatusVO();
         combatStatusVO.setCurrentRound(((PathfinderCombat) combat).getCurrentRound());
         combatStatusVO.setCurrentTurn(((PathfinderCombat) combat).getCurrentTurn());
         return combatStatusVO;
     }
 
-    private CombatCharacterStatusVO getStatus(CombatCharacter combatCharacter, SystemType system) {
+    private CombatCharacterStatusVO getStatus(CombatCharacter<?> combatCharacter, SystemType system, User user) {
         CombatCharacterStatusVO vo = null;
         switch (system) {
             case Pathfinder:
@@ -249,15 +248,22 @@ public class CombatService {
         vo.setId(combatCharacter.getId());
         vo.setOrder(combatCharacter.getOrder());
         vo.setHidden(combatCharacter.getHidden());
+        vo.setEditable(combatCharacter.getCharacter().getCharacter().getOwner().equals(user));
         return vo;
     }
 
     private CombatCharacterStatusVO createPathfinderCombatCharacterStatusVO(PathfinderCombatCharacter combatCharacter) {
         PathfinderCombatCharacterStatusVO vo = new PathfinderCombatCharacterStatusVO();
-        vo.setCurrentAction(combatCharacter.getCurrentAction().getLabel());
+        vo.setCurrentAction(getCurrentAction(combatCharacter.getCurrentAction()));
         vo.setCurrentHitPointStatus(combatCharacter.getHitPointsStatus());
+        vo.setHp(combatCharacter.getCurrentHitPoints());
+        vo.setMaxHp(((PathfinderCharacter) combatCharacter.getCharacter()).getHp());
         vo.setConditionsAndEffects(combatCharacter.getConditionsAndEffectsString());
         return vo;
+    }
+
+    private String getCurrentAction(PathfinderAction currentAction) {
+        return currentAction.getReady() || currentAction.getDelayed() ? currentAction.getLabel() : "Playing";
     }
 
     public SystemCombatItems getSystemCombatItems(SystemType system) {
