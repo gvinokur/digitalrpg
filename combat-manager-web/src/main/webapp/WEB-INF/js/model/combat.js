@@ -30,14 +30,14 @@ Combat.prototype.updateCharacters = function() {
 
 Combat.prototype.getOrderAndAction = function() {
 	var result = {}
-	for (i = 0; i <this.characters.length ; i ++) {
+	for (var i = 0; i <this.characters.length ; i ++) {
 		result[this.characters[i].id] = {order: this.characters[i].order, action : this.characters[i].currentAction}
 	}
 	return result;
 }
 
 Combat.prototype.findCharacter = function(id) {
-	for (i = 0; i <this.characters.length ; i ++) {
+	for (var i = 0; i <this.characters.length ; i ++) {
 		if(this.characters[i].id == id) {
 			return this.characters[i]
 		}
@@ -50,12 +50,13 @@ Combat.prototype.updateBase = function(combat) {
 	if(!this.characters) {
 		this.characters = new Array();	
 	}
-	for(i = 0 ; i < combat.combat_characters.length; i++) {
-		character = this.findCharacter(combat.combat_characters[i].id);
+	for(var i = 0 ; i < combat.combat_characters.length; i++) {
+		var characterUpdates = combat.combat_characters[i]
+		var character = this.findCharacter(characterUpdates.id);
 		if(character) {
-			character.update(combat.combat_characters[i])
+			character.update(characterUpdates)
 		} else {
-			this.characters.push(this.createCharacter(combat.combat_characters[i]))	
+			this.characters.push(this.createCharacter(characterUpdates))	
 		}
 	}
 	this.updateCharacters();

@@ -16,7 +16,7 @@
 	
 	var widgets = {
 		'Pathfinder' : {
-			'lg' : '<li character-id="{character-id}" class="combat-character"><div class="selected-char" style="width: 10px">&#160;</div><div class="character-data character-name" attribute-name="name"></div><div style="width:25px" attribute-name="hp" attribute-type="life" class="character-data hp editable" data-type="text" data-title="HP" data-pk="" data-url="/combats/character/currentHitPoints"></div><div class="hiddenSelect character-data editable" attribute-name="hidden" attribute-type="boolean" data-pk="" data-url="/combats/character/hidden">Hidden <input type="checkbox"/></div><div class="character-data conditions-and-effects" attribute-name="conditionsAndEffects" title=""></div>	</li>'
+			'lg' : '<li character-id="{character-id}" class="combat-character"><div class="selected-char" style="width: 10px">&#160;</div><div class="character-data character-name" attribute-name="name"></div><div style="width:25px" attribute-name="hp" attribute-type="life" class="character-data hp editable" data-type="number" data-title="HP" data-pk="" data-url="/combats/character/currentHitPoints"></div><div class="hiddenSelect character-data editable" attribute-name="hidden" attribute-type="boolean" data-pk="" data-url="/combats/character/hidden">Hidden <input type="checkbox"/></div><div class="character-data conditions-and-effects" attribute-name="conditionsAndEffects" title=""></div>	</li>'
 		}
 	}
 	
@@ -128,7 +128,7 @@
 			
 			var headerDIV = $("<div/>").appendTo(this.el)
 			headerDIV.addClass("titles").addClass("row");
-			for(i = 0; i < actions[this.settings.systemType].length; i++) {
+			for(var i = 0; i < actions[this.settings.systemType].length; i++) {
 				$("<div/>").addClass("col-xs-4").css("text-align","center").append(actions[this.settings.systemType][i]).appendTo(headerDIV)
 			}
 			
@@ -159,6 +159,9 @@
 	            }
 	        }).data("gridster");
 			
+			if(this.settings.mode == 'player') {
+				this.gridster.disable();
+			}
 		}
 	}
 	
@@ -208,7 +211,7 @@
 				combatConsole.updateCombat(combatStatus)
 			},
 			complete: function() {
-//				setTimeout(combatConsole.reload, 5000); 
+				setTimeout(combatConsole.reload, 5000); 
 			}
 		})	
 	}
