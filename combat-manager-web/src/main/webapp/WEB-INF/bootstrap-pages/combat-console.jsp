@@ -18,6 +18,8 @@
 <link href="${url}" rel="stylesheet"/>
 <c:url var="url" value="/css/bootstrap-editable.css" />
 <link href="${url}" rel="stylesheet" type="text/css" />
+<c:url var="url" value="/css/tabdrop.css" />
+<link href="${url}" rel="stylesheet" type="text/css" />
 
 <c:url var="url" value="/js/min/jquery.gridster.min.js"/>
 <script src="${url}"><!-- --></script>
@@ -29,6 +31,8 @@
 <script src="${url}"><!-- --></script>
 <c:url var="url" value="/js/min/bootstrap-editable.min.js" />
 <script src='${url}'><!-- --></script>
+<c:url var="url" value="/js/bootstrap-tabdrop.js" />
+<script src='${url}'><!-- --></script>
 
 </head>
 <body>
@@ -36,7 +40,7 @@
 	<div class="container main">
 		<!-- Character Block for extra small devices -->
 		<div class="row visible-xs-block">
-			<div class="col-xs-12">
+			<div class="col-xs-12"><!--  -->
 			</div>
 		</div>
 		<div class="row">
@@ -59,12 +63,14 @@
 						${error_message }
 					</div>
 				</c:if>
-				<div id="combat-console" class="content-block loading">
+				<div id="combat-console" class="content-block">
 					<div style='width:100%;text-align:center;'><i class='fa fa-refresh fa-spin fa-5x'><!--  --></i></div>
 				</div>
 			</div>
 			<!-- Character Block for small and larger devices -->
 			<div class="hidden-xs col-sm-4">
+				<div id="character-data-lg" class="content-block panel">
+				</div>
 			</div>
 		</div>
 		<c:url var="baseUrl" value="/"/>
@@ -86,6 +92,7 @@
 				options.mode = "${mode}";
 				options.csrfHeaderName = "${_csrf.headerName}" 
 				options.csrfToken = "${_csrf.token}"
+				options.largePanel = "#character-data-lg";
 				//TODO: Improve this
 				options.combatSystemData = {
 					turns : ${combat.turns}, 

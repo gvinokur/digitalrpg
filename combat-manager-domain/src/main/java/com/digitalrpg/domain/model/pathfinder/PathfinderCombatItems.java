@@ -2,6 +2,7 @@ package com.digitalrpg.domain.model.pathfinder;
 
 import java.util.List;
 
+import com.digitalrpg.domain.model.SystemCombatItem;
 import com.digitalrpg.domain.model.SystemCombatItems;
 
 public class PathfinderCombatItems implements SystemCombatItems<PathfinderAction> {
@@ -34,6 +35,16 @@ public class PathfinderCombatItems implements SystemCombatItems<PathfinderAction
 
     public void setMagicalEffects(List<PathfinderMagicalEffect> magicalEffects) {
         this.magicalEffects = magicalEffects;
+    }
+
+    @Override
+    public List<? extends SystemCombatItem> get(String name) {
+        if ("conditions".equalsIgnoreCase(name)) {
+            return this.conditions;
+        } else if ("magicalEffects".equalsIgnoreCase(name)) {
+            return this.magicalEffects;
+        }
+        return null;
     }
 
 }

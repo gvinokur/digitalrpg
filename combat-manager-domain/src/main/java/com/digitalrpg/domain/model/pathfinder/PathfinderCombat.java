@@ -60,14 +60,16 @@ public class PathfinderCombat extends Combat<PathfinderAction> {
         CombatCharacter<PathfinderAction> currentCharacter = this.getCurrentCharacter();
         CombatCharacter<PathfinderAction> nextCharacter = null;
         NavigableSet<CombatCharacter<PathfinderAction>> combatCharacters = this.getCombatCharactersAsNavigableSet();
-        nextCharacter = combatCharacters.higher(currentCharacter);
+        if (currentCharacter != null)
+            nextCharacter = combatCharacters.higher(currentCharacter);
         if (nextCharacter == null) {
             end = this.advanceTurn();
             if (!end) {
                 nextCharacter = combatCharacters.first();
             }
         }
-        currentCharacter.played(availableActions);
+        if (currentCharacter != null)
+            currentCharacter.played(availableActions);
         if (nextCharacter != null)
             nextCharacter.startPlaying(availableActions);
         this.setCurrentCharacter(nextCharacter);
@@ -104,7 +106,9 @@ public class PathfinderCombat extends Combat<PathfinderAction> {
             }
         }
         if (currentCharacter != nextCharacter) {
-            currentCharacter.notPlayed(availableActions);
+            if (currentCharacter != null) {
+                currentCharacter.notPlayed(availableActions);
+            }
             nextCharacter.restartPlaying(availableActions);
         }
         setCurrentCharacter(nextCharacter);

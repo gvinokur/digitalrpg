@@ -14,6 +14,8 @@ public class CombatCharacterStatusVO implements Comparable<CombatCharacterStatus
 
     private Boolean editable;
 
+    private String type;
+
     @Override
     public int compareTo(CombatCharacterStatusVO o) {
         // TODO refactor this
@@ -82,6 +84,16 @@ public class CombatCharacterStatusVO implements Comparable<CombatCharacterStatus
 
     public void setEditable(Boolean editable) {
         this.editable = editable;
+    }
+
+
+    public String getType() {
+        return type;
+    }
+
+
+    public void setType(String type) {
+        this.type = type;
     }
 
 }

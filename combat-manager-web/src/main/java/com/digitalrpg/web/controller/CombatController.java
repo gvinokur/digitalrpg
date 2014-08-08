@@ -30,6 +30,7 @@ import com.digitalrpg.domain.model.Combat;
 import com.digitalrpg.domain.model.CombatCharacter;
 import com.digitalrpg.domain.model.CombatState;
 import com.digitalrpg.domain.model.SystemAction;
+import com.digitalrpg.domain.model.SystemCombatItem;
 import com.digitalrpg.domain.model.SystemCombatItems;
 import com.digitalrpg.domain.model.SystemCombatProperties;
 import com.digitalrpg.domain.model.SystemType;
@@ -195,9 +196,7 @@ public class CombatController {
             return new ModelAndView("redirect:/campaigns/" + combat.getCampaign().getId() + "/show");
         }
         combatService.startCombat(combat);
-        SystemCombatItems items = combatService.getSystemCombatItems(combat.getCampaign().getSystem());
         modelMap.put("combat", combat);
-        modelMap.put("items", items);
         return new ModelAndView("/combat-console", modelMap);
     }
 
@@ -233,6 +232,13 @@ public class CombatController {
             viewName = "redirect:/combats";
         }
         return new ModelAndView(viewName, modelMap);
+    }
+
+    @RequestMapping(value = "/{id}/items/{itemType}", method = RequestMethod.GET)
+    public ResponseEntity<List<? extends SystemCombatItem>> getItems(@PathVariable Long id, @PathVariable String itemType) {
+        Combat<?> combat = combatService.getCombat(id);
+        SystemCombatItems<?> items = combatService.getSystemCombatItems(combat.getCampaign().getSystem());
+        return new ResponseEntity<List<? extends SystemCombatItem>>(items.get(itemType), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/character/{attributeName}", method = RequestMethod.POST)

@@ -11,6 +11,7 @@ Character.prototype.baseUpdate = function(character) {
 	this.hidden = character.hidden;
 	this.currentAction = character.current_action;
 	this.editable = character.editable;
+	this.type = character.type;
 }
 
 Character.prototype.updateOrderAndAction = function(order, action) {

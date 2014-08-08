@@ -75,3 +75,28 @@ li.combat-character {
 	opacity: 0;
 	list-style: none;
 }
+
+.navbar-nav.centered > li {
+	float:left;
+} 
+
+.navbar-nav.centered >li >a {
+padding-top: 15px;
+padding-bottom: 15px;
+}
+
+.navbar-nav.centered {
+	margin: 0 auto;
+	display: table;
+	table-layout: fixed;
+	float: none;
+}
+
+.panel > .tab-content {
+	background: #272525;
+	border-bottom: 1px solid #ddd;
+	padding: 15px 10px 15px 10px;
+}
+
+
+

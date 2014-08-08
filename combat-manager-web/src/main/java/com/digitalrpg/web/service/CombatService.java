@@ -1,13 +1,13 @@
 package com.digitalrpg.web.service;
 
 import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableSet;
-import java.util.SortedMap;
 import java.util.SortedSet;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import javax.annotation.Resource;
@@ -37,7 +37,6 @@ import com.digitalrpg.domain.model.pathfinder.PathfinderAction;
 import com.digitalrpg.domain.model.pathfinder.PathfinderCombat;
 import com.digitalrpg.web.controller.model.CombatCharacterVO;
 import com.digitalrpg.web.controller.model.OrderAndAction;
-import com.digitalrpg.web.controller.model.PathfinderCombatCharacterVO;
 import com.digitalrpg.web.controller.model.PlayerExtraInfoVO;
 import com.digitalrpg.web.controller.model.status.CombatCharacterStatusVO;
 import com.digitalrpg.web.controller.model.status.CombatStatusVO;
@@ -57,22 +56,31 @@ public class CombatService {
                     if (in instanceof PathfinderCombatCharacter) {
                         out = createPathfinderCombatCharacterVO((PathfinderCombatCharacter) in);
                     }
-                    out.setInitiative(in.getInitiative());
-                    out.setHidden(in.getHidden());
                     out.setId(in.getId());
                     out.setImageUrl(in.getCharacter().getCharacter().getPictureUrl());
                     return out;
                 }
 
                 private CombatCharacterVO createPathfinderCombatCharacterVO(PathfinderCombatCharacter in) {
-                    PathfinderCombatCharacterVO out = new PathfinderCombatCharacterVO();
-                    out.setCurrentHitPoints(in.getCurrentHitPoints());
-                    out.setCurrentAction(in.getCurrentAction());
-                    out.setCurrentConditions(in.getConditions());
-                    out.setCurrentMagicalEffects(in.getMagicalEffects());
-                    out.setConditionsAndEffectsString(in.getConditionsAndEffectsString());
-                    out.setHitPointStatus(in.getHitPointsStatus());
+                    CombatCharacterVO out = new CombatCharacterVO();
+                    Map<String, Object> stats = new LinkedHashMap<>();
+                    PathfinderCharacter pathfinderCharacter = (PathfinderCharacter) in.getCharacter();
+                    stats.put("HP", pathfinderCharacter.getHp());
+                    stats.put("AC", pathfinderCharacter.getAc());
+                    stats.put("CMB", pathfinderCharacter.getCmb());
+                    stats.put("CMD", pathfinderCharacter.getCmd());
+                    stats.put("FORT", pathfinderCharacter.getFort());
+                    stats.put("REF", pathfinderCharacter.getRef());
+                    stats.put("WILL", pathfinderCharacter.getWill());
+                    out.setStats(stats);
 
+                    Map<String, Collection<? extends SystemCombatItem>> currentItemsMap =
+                            new HashMap<String, Collection<? extends SystemCombatItem>>();
+
+                    currentItemsMap.put("Conditions", in.getConditions());
+                    currentItemsMap.put("Magical_Effects", in.getMagicalEffects());
+
+                    out.setCurrentItemsMap(currentItemsMap);
                     return out;
                 }
             };
@@ -249,6 +257,7 @@ public class CombatService {
         vo.setOrder(combatCharacter.getOrder());
         vo.setHidden(combatCharacter.getHidden());
         vo.setEditable(combatCharacter.getCharacter().getCharacter().getOwner().equals(user));
+        vo.setType(combatCharacter.getCharacter().getCharacter().getCharacterType().name());
         return vo;
     }
 

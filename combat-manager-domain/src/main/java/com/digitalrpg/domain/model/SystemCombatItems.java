@@ -12,4 +12,5 @@ public interface SystemCombatItems<ACTION_TYPE extends SystemAction> {
 
     public List<ACTION_TYPE> getActions();
 
+    public List<? extends SystemCombatItem> get(String name);
 }

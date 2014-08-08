@@ -312,3 +312,10 @@ a:focus {
 	outline: 0px;
 	text-decoration: none;
 }
+
+.scroll_list_400 {
+	max-height: 400px;
+	overflow-x: overlay;
+}
+
+

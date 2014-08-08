@@ -50,16 +50,19 @@ Combat.prototype.updateBase = function(combat) {
 	if(!this.characters) {
 		this.characters = new Array();	
 	}
-	for(var i = 0 ; i < combat.combat_characters.length; i++) {
-		var characterUpdates = combat.combat_characters[i]
-		var character = this.findCharacter(characterUpdates.id);
-		if(character) {
-			character.update(characterUpdates)
-		} else {
-			this.characters.push(this.createCharacter(characterUpdates))	
+	//Sometimes combat characters don't get updated
+	if(combat.combat_characters) {
+		for(var i = 0 ; i < combat.combat_characters.length; i++) {
+			var characterUpdates = combat.combat_characters[i]
+			var character = this.findCharacter(characterUpdates.id);
+			if(character) {
+				character.update(characterUpdates)
+			} else {
+				this.characters.push(this.createCharacter(characterUpdates))	
+			}
 		}
+		this.updateCharacters();
 	}
-	this.updateCharacters();
 }
 
 Combat.prototype.createCharacter = function (character) {

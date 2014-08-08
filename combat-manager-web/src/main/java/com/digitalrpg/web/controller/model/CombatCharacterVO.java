@@ -1,46 +1,51 @@
 package com.digitalrpg.web.controller.model;
 
-public class CombatCharacterVO{
+import java.util.Collection;
+import java.util.Map;
 
-	
-	private Long initiative;
-	
-	private Boolean hidden;
-	
-	private Long id;
-	
-	private String imageUrl;
+import com.digitalrpg.domain.model.SystemCombatItem;
 
-	public Long getId() {
-		return id;
-	}
+public class CombatCharacterVO {
 
-	public void setId(Long id) {
-		this.id = id;
-	}
 
-	public Long getInitiative() {
-		return initiative;
-	}
+    private Long id;
 
-	public void setInitiative(Long initiative) {
-		this.initiative = initiative;
-	}
+    private String imageUrl;
 
-	public Boolean getHidden() {
-		return hidden;
-	}
+    private Map<String, Object> stats;
 
-	public void setHidden(Boolean hidden) {
-		this.hidden = hidden;
-	}
+    private Map<String, Collection<? extends SystemCombatItem>> currentItemsMap;
 
-	public String getImageUrl() {
-		return imageUrl;
-	}
+    public Long getId() {
+        return id;
+    }
 
-	public void setImageUrl(String imageUrl) {
-		this.imageUrl = imageUrl;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public Map<String, Object> getStats() {
+        return stats;
+    }
+
+    public void setStats(Map<String, Object> stats) {
+        this.stats = stats;
+    }
+
+    public Map<String, Collection<? extends SystemCombatItem>> getCurrentItemsMap() {
+        return currentItemsMap;
+    }
+
+    public void setCurrentItemsMap(Map<String, Collection<? extends SystemCombatItem>> currentItemsMap) {
+        this.currentItemsMap = currentItemsMap;
+    }
 
 }
