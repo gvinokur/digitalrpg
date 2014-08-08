@@ -35,7 +35,7 @@ public abstract class CombatCharacter<ACTION_TYPE extends SystemAction> {
 
     private Boolean hidden;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER, targetEntity = Combat.class)
     @JoinColumn(name = "combat_id", referencedColumnName = "id")
     @Type(type = "Combat")
     public Combat<ACTION_TYPE> getCombat() {
