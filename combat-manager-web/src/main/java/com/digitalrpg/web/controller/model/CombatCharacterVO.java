@@ -14,7 +14,7 @@ public class CombatCharacterVO {
 
     private Map<String, Object> stats;
 
-    private Map<String, Collection<? extends SystemCombatItem>> currentItemsMap;
+    private Map<String, Collection<Long>> currentItemsMap;
 
     public Long getId() {
         return id;
@@ -40,11 +40,11 @@ public class CombatCharacterVO {
         this.stats = stats;
     }
 
-    public Map<String, Collection<? extends SystemCombatItem>> getCurrentItemsMap() {
+    public Map<String, Collection<Long>> getCurrentItemsMap() {
         return currentItemsMap;
     }
 
-    public void setCurrentItemsMap(Map<String, Collection<? extends SystemCombatItem>> currentItemsMap) {
+    public void setCurrentItemsMap(Map<String, Collection<Long>> currentItemsMap) {
         this.currentItemsMap = currentItemsMap;
     }
 

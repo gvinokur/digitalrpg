@@ -40,6 +40,7 @@ import com.digitalrpg.domain.model.pathfinder.PathfinderCombatProperties;
 import com.digitalrpg.web.controller.model.CombatCharacterVO;
 import com.digitalrpg.web.controller.model.CreateCombatVO;
 import com.digitalrpg.web.controller.model.OrderAndAction;
+import com.digitalrpg.web.controller.model.status.CombatCharacterStatusVO;
 import com.digitalrpg.web.controller.model.status.CombatStatusVO;
 import com.digitalrpg.web.service.CampaignService;
 import com.digitalrpg.web.service.CombatService;
@@ -256,8 +257,8 @@ public class CombatController {
     public ResponseEntity<?> updateCombatCharacterItem(@PathVariable String itemType, @PathVariable ItemAction action,
             @RequestParam("pk") Long id, @RequestParam("itemId") Long itemId, @AuthenticationPrincipal UserWrapper user) {
         try {
-            CombatCharacterVO vo = combatService.updateCombatCharacterItem(id, itemType, action, itemId, user);
-            return new ResponseEntity<CombatCharacterVO>(vo, HttpStatus.OK);
+            CombatCharacterStatusVO vo = combatService.updateCombatCharacterItem(id, itemType, action, itemId, user);
+            return new ResponseEntity<CombatCharacterStatusVO>(vo, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<String>("Cannot update data", HttpStatus.BAD_REQUEST);
         }

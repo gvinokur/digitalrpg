@@ -270,7 +270,9 @@ input:focus:required:invalid:focus,textarea:focus:required:invalid:focus,select:
 }
 
 .overflown {
-	margin-right: 30px;
+	width: -moz-calc(100% - 30px);
+	width: -webkit-calc(100% - 30px);
+	width: calc(100% - 30px);
 	text-overflow: ellipsis;
 	overflow-x: overlay;
 	margin: 0px;
@@ -317,5 +319,3 @@ a:focus {
 	max-height: 400px;
 	overflow-x: overlay;
 }
-
-

@@ -17,6 +17,12 @@ Combat.prototype.isCurrent = function(character) {
 	return this.currentCharacterId == character.id;
 }
 
+Combat.prototype.updateCharacter = function(combatCharacter) {
+	var character = this.findCharacter(combatCharacter.id)
+	character.update(combatCharacter);
+	return character;
+}
+
 Combat.prototype.updateCharacterOrderAndAction = function(id, order, action) {
 	var character = this.findCharacter(id)
 	character.updateOrderAndAction(order, action);

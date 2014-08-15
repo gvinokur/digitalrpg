@@ -111,6 +111,13 @@
     		var characterId = $(this).attr("character-id");
     		combatConsole.select(characterId);
     	});
+    	
+    	$(".panel").on('click', '.item a input', function(e) {
+    		
+    		var characterId = $(".combat-character.selected").attr("character-id")
+    		combatConsole.updateCharacterItem(characterId, $(this).attr("item-type"), $(this).attr("item-id") , $(this).prop("checked"));
+    		
+    	})
 		
 		return this;
 	}
@@ -145,6 +152,32 @@
 
 	function Console() {
 		
+	}
+	
+	Console.prototype.updateCharacterItem = function(characterId, itemType, itemId, value) {
+		var url = combatConsole.buildUrl("combats/character/" + itemType + "/{action}")
+		var data = { pk : characterId, itemId : itemId }
+		if(value) {
+			url = url.replace("{action}","ADD")
+		} else {
+			url = url.replace("{action}","REMOVE")
+		}
+		$.ajax({
+			url : url,
+			dataType : "json",
+			type : "POST",
+			data: data,
+			beforeSend : beforePost,
+			success : function (combatCharacter) {
+				combatConsole.updateCombatCharacter(combatCharacter) 
+			}
+		})
+	}
+	
+	Console.prototype.updateCombatCharacter = function(combatCharacter) {
+		var character = this.combat.updateCharacter(combatCharacter);
+		var characterWidget = $(".combat-character[character-id='"+ character.id +"']")
+		this.updateWidgetData(characterWidget, character)
 	}
 
 	Console.prototype.select = function(characterId) {
@@ -190,7 +223,7 @@
     					var items = characterData[attributeName];
     					$(this).find("input[type='checkbox']").each(function(){
     						var itemType = $(this).attr("item-type");
-    						var itemId = $(this).attr("item-id");
+    						var itemId = parseInt($(this).attr("item-id"));
     						if(items[itemType].indexOf(itemId) >= 0) {
     							$(this).prop("checked", true);
     						} else {
@@ -262,17 +295,17 @@
 		    		type: "GET",
 		    		success : function(items) {
 		    			var scrollDivEL = $("<div/>").addClass("scroll_list_400").addClass("nice_list")
-		    				.addClass("character-data").attr("attribute-name","items").attr("attribute-type","Items").appendTo(el);
+		    				.addClass("character-data").attr("attribute-name","current_items_map").attr("attribute-type","Items").appendTo(el);
 		    			var scrollUlEL = $("<ul/>").appendTo(scrollDivEL);
 		    			for(var i=0; i< items.length; i++) {
 		    				var item = items[i];
 		    				var itemLiEL = $("<li/>").addClass("item").appendTo(scrollUlEL);
-		    				var itemLinkEl = $("<a/>").addClass("overflown").appendTo(itemLiEL);
+		    				var itemLinkEl = $("<a/>").appendTo(itemLiEL);
 		    				
 		    				
 		    				$("<input/>").attr("type","checkbox").addClass("pull-right").css("margin-right","10px")
 	    						.attr("item-type",partDefinition.items).attr("item-id",item.id).appendTo(itemLinkEl);
-		    				$("<label/>").addClass("overflown").css("padding-right","30px").append(item.label).appendTo(itemLinkEl);
+		    				$("<label/>").addClass("overflown").append(item.label).appendTo(itemLinkEl);
 		    			}
 		    		}
 				})

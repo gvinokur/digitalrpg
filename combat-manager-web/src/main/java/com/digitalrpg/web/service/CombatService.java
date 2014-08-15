@@ -45,6 +45,7 @@ import com.digitalrpg.web.controller.model.status.PathfinderCombatStatusVO;
 import com.digitalrpg.web.service.combat.CharacterAttributeConverter;
 import com.digitalrpg.web.service.combat.ItemAction;
 import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
 
 public class CombatService {
 
@@ -74,15 +75,20 @@ public class CombatService {
                     stats.put("WILL", pathfinderCharacter.getWill());
                     out.setStats(stats);
 
-                    Map<String, Collection<? extends SystemCombatItem>> currentItemsMap =
-                            new HashMap<String, Collection<? extends SystemCombatItem>>();
+                    Map<String, Collection<Long>> currentItemsMap = new HashMap<String, Collection<Long>>();
 
-                    currentItemsMap.put("Conditions", in.getConditions());
-                    currentItemsMap.put("Magical_Effects", in.getMagicalEffects());
+                    currentItemsMap.put("conditions", Collections2.transform(in.getConditions(), combatItemIdExtractor));
+                    currentItemsMap.put("magicalEffects", Collections2.transform(in.getMagicalEffects(), combatItemIdExtractor));
 
                     out.setCurrentItemsMap(currentItemsMap);
                     return out;
                 }
+
+                private final Function<SystemCombatItem, Long> combatItemIdExtractor = new Function<SystemCombatItem, Long>() {
+                    public Long apply(SystemCombatItem item) {
+                        return item.getId();
+                    }
+                };
             };
 
     @Autowired
@@ -159,7 +165,7 @@ public class CombatService {
     }
 
     @Transactional(rollbackFor = Exception.class, isolation = Isolation.SERIALIZABLE)
-    public CombatCharacterVO updateCombatCharacterItem(Long id, String itemType, ItemAction action, Long itemId, User user)
+    public CombatCharacterStatusVO updateCombatCharacterItem(Long id, String itemType, ItemAction action, Long itemId, User user)
             throws IllegalArgumentException, IllegalAccessException {
         CombatCharacter combatCharacter = combatDao.getCombatCharacter(id);
         SystemType system = combatCharacter.getCombat().getCampaign().getSystem();
@@ -173,7 +179,7 @@ public class CombatService {
                 combatCharacter.removeItem(item);
                 break;
         }
-        return combatCharacterToVOfunction.apply(combatCharacter);
+        return getStatus(combatCharacter, system, user);
     }
 
     private SystemCombatItem getItem(SystemCombatItems systemCombatItems, String itemType, Long itemId) throws IllegalArgumentException,
