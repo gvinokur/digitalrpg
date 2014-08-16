@@ -43,32 +43,37 @@ Combat.prototype.getOrderAndAction = function() {
 }
 
 Combat.prototype.findCharacter = function(id) {
-	for (var i = 0; i <this.characters.length ; i ++) {
-		if(this.characters[i].id == id) {
-			return this.characters[i]
-		}
+	if(this.characters) {
+		for (var i = 0; i <this.characters.length ; i ++) {
+			if(this.characters[i].id == id) {
+				return this.characters[i]
+			}
+		}		
 	}
 }
 
 Combat.prototype.updateBase = function(combat) {
 	this.currentCharacterId = combat.current_character_id;
 	this.finished = combat.finished;
-	if(!this.characters) {
-		this.characters = new Array();	
-	}
+	
 	//Sometimes combat characters don't get updated
 	if(combat.combat_characters) {
+		var tempCharacters = new Array();
+		
 		for(var i = 0 ; i < combat.combat_characters.length; i++) {
 			var characterUpdates = combat.combat_characters[i]
 			var character = this.findCharacter(characterUpdates.id);
 			if(character) {
-				character.update(characterUpdates)
+				tempCharacters.push(character.update(characterUpdates));
 			} else {
-				this.characters.push(this.createCharacter(characterUpdates))	
+				tempCharacters.push(this.createCharacter(characterUpdates));
 			}
 		}
+		this.characters = tempCharacters;
+		
 		this.updateCharacters();
 	}
+	
 }
 
 Combat.prototype.createCharacter = function (character) {

@@ -12,7 +12,7 @@ li.combat-character {
 	border: thin solid #FF4040;
 }
 
-.combat-character.current div:first-child {
+.combat-character.current > div:first-child {
 	background: transparent url(../img/play.png) no-repeat center;
 	background-position-x: 0px;
 	background-size: contain;
@@ -35,7 +35,7 @@ li.combat-character {
 	border-bottom: 1px solid #c0c0c0;
 }
 
-.combat-character div {
+.combat-character > div:not(.popover) {
 	padding: 2px;
 	display: inline-block;
 	float: left;
@@ -98,5 +98,15 @@ padding-bottom: 15px;
 	padding: 15px 10px 15px 10px;
 }
 
+.gridster li.gs-w {
+	z-index: inherit;
+}
 
+.editableform .form-control.narrow_input {
+	width: 80px;
+}
+
+.popover h3 {
+	color : grey;
+}
 

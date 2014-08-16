@@ -69,6 +69,7 @@
     		    beforeSend: beforePost
     		};
     	$.fn.editable.defaults.showbuttons = false;
+    	$.fn.editable.defaults.placement = "right";
     	
     	$(this).on('click',".editable[attribute-type='boolean'] input",function(){
     		var pk = $(this).parent().attr("data-pk");
@@ -252,13 +253,14 @@
 				this.appendTab(tabsEL, tabContentEL, partDefiniiton)
 			}
 			tabsEL.tabdrop({'text' : 'More'})
+			tabsEL.children("li:not(.dropdown)").first().find("a").click();
 		} else {
 			//Simply put data there.
 			this.appendData(el, panelDefinition[0])
 		}
 	}
 	
-	Console.prototype.appendTab = function(tabsEL, tabContentEL, partDefinition) {
+	Console.prototype.appendTab = function(tabsEL, tabContentEL, partDefinition, active) {
 		if( partDefinition.modes.indexOf(this.settings.mode) >= 0 ) {
 			var tabId = partDefinition.name.replace(" ", "");
 			if(partDefinition.children && partDefinition.children.length > 0) {
@@ -455,6 +457,12 @@
 			$(this).text(combatConsole.combat[attributeName])
 		})
 		//Now change all data, including creating the widgets and stuff
+		$(".combat-character").each(function(){
+			var characterId = $(this).attr("character-id");
+			if(!combatConsole.combat.findCharacter(characterId)) {
+				combatConsole.gridster.remove_widget($(this));
+			}
+		})
 		for(var i = 0; i < this.combat.characters.length; i++) {
 			character = this.combat.characters[i];
 			characterWidget = $(".combat-character[character-id='"+ character.id +"']")
@@ -468,6 +476,7 @@
 			}
 			this.updateWidgetData(characterWidget, character);
 		}
+		
 	}
 	
 	Console.prototype.updateWidgetData = function(characterWidget, character) {
@@ -494,11 +503,13 @@
 			if(attributeType == 'boolean') {
 				$(this).find("input[type=checkbox]").prop('checked', character[attributeName]);
 			} else { 
-				$(this).text(character[attributeName]).attr('title', character[attributeName]);
+				$(this).text(character[attributeName]);
 			}
 			if (attributeType == 'life') {
 				var lifeStatus = character.getLifeStatus();
 				$(this).css('color', lifeStatus).css('background-color', lifeStatus)
+			} else {
+				$(this).attr('title', character[attributeName]);
 			}
 			if(attributeName == 'hidden') {
 				if(combatConsole.settings.mode != 'gm' || character.type != 'NPC') {

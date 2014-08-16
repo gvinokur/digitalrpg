@@ -52,5 +52,6 @@ PathfinderCharacter.prototype.update = function(character) {
 	this.hp = character.hp;
 	this.maxHp = character.max_hp;
 	this.conditionsAndEffects = character.conditions_and_effects;
+	return this;
 }
 

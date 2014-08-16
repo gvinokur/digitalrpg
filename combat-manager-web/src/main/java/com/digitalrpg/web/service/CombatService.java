@@ -179,7 +179,7 @@ public class CombatService {
                 combatCharacter.removeItem(item);
                 break;
         }
-        return getStatus(combatCharacter, system, user);
+        return getStatus(combatCharacter, system, user, 0);
     }
 
     private SystemCombatItem getItem(SystemCombatItems systemCombatItems, String itemType, Long itemId) throws IllegalArgumentException,
@@ -234,8 +234,13 @@ public class CombatService {
         combatStatusVO.setFinished(combat.getCurrentCharacter() == null);
         if (includeCharacters) {
             SortedSet<CombatCharacterStatusVO> combatCharactersVO = new TreeSet<CombatCharacterStatusVO>();
+            int hiddenChars = 0;
             for (CombatCharacter<? extends SystemAction> combatCharacter : combat.getCombatCharacters()) {
-                combatCharactersVO.add(getStatus(combatCharacter, combat.getCampaign().getSystem(), user));
+                if (combat.getCampaign().getGameMaster().equals(user) || BooleanUtils.isNotTrue(combatCharacter.getHidden())) {
+                    combatCharactersVO.add(getStatus(combatCharacter, combat.getCampaign().getSystem(), user, hiddenChars));
+                } else {
+                    hiddenChars++;
+                }
             }
             combatStatusVO.setCombatCharacters(combatCharactersVO);
         }
@@ -249,7 +254,7 @@ public class CombatService {
         return combatStatusVO;
     }
 
-    private CombatCharacterStatusVO getStatus(CombatCharacter<?> combatCharacter, SystemType system, User user) {
+    private CombatCharacterStatusVO getStatus(CombatCharacter<?> combatCharacter, SystemType system, User user, int hiddenChars) {
         CombatCharacterStatusVO vo = null;
         switch (system) {
             case Pathfinder:
@@ -260,9 +265,10 @@ public class CombatService {
         }
         vo.setName(combatCharacter.getCharacter().getCharacter().getName());
         vo.setId(combatCharacter.getId());
-        vo.setOrder(combatCharacter.getOrder());
+        vo.setOrder(combatCharacter.getOrder() - hiddenChars);
         vo.setHidden(combatCharacter.getHidden());
-        vo.setEditable(combatCharacter.getCharacter().getCharacter().getOwner().equals(user));
+        vo.setEditable(combatCharacter.getCombat().getCampaign().getGameMaster().equals(user)
+                || combatCharacter.getCharacter().getCharacter().getOwner().equals(user));
         vo.setType(combatCharacter.getCharacter().getCharacter().getCharacterType().name());
         return vo;
     }

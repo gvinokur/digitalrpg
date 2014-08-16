@@ -244,6 +244,19 @@
 									</div>
 									<h3 class="overflown tooltipable">${campaign.name }</h3>
 								</p>
+								<c:if test="${campaign.activeCombat !=null }">
+								<form class="form-inline">
+									<div class="form-group">
+										<label class="form-text" for="bio">Current Combat: </label> 
+										<label class="form-control-static" style="margin-left: 5px">
+											<c:url var="url" value="/combats/${campaign.activeCombat.id }/show"></c:url>
+											<a href="${url }">
+											 ${campaign.activeCombat.name }
+											</a>
+										</label>
+									</div>
+								</form>
+								</c:if>
 								<div id="campaign_description" class="scroll_description">
 									
 									${campaign.description }
