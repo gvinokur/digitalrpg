@@ -64,6 +64,9 @@ public class CombatService {
 
                 private CombatCharacterVO createPathfinderCombatCharacterVO(PathfinderCombatCharacter in) {
                     CombatCharacterVO out = new CombatCharacterVO();
+
+                    out.setName(in.getCharacter().getCharacter().getName());
+
                     Map<String, Object> stats = new LinkedHashMap<>();
                     PathfinderCharacter pathfinderCharacter = (PathfinderCharacter) in.getCharacter();
                     stats.put("HP", pathfinderCharacter.getHp());

@@ -43,7 +43,17 @@
 			<div class="col-xs-12"><!--  -->
 			</div>
 		</div>
+		<c:if test="${combat.campaign.gameMaster.name != user.name }">
+			<div class="row">
+				<div class="col-xs-12">
+					<div class="content-block" id="player-data">
+						<!--  -->
+					</div>
+				</div>
+			</div>
+		</c:if>
 		<div class="row">
+			
 			<div class="col-xs-12 col-sm-8">
 				<c:if test="${form_message!=null}">
 					<div class="alert alert-success">
@@ -93,10 +103,15 @@
 				options.csrfHeaderName = "${_csrf.headerName}" 
 				options.csrfToken = "${_csrf.token}"
 				options.largePanel = "#character-data-lg";
+				options.playerPanel = "#player-data";
 				//TODO: Improve this
 				options.combatSystemData = {
 					turns : ${combat.turns}, 
 					roundsPerTurn: ${combat.roundsPerTurn}
+				}
+				options.dialogs = {
+					'confirm' : '#confirm-action',
+					'add-character' : '#add-character'
 				}
 				$("#combat-console").combatConsole(options);
 			})
@@ -104,20 +119,37 @@
 		
 	</div>
 	
-	<div class="modal fade" id="confirm-delete">
+	<div class="modal fade" id="confirm-action">
 	  <div class="modal-dialog">
 	    <div class="modal-content">
 	      <div class="modal-header">
 	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&#215;</button>
-	        <h4 class="modal-title">Delete Combat?</h4>
+	        <h4 class="modal-title"><!--  --></h4>
 	      </div>
 	      <div class="modal-body">
-	        <p>This will delete this combat for ever, are you sure?</p>
+	        <p><!--  --></p>
 	      </div>
 	      <div class="modal-footer">
 	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-	        <c:url var="url" value="/combats/${combat.id }/delete"></c:url>
-	        <a href="${url }" class="btn btn-primary">Delete</a>
+	        <a href="#" class="confirm btn btn-primary">Confirm</a>
+	      </div>
+	    </div><!-- /.modal-content -->
+	  </div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+	
+	<div class="modal fade" id="add-character">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&#215;</button>
+	        <h4 class="modal-title">Add Character</h4>
+	      </div>
+	      <div class="modal-body">
+	        <p><select class="remaining-characters"><!--  --></select></p>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	        <a href="#" class="confirm btn btn-primary">Confirm</a>
 	      </div>
 	    </div><!-- /.modal-content -->
 	  </div><!-- /.modal-dialog -->

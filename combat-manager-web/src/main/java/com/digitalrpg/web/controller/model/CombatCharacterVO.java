@@ -7,8 +7,9 @@ import com.digitalrpg.domain.model.SystemCombatItem;
 
 public class CombatCharacterVO {
 
-
     private Long id;
+
+    private String name;
 
     private String imageUrl;
 
@@ -46,6 +47,14 @@ public class CombatCharacterVO {
 
     public void setCurrentItemsMap(Map<String, Collection<Long>> currentItemsMap) {
         this.currentItemsMap = currentItemsMap;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
 }

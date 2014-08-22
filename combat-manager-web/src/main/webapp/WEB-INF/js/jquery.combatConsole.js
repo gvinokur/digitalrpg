@@ -10,6 +10,8 @@
  * combatSystemData: Combat System specific data
  * largePanel : Selector to get the dom element for the large panel
  * smallPanel : Selector to get the dom element for the small panel
+ * playerPanel : Selector to get the dom element for the current player panel (Use only for Player Console)
+ * dialogs : map with modal dialogs selectors to use.
  */
 (function ($) {
 	
@@ -25,18 +27,22 @@
 		'Pathfinder' : {
 			'lg' : [
 				{ 'name' : 'Image', 'modes' : ['gm','player'], 'html' : '<div class="row"><div class="col-xs-12"><img class="character-data img-rounded img-responsive" attribute-name="image_url" attribute-type="Image" src="/img/no_pic_available.jpg"/></div></div>' } ,
-				{ 'name' : 'Stats', 'modes' : ['gm','player'], 'html' : '<div class="form-horizontal character-data" attribute-name="stats" attribute-type="Stats"></div>' } ,
+				{ 'name' : 'Stats', 'modes' : ['gm','player'], 'html' : '<div class="character-data" attribute-name="stats" attribute-type="Stats"></div><div class="clearfix"></div>' } ,
 				{ 'name' : 'Actions',  'modes' : ['gm'], 'children' : [
 	               { 'name' : 'Conditions',  'modes' : ['gm'], 'items' : 'conditions' },
 	               { 'name' : 'Magical Effects',  'modes' : ['gm'], 'items' : 'magicalEffects'  }
 				]}
 			],
-			'sm' : [ { 'name' : 'Stats', 'modes' : ['gm','player'], 'html' : '' }]
+			'sm' : [ { 'name' : 'Stats', 'modes' : ['gm','player'], 'html' : '' }],
+			'player' : [ { 'name' : 'All', 'modes': ['player'], 'html' : '<div class="row"><div class="col-xs-1"><img class="player-data img-rounded img-responsive" attribute-name="image_url" attribute-type="Image" src="/img/no_pic_available.jpg"/></div><div class="col-xs-3"><div class="overflown player-data" attribute-name="name" attribute-type="text"></div></div><div class="col-xs-8 player-data" attribute-name="stats" attribute-type="Stats"></div></div>' }]
 		}
 	}
 	
 	var controls = {
-		'Pathfinder': '<div class="navbar navbar-inverse"><div><ul class="nav navbar-nav centered"><li><a href="#" class="previous"><i class="fa fa-step-backward"></i></a></li><li><a>Round <span class="combat-data" attribute-name="round">3</span></a></li><li><a>Turn <span class="combat-data" attribute-name="turn">5</span></a></li><li><a href="#contact" class="next"><i class="fa fa-step-forward"></i></a></li></ul></div></div>'
+		'Pathfinder': { 
+			'header' : '<div class="navbar navbar-inverse"><div><ul class="nav navbar-nav centered"><li><a href="#" class="previous" title="Previous"><i class="fa fa-step-backward"></i></a></li><li><a>Round <span class="combat-data" attribute-name="round">3</span></a></li><li><a>Turn <span class="combat-data" attribute-name="turn">5</span></a></li><li><a href="#contact" class="next" title="Next"><i class="fa fa-step-forward"></i></a></li></ul></div></div>',
+			'footer' : '<div class="navbar navbar-inverse"><div><ul class="nav navbar-nav centered"><li><a href="#" class="add-character" title="Add Character"><span><i class="fa fa-user"></i><i class="fa fa-plus small"></i></span></a></li><li><a href="#" class="delete-character" title="Delete Selected Character"><span><i class="fa fa-user"></i><i class="fa fa-minus small"></i></span></a></li><li><li><a href="#" class="add-log" title="Add Log Entry"><span><i class="fa fa-comment"></i></i></span></a></li><li><li><a href="#" class="view-log" title="View Log"><span><i class="fa fa-comments"></i></i></span></a></li><li><a href="#" class="end-combat" title="End Combat"><i class="fa fa-stop"></i></a></li></ul></div></div>'
+		}
 	}
 	
 	var actions = {
@@ -99,6 +105,26 @@
     		combatConsole.next();
     	})
     	
+    	$(this).on('click','.end-combat', function() {
+    		combatConsole.endCombat();
+    	})
+    	
+    	$(this).on('click','.add-character', function() {
+    		combatConsole.addCharacter();
+    	})
+    	
+    	$(this).on('click','.delete-character', function() {
+    		combatConsole.deleteCharacter();
+    	})
+    	
+    	$(this).on('click','.add-log', function() {
+    		combatConsole.addLog();
+    	})
+    	
+    	$(this).on('click','.view-log', function() {
+    		combatConsole.viewLogs();
+    	})
+    	
     	$(this).editable({
     		selector: ".editable[attribute-type='life']",
     		success : function(response, newValue) {
@@ -155,6 +181,32 @@
 		
 	}
 	
+	Console.prototype.endCombat = function() {
+		var confirmDialog = $(this.settings.dialogs.confirm);
+		confirmDialog.find(".modal-title").empty().append("End Combat?")
+		confirmDialog.find(".modal-body p").empty().append("Confirm combat end. After ending the combat, you wont be able to start it again.")
+		confirmDialog.find(".confirm").unbind( "click" ).click(function(){
+			var url = combatConsole.buildUrl("combats/{id}/end");
+			window.location = url;
+		});
+		confirmDialog.modal();
+	}
+	
+	Console.prototype.deleteCharacter = function() {
+		var selectedCharacter = $(".combat-character.selected");
+		if(selectedCharacter.length == 1) {
+			var confirmDialog = $(this.settings.dialogs.confirm);
+			confirmDialog.find(".modal-title").empty().append("Remove Character")
+			confirmDialog.find(".modal-body p").empty().append("Remove character from combat.")
+			confirmDialog.find(".confirm").unbind( "click" ).click(function(){
+				var url = combatConsole.buildUrl("{id}/character/{characterId}/delete").replace("{characterId}", selectedCharacter.attr("character-id"));
+				alert(url)
+			});
+			confirmDialog.modal();	
+		}
+		
+	}
+	
 	Console.prototype.updateCharacterItem = function(characterId, itemType, itemId, value) {
 		var url = combatConsole.buildUrl("combats/character/" + itemType + "/{action}")
 		var data = { pk : characterId, itemId : itemId }
@@ -188,59 +240,41 @@
     		dataType: "json",
     		type: "GET",
     		success : function(characterData) {
-//    			$("#character-image").attr("src", characterData.image_url);
-//    			for(key in characterData) {
-//    				$("#character-" + key).text(characterData[key]);
-//    			}	
-//    			$(".condition input[type=checkbox]").prop("checked", false)
-//    			for(var i=0; i &lt; characterData.current_conditions.length;i++) {
-//    				$(".condition input[type=checkbox][condition-id=" + characterData.current_conditions[i].id + "]").prop("checked", true)
-//    			}
     			$(".combat-character").removeClass("selected")
     			$(".combat-character[character-id='" + characterId +"']").addClass("selected")
     			//TODO: Populatemagical effects
     			$(".panel .character-data").each(function() {
-    				var attributeName = $(this).attr("attribute-name");
-    				var attributeType = $(this).attr("attribute-type");
-    				if (attributeType == 'Image' ) {
-    					if(characterData[attributeName]) {
-    						$(this).attr("src", characterData[attributeName]);
-    					} else {
-    						$(this).attr("src", "/img/no_pic_available.jpg");
-    					}
-    				} else if (attributeType == 'Stats') {
-    					for(key in characterData[attributeName]) {
-    						var value = characterData[attributeName][key]
-    						var statWidget = $(this).find(".stat-widget[stat='" + key + "']")
-    						if(statWidget.size() == 0) {
-    							var groupDivEL = $("<div/>").addClass("form-group").appendTo($(this));
-    							$("<label/>").addClass("col-xs-4").addClass("control-label").append(key).appendTo(groupDivEL)
-    							var statDivEL = $("<div/>").addClass("col-xs-8").appendTo(groupDivEL)
-    							statWidget = $("<p/>").addClass("stat-widget").addClass("form-control-static").attr("stat",key).appendTo(statDivEL);
-    						}
-    						statWidget.empty().append(value);
-    					}
-    				} else if (attributeType == "Items") {
-    					var items = characterData[attributeName];
-    					$(this).find("input[type='checkbox']").each(function(){
-    						var itemType = $(this).attr("item-type");
-    						var itemId = parseInt($(this).attr("item-id"));
-    						if(items[itemType].indexOf(itemId) >= 0) {
-    							$(this).prop("checked", true);
-    						} else {
-    							$(this).prop("checked", false);
-    						}
-    					});
-    				}
+    				combatConsole.updateDataItem($(this), characterData);
     			})
     		}
     	})
 	}
 	
+	
+	
 	Console.prototype.createPanels = function() { 
 		var panelDefinitions = panels[this.settings.systemType];
 		this.createPanel($(this.settings.smallPanel), panelDefinitions['sm'])
 		this.createPanel($(this.settings.largePanel), panelDefinitions['lg'])
+		this.createPlayerPanel($(this.settings.playerPanel), panelDefinitions['player'])
+	}
+	
+	Console.prototype.createPlayerPanel = function(el, panelDefinition) {
+		var url = this.buildUrl("combats/{id}/playerCharacters")
+		$.ajax({
+    		url: url,
+    		dataType: "json",
+    		type: "GET",
+    		success : function(charactersData) {
+    			for(var i = 0; i < charactersData.length; i++){
+    				var characterData = charactersData[i];
+    				var characterRowEL = $(panelDefinition[0].html).appendTo(el)
+    				characterRowEL.find(".player-data").each(function() {
+    					combatConsole.updateDataItem($(this), characterData);
+    				})
+    			}
+    		}
+    	})
 	}
 	
 	Console.prototype.createPanel = function(el, panelDefinition) {
@@ -358,7 +392,7 @@
 		
 		if(this.useGridster) {
 			
-			var controlsDIV = $(controls[this.settings.systemType]).appendTo(this.el)
+			var controlsDIV = $(controls[this.settings.systemType]['header']).appendTo(this.el)
 			
 			var headerDIV = $("<div/>").appendTo(this.el)
 			headerDIV.addClass("titles").addClass("row");
@@ -392,6 +426,8 @@
 	            	}
 	            }
 	        }).data("gridster");
+			
+			var controlsDIV = $(controls[this.settings.systemType]['footer']).appendTo(this.el)
 			
 			if(this.settings.mode == 'player') {
 				this.gridster.disable();
@@ -493,30 +529,70 @@
 		characterWidget.find(".character-data").each(function(){
 			var attributeName = $(this).attr("attribute-name");
 			var attributeType = $(this).attr("attribute-type");
-			if($(this).hasClass("editable")) {
-				if(character.editable) {
-					$(this).attr("data-pk", character.id)
-				} else {
-					$(this).removeClass("editable")
-				}
-			}
-			if(attributeType == 'boolean') {
-				$(this).find("input[type=checkbox]").prop('checked', character[attributeName]);
-			} else { 
-				$(this).text(character[attributeName]);
-			}
-			if (attributeType == 'life') {
-				var lifeStatus = character.getLifeStatus();
-				$(this).css('color', lifeStatus).css('background-color', lifeStatus)
-			} else {
-				$(this).attr('title', character[attributeName]);
-			}
-			if(attributeName == 'hidden') {
-				if(combatConsole.settings.mode != 'gm' || character.type != 'NPC') {
-					$(this).css('display', 'none');
-				}
-			}
+			combatConsole.updateDataItem($(this), character)
 		});
+	}
+	
+	Console.prototype.updateDataItem = function(item, data) {
+		var attributeName = item.attr("attribute-name");
+		var attributeType = item.attr("attribute-type");
+		if(item.hasClass("editable")) {
+			if(data.editable) {
+				item.attr("data-pk", data.id)
+			} else {
+				item.removeClass("editable")
+			}
+		}
+		if(attributeType == 'boolean') {
+			item.find("input[type=checkbox]").prop('checked', data[attributeName]);
+		} else if (attributeType == 'Image' ) {
+			if(data[attributeName]) {
+				item.attr("src", data[attributeName]);
+			} else {
+				item.attr("src", "/img/no_pic_available.jpg");
+			}
+		} else if (attributeType == 'Stats') {
+			for(key in data[attributeName]) {
+				var value = data[attributeName][key]
+				var statWidget = item.find(".stat-widget[stat='" + key + "']")
+				if(statWidget.size() == 0) {
+					var groupDivEL = $("<div/>").addClass("row").addClass("pull-left").css("width","120px").appendTo(item);
+					$("<span/>").addClass("control-label").addClass("col-xs-6").append(key).appendTo(groupDivEL)
+					var statDivEL = $("<span/>").addClass("col-xs-6").appendTo(groupDivEL)
+					$("<strong/>").addClass("stat-widget").attr("stat",key).append(value).appendTo(statDivEL)
+					
+				}
+				statWidget.empty().append(value);
+			}
+		} else if (attributeType == "Items") {
+			var items = data[attributeName];
+			item.find("input[type='checkbox']").each(function(){
+				var itemType = $(this).attr("item-type");
+				var itemId = parseInt($(this).attr("item-id"));
+				if(items[itemType] && items[itemType].indexOf(itemId) >= 0) {
+					$(this).prop("checked", true);
+				} else {
+					$(this).prop("checked", false);
+				}
+			});
+		} else { 
+			item.text(data[attributeName]);
+			
+			if (attributeType == 'life') {
+				var lifeStatus = data.getLifeStatus();
+				item.css('color', lifeStatus).css('background-color', lifeStatus)
+			} else {
+				item.attr('title', data[attributeName]);
+			}
+			
+		}
+		
+		if(attributeName == 'hidden') {
+			if(combatConsole.settings.mode != 'gm' || data.type != 'NPC') {
+				item.css('display', 'none');
+			}
+		}
+		
 	}
 	
 	Console.prototype.createCombat = function() {

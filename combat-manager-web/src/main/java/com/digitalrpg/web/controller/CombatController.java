@@ -47,6 +47,7 @@ import com.digitalrpg.web.service.CombatService;
 import com.digitalrpg.web.service.UserWrapper;
 import com.digitalrpg.web.service.combat.ItemAction;
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -230,7 +231,7 @@ public class CombatController {
             viewName = "redirect:/campaigns/" + combat.getCampaign().getId() + "/show";
         } else {
             redirectAttributes.addFlashAttribute("error_message", "Cannot end combat, you must be the GM to end it");
-            viewName = "redirect:/combats";
+            viewName = "redirect:/combats/" + combat.getId() + "/show";
         }
         return new ModelAndView(viewName, modelMap);
     }
@@ -342,6 +343,18 @@ public class CombatController {
         // TODO: Verify if changed, then send only if modified. (Use Last-Modified,
         // If-Modified-Since or ETag headers)
         return new ResponseEntity<CombatStatusVO>(status, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/{id}/playerCharacters", method = RequestMethod.GET)
+    @ResponseBody
+    public Collection<CombatCharacterVO> getPlayerCharacters(@PathVariable Long id, @AuthenticationPrincipal final UserWrapper user) {
+        Combat<?> combat = combatService.getCombat(id);
+        return Collections2.transform(Collections2.filter(combat.getCombatCharacters(), new Predicate<CombatCharacter<?>>() {
+            @Override
+            public boolean apply(CombatCharacter<?> combatCharacter) {
+                return combatCharacter.getCharacter().getCharacter().getOwner().equals(user.unwrap());
+            }
+        }), combatService.combatCharacterToVOfunction);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

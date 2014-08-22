@@ -22,7 +22,7 @@
 <c:url var="faviconUrl" value="/img/favicon.ico" />
 <link rel="icon" type="image/x-icon" href="${faviconUrl}" />
 
-<link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet"/>
+<link href="http://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet"/>
 
 <!-- Bootstrap -->
 <c:url var="url" value="/css/bootstrap.min.css" />
