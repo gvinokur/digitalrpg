@@ -5,9 +5,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.validation.Valid;
 
+import org.apache.commons.collections.SetUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,6 +54,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.Sets;
 
 @Controller
 @RequestMapping("/combats")
@@ -288,6 +291,23 @@ public class CombatController {
             return new ResponseEntity("Only the game master can update the current user", HttpStatus.FORBIDDEN);
         }
 
+    }
+
+    @RequestMapping(value = "{id}/character/new", method = RequestMethod.GET)
+    public String creatCharacter(@PathVariable Long id) {
+        Combat<?> combat = combatService.getCombat(id);
+        return "redirect:/characters/create?campaignId=" + combat.getCampaign().getId() + "&combatId=" + combat.getId();
+    }
+
+    @RequestMapping(value = "{id}/characters/remaining", method = RequestMethod.GET)
+    @ResponseBody
+    public Set<SystemCharacter> getRemainingCharacters(@PathVariable Long id) {
+        Combat<?> combat = combatService.getCombat(id);
+        Set<SystemCharacter> systemCharacters = combat.getCampaign().getCharacters();
+        for (CombatCharacter<?> combatCharacter : combat.getCombatCharacters()) {
+            systemCharacters.remove(combatCharacter.getCharacter());
+        }
+        return systemCharacters;
     }
 
     @RequestMapping(value = "{id}/character/{characterId}/add", method = RequestMethod.POST)

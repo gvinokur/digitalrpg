@@ -30,6 +30,8 @@ public abstract class CreateCharacterVO {
 
     private Long campaignId;
 
+    private Long combatId;
+
     private Long messageId;
 
     private User owner;
@@ -165,6 +167,14 @@ public abstract class CreateCharacterVO {
 
     public void setCharacterType(CharacterType characterType) {
         this.characterType = characterType;
+    }
+
+    public Long getCombatId() {
+        return combatId;
+    }
+
+    public void setCombatId(Long combatId) {
+        this.combatId = combatId;
     }
 
 }

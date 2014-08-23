@@ -46,7 +46,7 @@
 		<c:if test="${combat.campaign.gameMaster.name != user.name }">
 			<div class="row">
 				<div class="col-xs-12">
-					<div class="content-block" id="player-data">
+					<div class="content-block" id="player-data" style="margin-bottom:15px">
 						<!--  -->
 					</div>
 				</div>
@@ -111,7 +111,7 @@
 				}
 				options.dialogs = {
 					'confirm' : '#confirm-action',
-					'add-character' : '#add-character'
+					'addCharacter' : '#add-character'
 				}
 				$("#combat-console").combatConsole(options);
 			})
@@ -145,7 +145,7 @@
 	        <h4 class="modal-title">Add Character</h4>
 	      </div>
 	      <div class="modal-body">
-	        <p><select class="remaining-characters"><!--  --></select></p>
+	        <p><select class="remaining-characters form-control"><!--  --></select></p>
 	      </div>
 	      <div class="modal-footer">
 	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

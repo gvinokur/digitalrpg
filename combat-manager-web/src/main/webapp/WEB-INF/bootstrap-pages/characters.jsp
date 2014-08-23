@@ -60,6 +60,7 @@
 		            		<form:form action="${createCharacterUrl }" modelAttribute="createCharacterVO" id="create-character" method="POST">
 		            			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
 		            			<input type="hidden" name="campaignId" value="${campaign.id }"/>
+		            			<input type="hidden" name="combatId" value="${combatId }"/>
 		            			<input type="hidden" name="id" value="${createCharacterVO.id }"/>
 		            			<spring:bind path="name">
 								<div class="form-group ${status.error? 'has-error' :'' }">

@@ -34,7 +34,7 @@
 				]}
 			],
 			'sm' : [ { 'name' : 'Stats', 'modes' : ['gm','player'], 'html' : '' }],
-			'player' : [ { 'name' : 'All', 'modes': ['player'], 'html' : '<div class="row"><div class="col-xs-1"><img class="player-data img-rounded img-responsive" attribute-name="image_url" attribute-type="Image" src="/img/no_pic_available.jpg"/></div><div class="col-xs-3"><div class="overflown player-data" attribute-name="name" attribute-type="text"></div></div><div class="col-xs-8 player-data" attribute-name="stats" attribute-type="Stats"></div></div>' }]
+			'player' : [ { 'name' : 'All', 'modes': ['player'], 'html' : '<div class="row"><div class="col-xs-3"><img class="player-data img-rounded" style="max-height:1px;max-width:100%" attribute-name="image_url" attribute-type="Image" src="/img/no_pic_available.jpg"/></div><div class="col-xs-9 player-data" attribute-name="stats" attribute-type="Stats"></div></div>' }]
 		}
 	}
 	
@@ -93,9 +93,7 @@
     		})
     	});
     	
-    	if(combatConsole.settings.mode == "player") {
-    		$('.previous,.next').css("display", "none");
-    	}
+    	
     	
     	$(this).on('click','.previous', function() {
     		combatConsole.previous();
@@ -124,6 +122,10 @@
     	$(this).on('click','.view-log', function() {
     		combatConsole.viewLogs();
     	})
+    	
+    	if(combatConsole.settings.mode == "player") {
+    		$('.previous,.next,.end-combat,.delete-character,.add-character,.add-log,.view-log').css("display", "none");
+    	}
     	
     	$(this).editable({
     		selector: ".editable[attribute-type='life']",
@@ -199,12 +201,58 @@
 			confirmDialog.find(".modal-title").empty().append("Remove Character")
 			confirmDialog.find(".modal-body p").empty().append("Remove character from combat.")
 			confirmDialog.find(".confirm").unbind( "click" ).click(function(){
-				var url = combatConsole.buildUrl("{id}/character/{characterId}/delete").replace("{characterId}", selectedCharacter.attr("character-id"));
-				alert(url)
+				var url = combatConsole.buildUrl("combats/{id}/character/{characterId}/delete").replace("{characterId}", selectedCharacter.attr("character-id"));
+				$.ajax({
+		    		url: url,
+		    		dataType: "json",
+		    		type: "POST",
+		    		beforeSend : beforePost,
+		    		success : function(combatStatus) {
+		    			combatConsole.updateCombat(combatStatus);
+		    			confirmDialog.modal('hide')
+		    		}
+		    	})
 			});
 			confirmDialog.modal();	
 		}
-		
+	}
+	
+	Console.prototype.addCharacter = function() {
+		var addCharacterDialog = $(this.settings.dialogs.addCharacter);
+		addCharacterDialog.find(".confirm").unbind( "click" ).click(function(){
+			var id = addCharacterDialog.find(".remaining-characters option:selected").val();
+			if(id == 'new') {
+				window.location = combatConsole.buildUrl("combats/{id}/character/new");
+			} else {
+				var url = combatConsole.buildUrl("combats/{id}/character/{characterId}/add").replace("{characterId}", id);
+				$.ajax({
+		    		url: url,
+		    		dataType: "json",
+		    		type: "POST",
+		    		beforeSend : beforePost,
+		    		success : function(combatStatus) {
+		    			combatConsole.updateCombat(combatStatus);
+		    			addCharacterDialog.modal('hide')
+		    		}
+		    	})
+			}
+		});
+		var url = this.buildUrl("combats/{id}/characters/remaining");
+		$.ajax({
+    		url: url,
+    		dataType: "json",
+    		type: "GET",
+    		success : function(characters) {
+    			var characterSelect = addCharacterDialog.find(".remaining-characters")
+    			characterSelect.empty();
+    			for(var i=0; i < characters.length ; i++) {
+    				var character = characters[i];
+    				$("<option>").attr("value",character.id).append(character.character.name).appendTo(characterSelect)
+    			}
+    			$("<option>").attr("value","new").append("Create new Character").appendTo(characterSelect);
+    			addCharacterDialog.modal();
+    		}
+    	})
 	}
 	
 	Console.prototype.updateCharacterItem = function(characterId, itemType, itemId, value) {
@@ -266,13 +314,30 @@
     		dataType: "json",
     		type: "GET",
     		success : function(charactersData) {
+    			var containerEL = $("<div/>").addClass("row").appendTo(el)
+    			var tabsEL = $("<ul/>").addClass("col-xs-3").addClass("nav").addClass("nav-pills").addClass("nav-stacked").css("padding-left","15px").attr("role","tablist").appendTo(containerEL);
+    			var tabContentEL = $("<div/>").addClass("col-xs-9").addClass("tab-content").appendTo(containerEL)
+    			var maxHeight = 40 * charactersData.length + 2 * (charactersData.length-1);
     			for(var i = 0; i < charactersData.length; i++){
     				var characterData = charactersData[i];
-    				var characterRowEL = $(panelDefinition[0].html).appendTo(el)
+    				var partTabEL = $("<li/>").appendTo(tabsEL);
+    				var partLinkEL = $("<a/>").addClass("overflown").append(characterData.name).appendTo(partTabEL)
+    				var id = characterData.name.replace(/ /g, "");
+    				partLinkEL.attr("href", "#" + id).attr("role","tab").attr("data-togle",  "tab")
+    				partLinkEL.click(function (e) {
+					  e.preventDefault()
+					  $(this).tab('show')
+					})
+    				var characterRowEL = $(panelDefinition[0].html).addClass("tab-pane").attr("id", id).appendTo(tabContentEL)
     				characterRowEL.find(".player-data").each(function() {
     					combatConsole.updateDataItem($(this), characterData);
+    					if($(this).css("max-height") == "1px") {
+    						$(this).css("max-height", maxHeight + "px")
+    					}
     				})
     			}
+    			tabsEL.tab();
+    			tabsEL.find("li:first-child a").click();
     		}
     	})
 	}
@@ -296,7 +361,7 @@
 	
 	Console.prototype.appendTab = function(tabsEL, tabContentEL, partDefinition, active) {
 		if( partDefinition.modes.indexOf(this.settings.mode) >= 0 ) {
-			var tabId = partDefinition.name.replace(" ", "");
+			var tabId = partDefinition.name.replace(/ /g, "");
 			if(partDefinition.children && partDefinition.children.length > 0) {
 				for(var i = 0; i < partDefinition.children.length; i++) {
 					var innerPartDefinition = partDefinition.children[i];

@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import com.digitalrpg.domain.model.Campaign;
@@ -26,6 +27,7 @@ public abstract class SystemCharacter {
 
     private Character character;
 
+    @JsonIgnore
     private Campaign campaign;
 
     @Id
