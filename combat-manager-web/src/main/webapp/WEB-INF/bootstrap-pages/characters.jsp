@@ -15,9 +15,19 @@
 </head>
 <body>
 	<sec:authentication property="principal" var="user"/>
+	<content tag="local_submenu">
+	<h4>My Characters</h4>
+	<c:forEach items="${characters}" var="mycharacter">
+								<c:url value="/characters/${mycharacter.id }/show" var="url"></c:url>
+								<a class="campaign_list_item"
+									id="character_${mycharacter.id }" href="${url }">${mycharacter.character.name }</a>
+							
+						</c:forEach>
+	</content>
+	
 	<div class="container main">
 		<div class="row">
-			<div class="xs-hidden col-sm-3 content-block">
+			<div class="hidden-xs col-sm-3 content-block">
 				<h4>My Characters</h4>
 				
 				<div class="scroll_list_150 nice_list">

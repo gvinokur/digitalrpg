@@ -14,7 +14,7 @@
 <body>
 	<div class="container main">
 		<div class="row">
-			<div class="col-xs-5 col-sm-3 content-block">
+			<div class="hidden-xs col-sm-3 content-block">
 				<div class="" id="accordion">
 					<div class="">
 						<div class="">
@@ -57,7 +57,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="col-xs-7 col-sm-7">
+			<div class="col-xs-12 col-sm-7">
 				<!--  -->
 				<div class="row">
 					<div class="col-xs-12 content-block center ">

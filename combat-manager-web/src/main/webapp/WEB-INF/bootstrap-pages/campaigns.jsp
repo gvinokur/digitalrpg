@@ -13,10 +13,46 @@
 <title>Campaigns</title>
 </head>
 <body>
-	<sec:authentication property="principal" var="user"/>
+	<sec:authentication property="principal" var="user" />
+
+	<content tag="local_submenu">
+	<h4>My Campaigns</h4>
+	<h5>
+		<a data-toggle="collapse" data-parent="#accordion"
+			href="#collapsePlayerSmall"> I'm a player in <span
+			id="collapsePlayerIcon"
+			class="pull-right glyphicon glyphicon-chevron-down"></span>
+		</a>
+	</h5>
+	<div id="collapsePlayerSmall" class="collapse">
+		<c:forEach items="${campaigns}" var="campaign">
+			<c:if test="${campaign.gameMaster.name != user.name }">
+				<c:url value="/campaigns/${campaign.id }/show" var="url"></c:url>
+				<a class="campaign_list_item" id="campaign_${campaign.id }"
+					href="${url }">${campaign.name }</a>
+			</c:if>
+		</c:forEach>
+
+	</div>
+	<h5>
+		<a data-toggle="collapse" data-parent="#accordion" href="#collapseGMSmall">
+			I'm a GM of <span class="pull-right glyphicon glyphicon-chevron-down"></span>
+		</a>
+	</h5>
+	<div id="collapseGMSmall" class="collapse">
+	<c:forEach items="${campaigns}" var="campaign">
+		<c:if test="${campaign.gameMaster.name == user.name }">
+			<c:url value="/campaigns/${campaign.id }/show" var="url"></c:url>
+			<a class="campaign_list_item" id="campaign_${campaign.id }"
+				href="${url }">${campaign.name }</a>
+		</c:if>
+	</c:forEach>
+	</div> 
+	</content>
+
 	<div class="container main">
 		<div class="row">
-			<div class="col-xs-5 col-sm-3 content-block">
+			<div class="hidden-xs col-sm-3 content-block">
 				<h4>My Campaigns</h4>
 				<div class="" id="accordion">
 					<div class="">
@@ -33,8 +69,7 @@
 							<div class="scroll_list_150 nice_list">
 								<ul class="campaigns">
 									<c:forEach items="${campaigns}" var="campaign">
-										<c:if
-											test="${campaign.gameMaster.name != user.name }">
+										<c:if test="${campaign.gameMaster.name != user.name }">
 											<c:url value="/campaigns/${campaign.id }/show" var="url"></c:url>
 											<li><a class="campaign_list_item"
 												id="campaign_${campaign.id }" href="${url }">${campaign.name }</a></li>
@@ -48,7 +83,8 @@
 						<div class="">
 							<h5>
 								<a data-toggle="collapse" data-parent="#accordion"
-									href="#collapseGM"> I'm a GM of <span class="pull-right glyphicon glyphicon-chevron-down"></span>
+									href="#collapseGM"> I'm a GM of <span
+									class="pull-right glyphicon glyphicon-chevron-down"></span>
 								</a>
 							</h5>
 						</div>
@@ -56,8 +92,7 @@
 							<div class="scroll_list_150 nice_list">
 								<ul class="campaigns">
 									<c:forEach items="${campaigns}" var="campaign">
-										<c:if
-											test="${campaign.gameMaster.name == user.name }">
+										<c:if test="${campaign.gameMaster.name == user.name }">
 											<c:url value="/campaigns/${campaign.id }/show" var="url"></c:url>
 											<li><a class="campaign_list_item"
 												id="campaign_${campaign.id }" href="${url }">${campaign.name }</a></li>
@@ -83,18 +118,18 @@
 							name="campaign" placeholder="Enter keywords" />
 					</div>
 					<div class="col-xs-3">
-						<a role="button" id="search_button"
-							class="btn btn-default" data-loading-text="&lt;i class='fa fa-spinner fa-spin'/&gt;">
+						<a role="button" id="search_button" class="btn btn-default"
+							data-loading-text="&lt;i class='fa fa-spinner fa-spin'/&gt;">
 							<span class="glyphicon glyphicon-search"></span>
 						</a>
 					</div>
 				</div>
-<!-- 					<div class="row search"> -->
-<!-- 						<div class="col-xs-5 col-xs-offset-7"> -->
-<!-- 							<input type="button" id="search_button" -->
-<!-- 								class="btn btn-default btn-block btn-sm glyphicon glyphicon-search" /> -->
-<!-- 						</div> -->
-<!-- 					</div> -->
+				<!-- 					<div class="row search"> -->
+				<!-- 						<div class="col-xs-5 col-xs-offset-7"> -->
+				<!-- 							<input type="button" id="search_button" -->
+				<!-- 								class="btn btn-default btn-block btn-sm glyphicon glyphicon-search" /> -->
+				<!-- 						</div> -->
+				<!-- 					</div> -->
 			</div>
 			<script type="text/javascript">
 				$(document)
@@ -122,22 +157,25 @@
 									})
 								})
 			</script>
-			<div class="col-xs-7 col-sm-7">
+			<div class="col-xs-12 col-sm-7">
 				<c:if test="${form_message!=null}">
 					<div class="alert alert-success">
-					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&#215;</button>
-					${form_message }
+						<button type="button" class="close" data-dismiss="alert"
+							aria-hidden="true">&#215;</button>
+						${form_message }
 					</div>
 				</c:if>
 				<c:if test="${warning_message!=null}">
 					<div class="alert alert-warning">
-					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&#215;</button>
-					${warning_message }
+						<button type="button" class="close" data-dismiss="alert"
+							aria-hidden="true">&#215;</button>
+						${warning_message }
 					</div>
 				</c:if>
 				<c:if test="${error_message!=null}">
 					<div class="alert alert-danger">
-						<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&#215;</button>
+						<button type="button" class="close" data-dismiss="alert"
+							aria-hidden="true">&#215;</button>
 						${error_message }
 					</div>
 				</c:if>
@@ -166,42 +204,46 @@
 						class="col-xs-12 content-block center dynamic ${show_content == 'create_campaign'? '' : 'hidden' }">
 						<h3>Create Campaign</h3>
 						<c:url value="/campaigns" var="createCampaignUrl"></c:url>
-	            		<form:form action="${createCampaignUrl }" modelAttribute="createCampaignVO" id="create-campaign" method="POST">
-	            			<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-	            			<spring:bind path="name">
-							<div class="form-group ${status.error? 'has-error' :'' }">
-								<label class="control-label" for="name">Name
-									<form:errors  path="name" />
-								</label> 
-								<input
-									type="text" class="form-control" id="name" name="name" value="${createCampaignVO.name }"/>
-								
-							</div>
+						<form:form action="${createCampaignUrl }"
+							modelAttribute="createCampaignVO" id="create-campaign"
+							method="POST">
+							<input type="hidden" name="${_csrf.parameterName}"
+								value="${_csrf.token}" />
+							<spring:bind path="name">
+								<div class="form-group ${status.error? 'has-error' :'' }">
+									<label class="control-label" for="name">Name <form:errors
+											path="name" />
+									</label> <input type="text" class="form-control" id="name" name="name"
+										value="${createCampaignVO.name }" />
+
+								</div>
 							</spring:bind>
-							
+
 							<div class="form-group">
-								<label class="form-text" for="description">Description</label> 
-								<textarea class="form-control" rows="4" id="description" name="description">${createCampaignVO.description }</textarea>
-								<form:errors element="div" path="name"/>
+								<label class="form-text" for="description">Description</label>
+								<textarea class="form-control" rows="4" id="description"
+									name="description">${createCampaignVO.description }</textarea>
+								<form:errors element="div" path="name" />
 							</div>
-							
+
 							<div class="form-group">
-								<label class="form-text" for="system">System</label> 
-								<select name="systemType" class="form-group">
+								<label class="form-text" for="system">System</label> <select
+									name="systemType" class="form-group">
 									<c:forEach items="${systems }" var="system">
 										<option value="${system }">${system }</option>
 									</c:forEach>
 								</select>
 							</div>
-							
+
 							<div class="checkbox">
-								<label> <input type="checkbox"
-									name="isPublic" checked="checked"/> Show campaign in search results
+								<label> <input type="checkbox" name="isPublic"
+									checked="checked" /> Show campaign in search results
 								</label>
-							</div>							
-							
-							<input type="submit" value="Create" class="btn btn-lg btn-default btn-block"></input>
-	            		</form:form>
+							</div>
+
+							<input type="submit" value="Create"
+								class="btn btn-lg btn-default btn-block"></input>
+						</form:form>
 					</div>
 
 					<div id="campaign_view"
@@ -214,65 +256,74 @@
 											<c:set var="userIsMember" value="true"></c:set>
 										</c:if>
 									</c:forEach>
-									<div class="dropdown pull-right">
-										<a data-toggle="dropdown" data-target="#" href="#" class="tooltipable fa fa-cogs fa-lg" title="Options" data-placement="top righ"><!--  --></a>
-										<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-											<c:if test="${campaign.gameMaster.name == user.username }">
-											<li>
-												<a class="" href="#" data-toggle="modal" data-target="#invite-form-dialog"><i class="fa fa-envelope-o fa-fw"><!--  --></i>&#160; Invite Player</a>
-											</li>
-											</c:if>
-											<c:if test="${campaign.gameMaster.name != user.username &amp;&amp; userIsMember != true}">
-   											<li>
-   												<a href="#" data-toggle="modal" data-target="#request-form-dialog"><i class="fa fa-sign-in fa-fw"><!--  --></i>&#160; Join Campaign</a>
-   											</li>
-   											</c:if>
-   											<c:if test="${campaign.gameMaster.name == user.username || userIsMember == true}">
-   											<li>
-   												<c:url var="createCharacterUrl" value="/characters/create?campaignId=${campaign.id }"/>
-   												<a href="${createCharacterUrl }"><i class="fa fa-user fa-fw"><!--  --></i>&#160; Create Character</a>
-   											</li>
-   											</c:if>
-   											<c:if test="${campaign.gameMaster.name == user.username }">
-											<li>
-												<c:url var="createCombatUrl" value="/combats/create?campaignId=${campaign.id }"/>
-												<a class="" href="${createCombatUrl }" ><i class="fa fa-bolt fa-fw"><!--  --></i>&#160; Create Combat</a>
-											</li>
-											</c:if>
-   											
-   										</ul>
-									</div>
-									<h3 class="overflown tooltipable">${campaign.name }</h3>
+								<div class="dropdown pull-right">
+									<a data-toggle="dropdown" data-target="#" href="#"
+										class="tooltipable fa fa-cogs fa-lg" title="Options"
+										data-placement="top righ"> <!--  -->
+									</a>
+									<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+										<c:if test="${campaign.gameMaster.name == user.username }">
+											<li><a class="" href="#" data-toggle="modal"
+												data-target="#invite-form-dialog"><i
+													class="fa fa-envelope-o fa-fw"> <!--  -->
+												</i>&#160; Invite Player</a></li>
+										</c:if>
+										<c:if
+											test="${campaign.gameMaster.name != user.username &amp;&amp; userIsMember != true}">
+											<li><a href="#" data-toggle="modal"
+												data-target="#request-form-dialog"><i
+													class="fa fa-sign-in fa-fw"> <!--  -->
+												</i>&#160; Join Campaign</a></li>
+										</c:if>
+										<c:if
+											test="${campaign.gameMaster.name == user.username || userIsMember == true}">
+											<li><c:url var="createCharacterUrl"
+													value="/characters/create?campaignId=${campaign.id }" /> <a
+												href="${createCharacterUrl }"><i
+													class="fa fa-user fa-fw"> <!--  -->
+												</i>&#160; Create Character</a></li>
+										</c:if>
+										<c:if test="${campaign.gameMaster.name == user.username }">
+											<li><c:url var="createCombatUrl"
+													value="/combats/create?campaignId=${campaign.id }" /> <a
+												class="" href="${createCombatUrl }"><i
+													class="fa fa-bolt fa-fw"> <!--  -->
+												</i>&#160; Create Combat</a></li>
+										</c:if>
+
+									</ul>
+								</div>
+								<h3 class="overflown tooltipable">${campaign.name }</h3>
 								</p>
 								<c:if test="${campaign.activeCombat !=null }">
-								<form class="form-inline">
-									<div class="form-group">
-										<label class="form-text" for="bio">Current Combat: </label> 
-										<label class="form-control-static" style="margin-left: 5px">
-											<c:url var="url" value="/combats/${campaign.activeCombat.id }/show"></c:url>
-											<a href="${url }">
-											 ${campaign.activeCombat.name }
-											</a>
-										</label>
-									</div>
-								</form>
+									<form class="form-inline">
+										<div class="form-group">
+											<label class="form-text" for="bio">Current Combat: </label> <label
+												class="form-control-static" style="margin-left: 5px">
+												<c:url var="url"
+													value="/combats/${campaign.activeCombat.id }/show"></c:url>
+												<a href="${url }"> ${campaign.activeCombat.name } </a>
+											</label>
+										</div>
+									</form>
 								</c:if>
-								
+
 
 							</div>
 							<div class="col-xs-12">
 								<div class="tabbable" id="rightBar">
 									<div class="tab-content">
-										<div id="campaign_description" class="scroll_description tab-pane active">
-											${campaign.description }
-										</div>
+										<div id="campaign_description"
+											class="scroll_description tab-pane active">
+											${campaign.description }</div>
 										<div id="campaign_members" class="tab-pane">
-											<div class="row" style="height:185px;margin-bottom:10px">
+											<div class="row" style="height: 185px; margin-bottom: 10px">
 												<div class="col-xs-4">
 													<div class="">
 														<h5>
 															<a data-toggle="collapse" data-parent="#rightBar"
-																href="#collapseMembers"> Members <span class="pull-right glyphicon glyphicon-chevron-up"></span>
+																href="#collapseMembers"> Members <span
+																class="pull-right glyphicon glyphicon-chevron-up"></span>
 															</a>
 														</h5>
 													</div>
@@ -287,17 +338,18 @@
 																	</c:if>
 																</c:forEach>
 															</ul>
-															
-															
+
+
 														</div>
-														
+
 													</div>
 												</div>
 												<div class="col-xs-4">
 													<div class="">
 														<h5>
 															<a data-toggle="collapse" data-parent="#rightBar"
-																href="#collapseCharacter"> My Characters <span class="pull-right glyphicon glyphicon-chevron-up"></span>
+																href="#collapseCharacter"> My Characters <span
+																class="pull-right glyphicon glyphicon-chevron-up"></span>
 															</a>
 														</h5>
 													</div>
@@ -305,18 +357,19 @@
 														<div class="scroll_list_150 nice_list">
 															<ul>
 																<c:forEach var="character" items="${characters }">
-																	<c:url var="url" value="/characters/${character.id }/show"></c:url>
-																	<li>
-																		<a href="${url }">
-																			<c:if test="${character.character.pictureUrl != '' }">
-																				<img alt="${character.character.name} Image" src="${character.character.pictureUrl}" 
-																					class="img-height-responsive pull-right char-thumbnail" rel="popover"/>
+																	<c:url var="url"
+																		value="/characters/${character.id }/show"></c:url>
+																	<li><a href="${url }"> <c:if
+																				test="${character.character.pictureUrl != '' }">
+																				<img alt="${character.character.name} Image"
+																					src="${character.character.pictureUrl}"
+																					class="img-height-responsive pull-right char-thumbnail"
+																					rel="popover" />
 																			</c:if>
-																			<p class="overflown tooltipable" title="${character.character.name}">
-																				${character.character.name}
-																			</p>
-																		</a>
-																	</li>
+																			<p class="overflown tooltipable"
+																				title="${character.character.name}">
+																				${character.character.name}</p>
+																	</a></li>
 																</c:forEach>
 															</ul>
 														</div>
@@ -326,7 +379,8 @@
 													<div class="">
 														<h5>
 															<a data-toggle="collapse" data-parent="#rightBar"
-																href="#collapseOtherCharacter"> Other Characters <span class="pull-right glyphicon glyphicon-chevron-up"></span>
+																href="#collapseOtherCharacter"> Other Characters <span
+																class="pull-right glyphicon glyphicon-chevron-up"></span>
 															</a>
 														</h5>
 													</div>
@@ -334,48 +388,56 @@
 														<div class="scroll_list_150 nice_list">
 															<ul>
 																<c:forEach var="character" items="${otherCharacters }">
-																	<c:url var="url" value="/characters/${character.id }/show"></c:url>
-																	<li>
-																		<a href="${url }">
-																			<c:if test="${character.character.pictureUrl != '' }">
-																				<img alt="${character.character.name} Image" src="${character.character.pictureUrl}" 
-																					class="img-height-responsive pull-right char-thumbnail" rel="popover"/>
+																	<c:url var="url"
+																		value="/characters/${character.id }/show"></c:url>
+																	<li><a href="${url }"> <c:if
+																				test="${character.character.pictureUrl != '' }">
+																				<img alt="${character.character.name} Image"
+																					src="${character.character.pictureUrl}"
+																					class="img-height-responsive pull-right char-thumbnail"
+																					rel="popover" />
 																			</c:if>
-																			<p class="overflown tooltipable" title="${character.character.name}">
-																				${character.character.name}
-																			</p>
-																		</a>
-																	</li>
+																			<p class="overflown tooltipable"
+																				title="${character.character.name}">
+																				${character.character.name}</p>
+																	</a></li>
 																</c:forEach>
 															</ul>
 														</div>
-											</div>
+													</div>
 												</div>
 											</div>
-										</div>	
+										</div>
 										<div id="campaign_messages" class="tab-pane">
-											<div class="row" style="height:185px;margin-bottom:10px">
+											<div class="row" style="height: 185px; margin-bottom: 10px">
 												<div class="col-xs-6">
 													<div class="">
 														<h5>
 															<a data-toggle="collapse" data-parent="#rightBar"
-																href="#collapsePendingInvites"> Pending Invitations <span class="pull-right glyphicon glyphicon-chevron-up"></span>
+																href="#collapsePendingInvites"> Pending Invitations
+																<span class="pull-right glyphicon glyphicon-chevron-up"></span>
 															</a>
 														</h5>
 													</div>
 													<div id="collapsePendingInvites" class="collapse in">
 														<div class="scroll_list_150 nice_list">
 															<ul>
-															<c:forEach var="invite" items="${campaign.pendingInvitations }">
-																<li data-message-id="${invite.id }">
-																<a style="padding-right:10px;" class="tooltipable pull-right" title="Resend Invitation" data-placement="top right"
-																	data-toggle="modal" data-target="#invite-form-dialog"  data-to="${invite.to.name != null ? invite.to.name : invite.toMail }"><i class="fa fa-envelope-o"><!--  --></i></a>
-																<a>
-																	<p class="overflown tooltipable right_40" title="${invite.to.name != null ? invite.to.name : invite.toMail }">
-																		${invite.to.name != null ? invite.to.name : invite.toMail }
-										           					</p>
-										           				</a></li>
-															</c:forEach>
+																<c:forEach var="invite"
+																	items="${campaign.pendingInvitations }">
+																	<li data-message-id="${invite.id }"><a
+																		style="padding-right: 10px;"
+																		class="tooltipable pull-right"
+																		title="Resend Invitation" data-placement="top right"
+																		data-toggle="modal" data-target="#invite-form-dialog"
+																		data-to="${invite.to.name != null ? invite.to.name : invite.toMail }"><i
+																			class="fa fa-envelope-o"> <!--  -->
+																		</i></a> <a>
+																			<p class="overflown tooltipable right_40"
+																				title="${invite.to.name != null ? invite.to.name : invite.toMail }">
+																				${invite.to.name != null ? invite.to.name : invite.toMail }
+																			</p>
+																	</a></li>
+																</c:forEach>
 															</ul>
 														</div>
 													</div>
@@ -384,24 +446,35 @@
 													<div class="">
 														<h5>
 															<a data-toggle="collapse" data-parent="#rightBar"
-																href="#collapsePendingRequests"> Pending Requests <span class="pull-right glyphicon glyphicon-chevron-up"></span>
+																href="#collapsePendingRequests"> Pending Requests <span
+																class="pull-right glyphicon glyphicon-chevron-up"></span>
 															</a>
 														</h5>
 													</div>
 													<div id="collapsePendingRequests" class="collapse in">
 														<div class="scroll_list_150 nice_list">
 															<ul>
-															<c:forEach var="request" items="${campaign.pendingRequest }">
-																<li data-message-id="${request.id }">
-																	<button data-request="${request.id }" style="margin-right:5px;" class="reject-message tooltipable close glyphicon glyphicon-remove" title="Reject" data-placement="top right"><!--  --></button>
-																	<button data-request="${request.id }" style="margin-right:5px;" class="accept-request tooltipable close glyphicon glyphicon-ok" title="Accept" data-placement="top right"><!--  --></button>
-																	<a>
-																		<p class="overflown tooltipable right_70" title="${request.from.name }">
-																			${request.from.name }
-																		</p>
-											           				</a>
-										           				</li>
-															</c:forEach>
+																<c:forEach var="request"
+																	items="${campaign.pendingRequest }">
+																	<li data-message-id="${request.id }">
+																		<button data-request="${request.id }"
+																			style="margin-right: 5px;"
+																			class="reject-message tooltipable close glyphicon glyphicon-remove"
+																			title="Reject" data-placement="top right">
+																			<!--  -->
+																		</button>
+																		<button data-request="${request.id }"
+																			style="margin-right: 5px;"
+																			class="accept-request tooltipable close glyphicon glyphicon-ok"
+																			title="Accept" data-placement="top right">
+																			<!--  -->
+																		</button> <a>
+																			<p class="overflown tooltipable right_70"
+																				title="${request.from.name }">
+																				${request.from.name }</p>
+																	</a>
+																	</li>
+																</c:forEach>
 															</ul>
 															<script type="text/javascript">
 																
@@ -447,14 +520,15 @@
 													</div>
 												</div>
 											</div>
-										</div>	
+										</div>
 										<div id="campaign_combats" class="tab-pane">
-											<div class="row" style="height:185px;margin-bottom:10px">
+											<div class="row" style="height: 185px; margin-bottom: 10px">
 												<div class="col-xs-6">
 													<div class="">
 														<h5>
 															<a data-toggle="collapse" data-parent="#rightBar"
-																href="#collapseCombats"> Combats <span class="pull-right glyphicon glyphicon-chevron-up"></span>
+																href="#collapseCombats"> Combats <span
+																class="pull-right glyphicon glyphicon-chevron-up"></span>
 															</a>
 														</h5>
 													</div>
@@ -462,48 +536,55 @@
 														<div class="scroll_list_150 nice_list">
 															<ul>
 																<c:forEach var="combat" items="${campaign.combats }">
-																	<c:if test="${(campaign.gameMaster.name == user.username &amp;&amp; combat.state == 'STAGING') || combat.state == 'READY'}">
-																	<c:url var="url" value="/combats/${combat.id }/show"></c:url>
-																	<li>
-																		<a href="${url }">
-																			<c:choose>
-																				<c:when test="${combat.state == 'STAGING' }">
-																					<p class="tooltipable pull-right" style="margin-right: 4px" title="Staging"><i class="fa fa-info-circle" ><!--  --></i></p>
-																				</c:when>
-																			</c:choose>
-																			<p class="overflown tooltipable" title="${combat.name}">
-																				${combat.name}
-																			</p>
-																		</a>
-																	</li>
+																	<c:if
+																		test="${(campaign.gameMaster.name == user.username &amp;&amp; combat.state == 'STAGING') || combat.state == 'READY'}">
+																		<c:url var="url" value="/combats/${combat.id }/show"></c:url>
+																		<li><a href="${url }"> <c:choose>
+																					<c:when test="${combat.state == 'STAGING' }">
+																						<p class="tooltipable pull-right"
+																							style="margin-right: 4px" title="Staging">
+																							<i class="fa fa-info-circle"> <!--  -->
+																							</i>
+																						</p>
+																					</c:when>
+																				</c:choose>
+																				<p class="overflown tooltipable"
+																					title="${combat.name}">${combat.name}</p>
+																		</a></li>
 																	</c:if>
 																</c:forEach>
 															</ul>
-															
-															
+
+
 														</div>
-														
+
 													</div>
 												</div>
 											</div>
 										</div>
 									</div>
 									<ul class="nav nav-pills">
-										<li class="active"><a href="#campaign_description" role="tab" data-toggle="tab">Description</a></li>
-										<li><a href="#campaign_members" role="tab" data-toggle="tab">Members and Characters</a></li>
-										<li><a href="#campaign_combats" role="tab" data-toggle="tab">Combats</a></li>
-										<c:if test="${(campaign.gameMaster.name == pageContext.request.userPrincipal.principal.name) }">
-											<li><a href="#campaign_messages" role="tab" data-toggle="tab">Messages</a></li>
-										</c:if> 
+										<li class="active"><a href="#campaign_description"
+											role="tab" data-toggle="tab">Description</a></li>
+										<li><a href="#campaign_members" role="tab"
+											data-toggle="tab">Members and Characters</a></li>
+										<li><a href="#campaign_combats" role="tab"
+											data-toggle="tab">Combats</a></li>
+										<c:if
+											test="${(campaign.gameMaster.name == pageContext.request.userPrincipal.principal.name) }">
+											<li><a href="#campaign_messages" role="tab"
+												data-toggle="tab">Messages</a></li>
+										</c:if>
 									</ul>
-									
-									
+
+
 								</div>
 							</div>
 						</div>
 					</div>
 
-					<div id="search-result" class="dynamic hidden col-xs-12 content-block center">
+					<div id="search-result"
+						class="dynamic hidden col-xs-12 content-block center">
 						<h3>Search Result</h3>
 						<script type="text/javascript">
 						$(document).ready(function() {
@@ -571,50 +652,60 @@
 			</div>
 		</div>
 	</div>
-	
+
 	<!-- Search result template -->
-	<div campaign-id="template" class="hidden search-result panel panel-default">
-  		<div class="panel-heading">
-    		<h3 class="panel-title"></h3>
-  		</div>
-  		<div class="panel-body"><!--  -->
-  		</div>
+	<div campaign-id="template"
+		class="hidden search-result panel panel-default">
+		<div class="panel-heading">
+			<h3 class="panel-title"></h3>
+		</div>
+		<div class="panel-body">
+			<!--  -->
+		</div>
 	</div>
-	
+
 	<!-- Modal -->
-	<div class="modal fade" id="invite-form-dialog" tabindex="-1" role="dialog" aria-labelledby="invite-form-label" aria-hidden="true"
+	<div class="modal fade" id="invite-form-dialog" tabindex="-1"
+		role="dialog" aria-labelledby="invite-form-label" aria-hidden="true"
 		data-keyboard="false">
-	  <div class="modal-dialog">
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&#215;</button>
-	        <h4 class="modal-title" id="invite-form-label">Invite Friend to campaign</h4>
-	      </div>
-	      <div class="modal-body">
-	        <form:form id="invite-form" class="invite-form">
-	        	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-   				<p>Send an Invitation to another user and ask him to join your campaign</p>
-				<div class="form-group">   				
-					<div class="to_email sr-only">
-						<label for="email">Username or Email</label>
-					</div>
-					<input type="text" id="invite_email" name="usernameOrEmail"
-						class="form-control" placeholder="Enter username or email"/>
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&#215;</button>
+					<h4 class="modal-title" id="invite-form-label">Invite Friend
+						to campaign</h4>
 				</div>
-				<div class="form-group">
-					<textarea class="form-control" rows="4" id="invite_message" name="message" placeholder="Enter the message you want to add to the invitation">
+				<div class="modal-body">
+					<form:form id="invite-form" class="invite-form">
+						<input type="hidden" name="${_csrf.parameterName}"
+							value="${_csrf.token}" />
+						<p>Send an Invitation to another user and ask him to join your
+							campaign</p>
+						<div class="form-group">
+							<div class="to_email sr-only">
+								<label for="email">Username or Email</label>
+							</div>
+							<input type="text" id="invite_email" name="usernameOrEmail"
+								class="form-control" placeholder="Enter username or email" />
+						</div>
+						<div class="form-group">
+							<textarea class="form-control" rows="4" id="invite_message"
+								name="message"
+								placeholder="Enter the message you want to add to the invitation">
 						<!--  -->
 					</textarea>
+						</div>
+					</form:form>
 				</div>
-   			</form:form>
-	      </div>
-	      <div class="modal-footer">
-	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-	        <button type="button" class="btn btn-primary" id="send-invite">Send Invite</button>
-	      </div>
-	    </div>
-	  </div>
-	  <script type="text/javascript">
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary" id="send-invite">Send
+						Invite</button>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript">
 	  	$(document).ready(function(){
 	  		
 	  		$(".tooltipable").tooltip();
@@ -689,27 +780,31 @@
 	</div>
 
 	<!-- Modal -->
-	<div class="modal fade" id="request-form-dialog" tabindex="-1" role="dialog" aria-labelledby="request-form-label" aria-hidden="true"
+	<div class="modal fade" id="request-form-dialog" tabindex="-1"
+		role="dialog" aria-labelledby="request-form-label" aria-hidden="true"
 		data-keyboard="false">
-	  <div class="modal-dialog">
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&#215;</button>
-	        <h4 class="modal-title" id="request-form-label">Request access to campaign</h4>
-	      </div>
-	      <div class="modal-body">
-	        <form:form id="request-form" class="request-form">
-	        	<input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-   				<p>Send a request to access this campaign</p>
-   			</form:form>
-	      </div>
-	      <div class="modal-footer">
-	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-	        <button type="button" class="btn btn-primary" id="send-request">Send</button>
-	      </div>
-	    </div>
-	  </div>
-	  <script type="text/javascript">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"
+						aria-hidden="true">&#215;</button>
+					<h4 class="modal-title" id="request-form-label">Request access
+						to campaign</h4>
+				</div>
+				<div class="modal-body">
+					<form:form id="request-form" class="request-form">
+						<input type="hidden" name="${_csrf.parameterName}"
+							value="${_csrf.token}" />
+						<p>Send a request to access this campaign</p>
+					</form:form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary" id="send-request">Send</button>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript">
 	  	$(document).ready(function(){
 	  		$("#send-request").click(function(){
 	  			<c:set var="url" value="/campaigns/${campaign.id}/join/request"/>
@@ -746,7 +841,7 @@
 	  		});
 	  	});
 	  </script>
-	 </div>
+	</div>
 
 	<!-- 
         <div id="central_panel" class="templatemo_multi_content margin_right_10">

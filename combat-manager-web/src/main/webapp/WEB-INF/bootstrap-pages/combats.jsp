@@ -21,7 +21,7 @@
 	<sec:authentication property="principal" var="user"/>
 	<div class="container main">
 		<div class="row">
-			<div class="xs-hidden col-sm-3 content-block">
+			<div class="hidden-xs col-sm-3 content-block">
 				<h4>My Combats</h4>
 				
 				<div class="scroll_list_150 nice_list">

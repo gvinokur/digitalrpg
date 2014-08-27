@@ -111,7 +111,9 @@
 				}
 				options.dialogs = {
 					'confirm' : '#confirm-action',
-					'addCharacter' : '#add-character'
+					'addCharacter' : '#add-character',
+					'addLog' : '#add-log',
+					'viewLogs' : '#view-logs'
 				}
 				$("#combat-console").combatConsole(options);
 			})
@@ -150,6 +152,41 @@
 	      <div class="modal-footer">
 	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 	        <a href="#" class="confirm btn btn-primary">Confirm</a>
+	      </div>
+	    </div><!-- /.modal-content -->
+	  </div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+	
+	<div class="modal fade" id="add-log">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&#215;</button>
+	        <h4 class="modal-title">Add Log Entry</h4>
+	      </div>
+	      <div class="modal-body">
+	        <p><textarea class="log-entry form-control"><!--  --></textarea></p>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+	        <a href="#" class="confirm btn btn-primary">Confirm</a>
+	      </div>
+	    </div><!-- /.modal-content -->
+	  </div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+	
+	<div class="modal fade" id="view-logs">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&#215;</button>
+	        <h4 class="modal-title">Combat Log</h4>
+	      </div>
+	      <div class="modal-body vertical-scroll-max-350">
+	        <!--  -->
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
 	      </div>
 	    </div><!-- /.modal-content -->
 	  </div><!-- /.modal-dialog -->

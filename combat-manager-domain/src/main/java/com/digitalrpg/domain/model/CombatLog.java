@@ -10,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
@@ -19,6 +20,7 @@ public class CombatLog {
 
     private Long id;
 
+    @JsonIgnore
     private Combat<? extends SystemAction> combat;
 
     private Long order;

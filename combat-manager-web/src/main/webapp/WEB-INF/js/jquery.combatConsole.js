@@ -255,6 +255,48 @@
     	})
 	}
 	
+	Console.prototype.addLog = function() {
+		var addLogDialog = $(this.settings.dialogs.addLog)
+		addLogDialog.find(".confirm").unbind('click').click(function(){
+			var data = { logEntry : addLogDialog.find('.log-entry').val() };
+			var url = combatConsole.buildUrl("combats/{id}/logs");
+			$.ajax({
+	    		url: url,
+	    		dataType: "json",
+	    		type: "POST",
+	    		data : JSON.stringify(data),
+	    		contentType: "application/json",
+	    		beforeSend : beforePost,
+	    		success : function(result) {
+	    			addLogDialog.modal('hide')
+	    		}
+	    	})
+		})
+		addLogDialog.modal();
+	}
+	
+	Console.prototype.viewLogs = function() {
+		var viewLogsDialog = $(this.settings.dialogs.viewLogs);
+		var url = combatConsole.buildUrl("combats/{id}/logs");
+		$.ajax({
+			url : url,
+			dataType : "json",
+			type : "GET",
+			success : function(logEntries) {
+				viewLogsDialog.find(".modal-body").empty();
+				for(var i=0; i< logEntries.length; i++) {
+					var logEntry = logEntries[i];
+					var panelDivEL = $("<div/>").addClass('panel').addClass('panel-default').prependTo(viewLogsDialog.find(".modal-body"));
+					var panelHeadingEL = $("<div/>").addClass('panel-heading').appendTo(panelDivEL)
+					var panelBodyEL = $("<div/>").addClass('panel-body').appendTo(panelDivEL)
+					$("<h3/>").addClass("panel-title").append(logEntry.combat_context_description).appendTo(panelHeadingEL)
+					panelBodyEL.append(logEntry.log)
+				}
+			}
+		})
+		viewLogsDialog.modal();
+	}
+	
 	Console.prototype.updateCharacterItem = function(characterId, itemType, itemId, value) {
 		var url = combatConsole.buildUrl("combats/character/" + itemType + "/{action}")
 		var data = { pk : characterId, itemId : itemId }

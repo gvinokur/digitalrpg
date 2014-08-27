@@ -49,7 +49,7 @@ public abstract class Combat<ACTION_TYPE extends SystemAction> {
 
     private CombatCharacter<ACTION_TYPE> currentCharacter;
 
-    private List<CombatLog> combatLogs;
+    private SortedSet<CombatLog> combatLogs;
 
     @OneToOne(fetch = FetchType.EAGER, targetEntity = CombatCharacter.class)
     @JoinColumn(name = "current_character_id", referencedColumnName = "id")
@@ -141,13 +141,13 @@ public abstract class Combat<ACTION_TYPE extends SystemAction> {
         this.state = state;
     }
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "combat")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "combat", cascade = CascadeType.ALL)
     @Sort(comparator = CombatLogComparator.class, type = SortType.COMPARATOR)
-    public List<CombatLog> getCombatLogs() {
+    public SortedSet<CombatLog> getCombatLogs() {
         return combatLogs;
     }
 
-    public void setCombatLogs(List<CombatLog> combatLogs) {
+    public void setCombatLogs(SortedSet<CombatLog> combatLogs) {
         this.combatLogs = combatLogs;
     }
 
@@ -165,5 +165,8 @@ public abstract class Combat<ACTION_TYPE extends SystemAction> {
             }
         });
     }
+
+    @Transient
+    public abstract String getContextDescription();
 
 }

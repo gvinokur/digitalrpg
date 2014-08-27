@@ -15,14 +15,16 @@
 		doctype-system="about:legacy-compat" />
 
 	<head>
-	<meta charset="utf-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Digital RPG - <decorator:title /></title>
 <c:url var="faviconUrl" value="/img/favicon.ico" />
 <link rel="icon" type="image/x-icon" href="${faviconUrl}" />
 
-<link href="http://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet"/>
+<link
+	href="http://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css"
+	rel="stylesheet" />
 
 <!-- Bootstrap -->
 <c:url var="url" value="/css/bootstrap.min.css" />
@@ -38,86 +40,137 @@
 <link href="${url}" rel="stylesheet">
 	<!--  --></link>
 
-<link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+<link
+	href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css"
+	rel="stylesheet" />
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-	<c:url var="url" value="/js/jquery.min.js" />
-	<script src="${url}"><!-- --></script>
+<c:url var="url" value="/js/jquery.min.js" />
+<script src="${url}"><!-- --></script>
 <!-- 	<c:url var="url" value="/js/css3-mediaqueries.js" /> -->
 <!-- 	<script src="${url}"> -->
-		<!-- -->
+<!-- -->
 <!-- 	</script>  -->
-	<!-- Include all compiled plugins (below), or include individual files as needed -->
-	<c:url var="url" value="/js/bootstrap.min.js" />
-	<script src="${url}"><!-- --></script>
-	<c:url var="url" value="/js/jqBootstrapValidation.js" />
-	<script src="${url}"><!-- --></script>
-	<c:url var="url" value="/js/notify-combined.min.js" />
-	<script src="${url}"><!-- --></script>
-	<c:url var="url" value="/js/notify-bootstrap.js" />
-	<script src="${url}"><!-- --></script>
-	<c:url var="jQueryBlockUIUrl" value="/js/jquery.blockUI.js" />
-	<script src='${jQueryBlockUIUrl}'><!-- --></script>
-	<c:url var="url" value="/js/tagmanager.js" />
-	<script src="${url}"><!-- --></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<c:url var="url" value="/js/bootstrap.min.js" />
+<script src="${url}"><!-- --></script>
+<c:url var="url" value="/js/jqBootstrapValidation.js" />
+<script src="${url}"><!-- --></script>
+<c:url var="url" value="/js/notify-combined.min.js" />
+<script src="${url}"><!-- --></script>
+<c:url var="url" value="/js/notify-bootstrap.js" />
+<script src="${url}"><!-- --></script>
+<c:url var="jQueryBlockUIUrl" value="/js/jquery.blockUI.js" />
+<script src='${jQueryBlockUIUrl}'><!-- --></script>
+<c:url var="url" value="/js/tagmanager.js" />
+<script src="${url}"><!-- --></script>
 
-	
-	<script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"><!-- --></script>
 
-	&lt;!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries --&gt;
-    &lt;!-- WARNING: Respond.js doesn't work if you view the page via file:// --&gt;
-    &lt;!--[if lt IE 9]&gt;
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    &lt;![endif]--&gt;
-	 
-	 <decorator:head />
-	
+<script
+	src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"><!-- --></script>
+
+&lt;!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and
+media queries --&gt; &lt;!-- WARNING: Respond.js doesn't work if you
+view the page via file:// --&gt; &lt;!--[if lt IE 9]&gt;
+<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+<script
+	src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+&lt;![endif]--&gt;
+
+<decorator:head />
+
 	</head>
 
 	<body>
 
 		<!-- Make user available for all pages if exists -->
-		<sec:authentication property="principal" var="user"/>
-		
-		
-		<div class="container banner-wrapper">
-			<div class="row">
-				<div class="col-md-12 banner">
-					<!--  -->
+		<sec:authentication property="principal" var="user" />
+
+		<nav class="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-left"
+			id="cbp-spmenu-s1">
+			<h3>Menu</h3>
+			<c:url var="homeUrl" value="/home" />
+			<c:url var="lobbyUrl" value="/lobby" />
+			<c:url var="campaignsUrl" value="/campaigns" />
+			<c:url var="pcsUrl" value="/characters" />
+			<c:url var="combatsUrl" value="/combats" />
+			<c:if test="${pageContext.request.userPrincipal !=null }">
+				<a href="${homeUrl}">Home</a>
+				<a href="${lobbyUrl }">My Lobby <span id="unread-messages"
+					class="badge hidden"></span></a>
+				<a href="${campaignsUrl }">Campaigns</a>
+				<a href="${pcsUrl }">Characters</a>
+				<a href="${combatsUrl }">Combats</a>
+			</c:if>
+			<decorator:getProperty property="page.local_submenu"/>
+		</nav>
+
+		<div class="main-container">
+			<div class="visible-xs">
+				<div class="navbar navbar-inverse">
+					<div class="navbar-inner">
+						<button id="left-menu-button" type="button"
+							class="pull-left navbar-toggle" data-toggle="collapse"
+							data-target="#menu">
+							<span class="icon-bar">
+								<!--  -->
+							</span> <span class="icon-bar">
+								<!--  -->
+							</span> <span class="icon-bar">
+								<!--  -->
+							</span>
+						</button>
+					</div>
 				</div>
 			</div>
-		</div>
-
-		<!-- Static navbar -->
-		<div class="navbar navbar-default navbar-fixed menu-wrapper hidden-xs"
-			role="navigation">
-			<div class="container menu">
-				<div class="navbar-header">
-					<button type="button" class="navbar-toggle" data-toggle="collapse"
-						data-target=".navbar-collapse">
-						<span class="sr-only">Toggle navigation</span> <span
-							class="icon-bar"></span> <span class="icon-bar"></span> <span
-							class="icon-bar"></span>
-					</button>
+			<div class="hidden-xs container banner-wrapper">
+				<div class="row">
+					<div class="col-md-12 banner">
+						<!--  -->
+					</div>
 				</div>
-				<div class="navbar-collapse collapse">
-					<ul class="nav navbar-nav nav-pills">
-						<c:url var="homeUrl" value="/home" />
-						<c:url var="lobbyUrl" value="/lobby" />
-						<c:url var="campaignsUrl" value="/campaigns" />
-						<c:url var="pcsUrl" value="/characters" />
-						<c:url var="combatsUrl" value="/combats" />
-						<c:if test="${pageContext.request.userPrincipal !=null }">
-							<li class="${fn:startsWith(pageContext.request.servletPath,homeUrl)?'active':' '}"><a href="${homeUrl}">Home</a></li>
-							<li class="${fn:startsWith(pageContext.request.servletPath,lobbyUrl)?'active':' '}" id="lobby"><a href="${lobbyUrl }">My
-									Lobby <span id="unread-messages" class="badge hidden"></span></a></li>
-							<li class="${fn:startsWith(pageContext.request.servletPath,campaignsUrl)?'active':' '}"><a href="${campaignsUrl }">Campaigns</a></li>
-							<li class="${fn:startsWith(pageContext.request.servletPath,pcsUrl)?'active':''}"><a href="${pcsUrl }">Characters</a></li>
-							<li class="${fn:startsWith(pageContext.request.servletPath,combatsUrl)?'active':''}"><a href="${combatsUrl }">Combats</a></li>
-						</c:if>
-					</ul>
-					<ul class="nav navbar-nav navbar-right">
+			</div>
+
+			<!-- Static navbar -->
+			<div
+				class="navbar navbar-default navbar-fixed menu-wrapper hidden-xs"
+				role="navigation">
+				<div class="container menu">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle" data-toggle="collapse"
+							data-target=".navbar-collapse">
+							<span class="sr-only">Toggle navigation</span> <span
+								class="icon-bar"></span> <span class="icon-bar"></span> <span
+								class="icon-bar"></span>
+						</button>
+					</div>
+					<div class="navbar-collapse collapse">
+						<ul class="nav navbar-nav nav-pills">
+							<c:url var="homeUrl" value="/home" />
+							<c:url var="lobbyUrl" value="/lobby" />
+							<c:url var="campaignsUrl" value="/campaigns" />
+							<c:url var="pcsUrl" value="/characters" />
+							<c:url var="combatsUrl" value="/combats" />
+							<c:if test="${pageContext.request.userPrincipal !=null }">
+								<li
+									class="${fn:startsWith(pageContext.request.servletPath,homeUrl)?'active':' '}"><a
+									href="${homeUrl}">Home</a></li>
+								<li
+									class="${fn:startsWith(pageContext.request.servletPath,lobbyUrl)?'active':' '}"
+									id="lobby"><a href="${lobbyUrl }">My Lobby <span
+										id="unread-messages" class="badge hidden"></span></a></li>
+								<li
+									class="${fn:startsWith(pageContext.request.servletPath,campaignsUrl)?'active':' '}"><a
+									href="${campaignsUrl }">Campaigns</a></li>
+								<li
+									class="${fn:startsWith(pageContext.request.servletPath,pcsUrl)?'active':''}"><a
+									href="${pcsUrl }">Characters</a></li>
+								<li
+									class="${fn:startsWith(pageContext.request.servletPath,combatsUrl)?'active':''}"><a
+									href="${combatsUrl }">Combats</a></li>
+							</c:if>
+						</ul>
+						<ul class="nav navbar-nav navbar-right">
 							<sec:authorize access="isAuthenticated()" var="isAuthenticated">
 								<c:url var="logoutUrl" value="/logout" />
 								<li class="hidden-sm">
@@ -125,19 +178,13 @@
 										Welcome <strong>${user.username }</strong>
 									</p>
 								</li>
-								<li>
-									<c:set var="url" value="/profile"/>
-									<a href="${url }">Profile</a>
+								<li><c:set var="url" value="/profile" /> <a href="${url }">Profile</a>
 								</li>
-								<li>
-									<a id="logout-link">Logout</a>
-								</li>
-								<form:form id="logout"
-										action="${logoutUrl}" method="post">
-										<!--  -->
-										<input type="hidden"
-										    name="${_csrf.parameterName}"
-										    value="${_csrf.token}"/>
+								<li><a id="logout-link">Logout</a></li>
+								<form:form id="logout" action="${logoutUrl}" method="post">
+									<!--  -->
+									<input type="hidden" name="${_csrf.parameterName}"
+										value="${_csrf.token}" />
 								</form:form>
 							</sec:authorize>
 							<c:if test="${!isAuthenticated }">
@@ -152,18 +199,32 @@
 								<li><a href="${registerBarUrl }">Register</a></li>
 							</c:if>
 
-					</ul>
+						</ul>
+					</div>
+					<!--/.nav-collapse -->
 				</div>
-				<!--/.nav-collapse -->
 			</div>
+
+
+			<decorator:body />
+
+
 		</div>
 
-		<decorator:body />
-		
+
+
+
+
 		<script type="text/javascript">
 		$(document).ready(function(){
 			$("#logout-link").click(function(){
 				$("#logout").submit();
+			})
+			
+			$("#left-menu-button").click(function() {
+				$(this).toggleClass('active');
+				$('body').toggleClass('cbp-spmenu-push-toright');
+				$('#cbp-spmenu-s1').toggleClass('cbp-spmenu-open');
 			})
 			
 			pollMessages();
@@ -215,7 +276,7 @@
 		        !(/^(\/\/|http:|https:).*/.test(url));
 		}
 		</script>
-		
+
 	</body>
 
 </jsp:root>

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 
 import javax.validation.Valid;
 
@@ -30,6 +31,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.Combat;
 import com.digitalrpg.domain.model.CombatCharacter;
+import com.digitalrpg.domain.model.CombatLog;
 import com.digitalrpg.domain.model.CombatState;
 import com.digitalrpg.domain.model.SystemAction;
 import com.digitalrpg.domain.model.SystemCombatItem;
@@ -406,5 +408,21 @@ public class CombatController {
         return builder.build();
     }
 
+    @RequestMapping(value = "/{id}/logs", method = RequestMethod.POST)
+    @ResponseBody
+    public boolean addLogEntry(@PathVariable Long id, @AuthenticationPrincipal UserWrapper user, @RequestBody Map<String, String> logEntry) {
+        Combat combat = combatService.getCombat(id);
+        if (!combat.getCampaign().getGameMaster().equals(user.unwrap())) {
+            return false;
+        }
+        combatService.addLog(combat.getId(), logEntry.get("logEntry"));
+        return true;
+    }
+
+    @RequestMapping(value = "/{id}/logs", method = RequestMethod.GET)
+    @ResponseBody
+    public SortedSet<CombatLog> getLogs(@PathVariable Long id) {
+        return combatService.getCombatLogs(id);
+    }
 
 }

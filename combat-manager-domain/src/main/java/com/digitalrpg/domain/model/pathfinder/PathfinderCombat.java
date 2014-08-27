@@ -5,6 +5,7 @@ import java.util.NavigableSet;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.digitalrpg.domain.model.Combat;
 import com.digitalrpg.domain.model.CombatCharacter;
@@ -124,6 +125,12 @@ public class PathfinderCombat extends Combat<PathfinderAction> {
             return false;
         }
         return true;
+    }
+
+    @Override
+    @Transient
+    public String getContextDescription() {
+        return String.format("Round %s, Turn %s", this.currentRound, this.currentTurn);
     }
 
 }

@@ -23,6 +23,7 @@ import com.digitalrpg.domain.dao.SystemDao;
 import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.Combat;
 import com.digitalrpg.domain.model.CombatCharacter;
+import com.digitalrpg.domain.model.CombatLog;
 import com.digitalrpg.domain.model.CombatState;
 import com.digitalrpg.domain.model.SystemAction;
 import com.digitalrpg.domain.model.SystemCombatItem;
@@ -377,6 +378,23 @@ public class CombatService {
 
     public void deleteCombat(Long id) {
         combatDao.delete(id);
+    }
+
+    @Transactional
+    public void addLog(Long id, String logEntry) {
+        Combat<?> combat = combatDao.get(id);
+        SortedSet<CombatLog> combatLogs = combat.getCombatLogs();
+        CombatLog log = new CombatLog();
+        log.setCombat(combat);
+        log.setCombatContextDescription(combat.getContextDescription());
+        log.setLog(logEntry);
+        log.setOrder((long) combatLogs.size());
+        combatLogs.add(log);
+    }
+
+    @Transactional(readOnly = true)
+    public SortedSet<CombatLog> getCombatLogs(Long id) {
+        return combatDao.get(id).getCombatLogs();
     }
 
 
