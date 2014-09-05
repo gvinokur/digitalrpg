@@ -32,6 +32,7 @@ import com.digitalrpg.domain.model.SystemCombatProperties;
 import com.digitalrpg.domain.model.SystemType;
 import com.digitalrpg.domain.model.User;
 import com.digitalrpg.domain.model.characters.SystemCharacter;
+import com.digitalrpg.domain.model.characters.Character.CharacterType;
 import com.digitalrpg.domain.model.characters.pathfinder.PathfinderCharacter;
 import com.digitalrpg.domain.model.characters.pathfinder.PathfinderCombatCharacter;
 import com.digitalrpg.domain.model.pathfinder.PathfinderAction;
@@ -342,8 +343,8 @@ public class CombatService {
     public Combat<? extends SystemAction> addCombatant(Combat<? extends SystemAction> combat, Long characterId) {
 
         SystemCharacter systemCharacter = characterService.get(characterId);
-        combatDao.createCharacter(combat, systemCharacter, Boolean.FALSE, Long.valueOf(0),
-                Long.valueOf(combat.getCombatCharactersAsNavigableSet().last().getOrder() + 1), null);
+        combatDao.createCharacter(combat, systemCharacter, !CharacterType.PC.equals(systemCharacter.getCharacter().getCharacterType()),
+                Long.valueOf(0), Long.valueOf(combat.getCombatCharactersAsNavigableSet().last().getOrder() + 1), null);
         return this.getCombat(combat.getId());
     }
 

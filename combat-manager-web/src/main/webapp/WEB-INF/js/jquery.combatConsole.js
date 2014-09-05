@@ -19,7 +19,7 @@
 	
 	var widgets = {
 		'Pathfinder' : {
-			'lg' : '<li character-id="{character-id}" class="combat-character"><div class="selected-char" style="width: 10px">&#160;</div><div class="character-data character-name" attribute-name="name"></div><div style="width:25px" attribute-name="hp" attribute-type="life" class="character-data hp editable" data-type="number" data-title="HP" data-pk="" data-url="/combats/character/currentHitPoints"></div><div class="hiddenSelect character-data editable" attribute-name="hidden" attribute-type="boolean" data-pk="" data-url="/combats/character/hidden">Hidden <input type="checkbox"/></div><div class="character-data conditions-and-effects" attribute-name="conditionsAndEffects" title=""></div>	</li>'
+			'lg' : '<li character-id="{character-id}" class="combat-character"><div class="selected-char" style="width: 10px">&#160;</div><div class="character-name" ><span class="character-data" attribute-name="name"></span>&nbsp;-&nbsp;<span class="character-data" attribute-name="type"></span></div><div style="width:25px" attribute-name="hp" attribute-type="life" class="character-data hp editable" data-type="number" data-title="HP" data-pk="" data-url="/combats/character/currentHitPoints"></div><div class="hiddenSelect character-data editable" attribute-name="hidden" attribute-type="boolean" data-pk="" data-url="/combats/character/hidden">Hidden <input type="checkbox"/></div><div class="character-data conditions-and-effects" attribute-name="conditionsAndEffects" title=""></div>	</li>'
 		}
 	}
 	
@@ -27,7 +27,7 @@
 		'Pathfinder' : {
 			'lg' : [
 				{ 'name' : 'Image', 'modes' : ['gm','player'], 'html' : '<div class="row"><div class="col-xs-12"><img class="character-data img-rounded img-responsive" attribute-name="image_url" attribute-type="Image" src="/img/no_pic_available.jpg"/></div></div>' } ,
-				{ 'name' : 'Stats', 'modes' : ['gm','player'], 'html' : '<div class="character-data" attribute-name="stats" attribute-type="Stats"></div><div class="clearfix"></div>' } ,
+				{ 'name' : 'Stats', 'modes' : ['gm'], 'html' : '<div class="character-data" attribute-name="stats" attribute-type="Stats"></div><div class="clearfix"></div>' } ,
 				{ 'name' : 'Actions',  'modes' : ['gm'], 'children' : [
 	               { 'name' : 'Conditions',  'modes' : ['gm'], 'items' : 'conditions' },
 	               { 'name' : 'Magical Effects',  'modes' : ['gm'], 'items' : 'magicalEffects'  }
@@ -123,9 +123,7 @@
     		combatConsole.viewLogs();
     	})
     	
-    	if(combatConsole.settings.mode == "player") {
-    		$('.previous,.next,.end-combat,.delete-character,.add-character,.add-log,.view-log').css("display", "none");
-    	}
+    	
     	
     	$(this).editable({
     		selector: ".editable[attribute-type='life']",
@@ -538,7 +536,9 @@
 			
 			if(this.settings.mode == 'player') {
 				this.gridster.disable();
+				$('.previous,.next,.end-combat,.delete-character,.add-character,.add-log,.view-log').css("display", "none");
 			}
+			
 		}
 	}
 	
@@ -695,7 +695,7 @@
 		}
 		
 		if(attributeName == 'hidden') {
-			if(combatConsole.settings.mode != 'gm' || data.type != 'NPC') {
+			if(combatConsole.settings.mode != 'gm' || data.type == 'PC') {
 				item.css('display', 'none');
 			}
 		}

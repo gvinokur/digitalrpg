@@ -107,7 +107,7 @@ view the page via file:// --&gt; &lt;!--[if lt IE 9]&gt;
 
 		<div class="main-container">
 			<div class="visible-xs">
-				<div class="navbar navbar-inverse">
+				<div class="navbar navbar-inverse small-banner">
 					<div class="navbar-inner">
 						<button id="left-menu-button" type="button"
 							class="pull-left navbar-toggle" data-toggle="collapse"

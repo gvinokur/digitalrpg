@@ -154,6 +154,9 @@
 									$("#create_campaign_button").click(function() {
 										$(".dynamic").addClass("hidden");
 										$("#campaign_create").removeClass("hidden");
+										$("#campaign_create").find("[name='id'], [name='description'], [name='name']").val("");
+										$("#campaign_create").find("[type='submit']").val("Create");
+										$("#campaign_create").find("#systemType").removeClass("hidden");
 									})
 								})
 			</script>
@@ -209,6 +212,8 @@
 							method="POST">
 							<input type="hidden" name="${_csrf.parameterName}"
 								value="${_csrf.token}" />
+							<input type="hidden" name="id"
+								value="${createCampaignVO.id}" />
 							<spring:bind path="name">
 								<div class="form-group ${status.error? 'has-error' :'' }">
 									<label class="control-label" for="name">Name <form:errors
@@ -226,11 +231,20 @@
 								<form:errors element="div" path="name" />
 							</div>
 
-							<div class="form-group">
-								<label class="form-text" for="system">System</label> <select
-									name="systemType" class="form-group">
+							<div class="form-group ${createCampaignVO.id == null ? '' : 'hidden' }" id="systemType">
+								<label class="form-text" for="system">System</label>
+								 
+								<select
+									name="systemType" class="form-control" >
 									<c:forEach items="${systems }" var="system">
-										<option value="${system }">${system }</option>
+										<c:choose>
+											<c:when test="${createCampaignVO.systemType == system }">
+												<option value="${system }" selected="selected">${system }</option>
+											</c:when>
+											<c:otherwise>
+												<option value="${system }">${system }</option>
+											</c:otherwise>
+										</c:choose>
 									</c:forEach>
 								</select>
 							</div>
@@ -241,11 +255,11 @@
 								</label>
 							</div>
 
-							<input type="submit" value="Create"
+							<input type="submit" value="${createCampaignVO.id == null ? 'Create' : 'Edit' }"
 								class="btn btn-lg btn-default btn-block"></input>
 						</form:form>
 					</div>
-
+					
 					<div id="campaign_view"
 						class="col-xs-12 content-block center dynamic ${show_content == 'campaign_view'?'':'hidden' }">
 						<div class="row">
@@ -262,7 +276,12 @@
 										data-placement="top righ"> <!--  -->
 									</a>
 									<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+									
 										<c:if test="${campaign.gameMaster.name == user.username }">
+											<li>
+												<c:url var="url" value="/campaigns/${campaign.id }/edit"></c:url>
+												<a class="" href="${url }"><i class="fa fa-pencil-square-o fa-fw"><!--  --></i>&#160; Edit Campaign</a>
+											</li>
 											<li><a class="" href="#" data-toggle="modal"
 												data-target="#invite-form-dialog"><i
 													class="fa fa-envelope-o fa-fw"> <!--  -->

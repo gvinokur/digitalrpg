@@ -98,7 +98,7 @@
 									                    		<div class="dd3-content">
 									                    			<span class="overflown tooltipable">${character.character.name }
 									                    			</span>
-									                    			<c:if test="${character.character.owner.name == user.name }">
+									                    			<c:if test="${character.character.characterType == 'NPC' }">
 									                    				<!-- GM Char, can be hidden -->
 									                    				<span class="pull-right">
 									                    					Hidden <input type="checkbox" name="extraInfo[${character.id }].hidden"/>

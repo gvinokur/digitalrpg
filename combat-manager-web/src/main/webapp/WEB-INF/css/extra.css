@@ -1,9 +1,19 @@
 .banner {
-	height: 150px;
-	background: url(../img/digital_rpg_banner_nc.png) no-repeat;
+	height: 100px;
+	background: url(../img/D_RPG_1_o.png) no-repeat;
 	position: relative;
 	background-color: #1e1e1e;
-	background: url(../img/digital_rpg_banner_nc.png) no-repeat;
+	background-size: contain; 
+}
+
+.small-banner {
+	height: 50px;
+	background: url(../img/D_RPG_1_o.png) no-repeat;
+	position: relative;
+	background-color: #1e1e1e;
+	background-size: contain; 
+	background-position: 44px;
+	background-size: 300px;
 }
 
 .container.banner-wrapper {
