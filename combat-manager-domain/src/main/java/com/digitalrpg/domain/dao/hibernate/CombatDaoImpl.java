@@ -170,4 +170,10 @@ public class CombatDaoImpl extends HibernateDao implements CombatDao {
         this.sessionFactory.getCurrentSession().update(combat);
     }
 
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public void update(CombatCharacter<?> combatCharacter) {
+        this.sessionFactory.getCurrentSession().update(combatCharacter);
+
+    }
+
 }

@@ -357,12 +357,12 @@
     			var containerEL = $("<div/>").addClass("row").appendTo(el)
     			var tabsEL = $("<ul/>").addClass("col-xs-3").addClass("nav").addClass("nav-pills").addClass("nav-stacked").css("padding-left","15px").attr("role","tablist").appendTo(containerEL);
     			var tabContentEL = $("<div/>").addClass("col-xs-9").addClass("tab-content").appendTo(containerEL)
-    			var maxHeight = 40 * charactersData.length + 2 * (charactersData.length-1);
+    			var maxHeight = Math.max(40 * charactersData.length + 2 * (charactersData.length-1), 82);
     			for(var i = 0; i < charactersData.length; i++){
     				var characterData = charactersData[i];
     				var partTabEL = $("<li/>").appendTo(tabsEL);
     				var partLinkEL = $("<a/>").addClass("overflown").append(characterData.name).appendTo(partTabEL)
-    				var id = characterData.name.replace(/ /g, "");
+    				var id = characterData.name.replace(/\W/g, '')
     				partLinkEL.attr("href", "#" + id).attr("role","tab").attr("data-togle",  "tab")
     				partLinkEL.click(function (e) {
 					  e.preventDefault()
@@ -493,7 +493,7 @@
 			combatConsole.size = 'sm';
 		}
 		
-		this.useGridster = (this.size == 'lg' || this.size == 'md');
+		this.useGridster = true;
 		
 		if(this.useGridster) {
 			

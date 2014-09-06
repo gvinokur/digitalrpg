@@ -34,6 +34,8 @@ public interface CombatDao {
 
     public void update(Combat combat);
 
+    public void update(CombatCharacter<?> combatCharacter);
+
     public void delete(Long id);
 
 }

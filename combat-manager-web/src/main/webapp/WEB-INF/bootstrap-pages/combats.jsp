@@ -163,7 +163,7 @@
 							})
 							</script>
 							
-							<input type="submit" value="${empty createCombatVO.id ? 'Create' : 'Edit'}" class="btn btn-lg btn-default btn-block"></input>
+							<input type="submit" value="${empty createCombatVO.id ? 'Create' : 'Save'}" class="btn btn-lg btn-default btn-block"></input>
 	            		</form:form>
 					</div>
 				</c:if>

@@ -356,6 +356,10 @@ public class CombatService {
             NavigableSet<CombatCharacter> tailSet = navigableSet.tailSet(combatCharacter, false);
             if (!tailSet.isEmpty()) {
                 combat.setCurrentCharacter(tailSet.first());
+                for (CombatCharacter<?> character : tailSet) {
+                    character.setOrder(character.getOrder() - 1);
+                    combatDao.update(combatCharacter);
+                }
             } else {
                 NavigableSet<CombatCharacter> headSet = navigableSet.headSet(combatCharacter, false);
                 if (!headSet.isEmpty()) {
@@ -367,7 +371,6 @@ public class CombatService {
         }
         combatDao.update(combat);
         combatDao.delete(combatCharacter);
-
     }
 
     @Transactional

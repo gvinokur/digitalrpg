@@ -255,7 +255,7 @@
 								</label>
 							</div>
 
-							<input type="submit" value="${createCampaignVO.id == null ? 'Create' : 'Edit' }"
+							<input type="submit" value="${createCampaignVO.id == null ? 'Create' : 'Save' }"
 								class="btn btn-lg btn-default btn-block"></input>
 						</form:form>
 					</div>
