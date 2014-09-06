@@ -361,13 +361,13 @@ a:focus {
 }
 
 .cbp-spmenu {
-	background: #333;
+	background: #272525;
 	position: fixed;
 	border-right: 1px solid #f5f5f5;
 }
 
 .cbp-spmenu h3 {
-	color: #333;
+	color: #272525;
 	font-size: 1.9em;
 	padding: 21px 20px;
 	margin: 0;
@@ -376,7 +376,7 @@ a:focus {
 }
 
 .cbp-spmenu h4 {
-	color: #333;
+	color: #272525;
 	font-size: 1.4em;
 	padding: 20px;
 	padding-bottom: 17px;
@@ -391,7 +391,7 @@ a:focus {
 }
 
 .cbp-spmenu h5 a {
-	color: #333;
+	color: #272525;
 	font-size: 1.2em;
 	padding: 20px;
 	padding-bottom: 15px;
@@ -402,24 +402,24 @@ a:focus {
 }
 
 .cbp-spmenu h5 a:hover {
-	background: #333;
-	color: #f5f5f5;
+	background: #e5e5e5;
+	color: #474545;
 }
 
 .cbp-spmenu a {
 	display: block;
-	color: #ddd;
+	color: #aaa;
 	font-size: 1.1em;
-	font-weight: 300;
+	font-weight: 400;
 }
 
 .cbp-spmenu a:hover {
-	background: #ddd;
-	color: #333;
+/* 	background: #ddd; */
+	color: #ccc;
 	text-decoration: none;
 }
 
-.cbp-spmenu a:active {
+.cbp-spmenu a.active {
 	color: #fff;
 }
 
@@ -434,7 +434,7 @@ a:focus {
 
 .cbp-spmenu-vertical a {
 	border-bottom: 1px solid #f5f5f5;
-	padding: 1em;
+	padding: 20px;
 }
 
 .cbp-spmenu-horizontal {
@@ -509,6 +509,7 @@ a:focus {
 	-moz-transition: all 0.3s ease;
 	transition: all 0.3s ease;
 	-webkit-transition: all 0.3s ease;
+	position: fixed
 }
 
 .cbp-spmenu-push-toleft {

@@ -95,12 +95,12 @@ view the page via file:// --&gt; &lt;!--[if lt IE 9]&gt;
 			<c:url var="pcsUrl" value="/characters" />
 			<c:url var="combatsUrl" value="/combats" />
 			<c:if test="${pageContext.request.userPrincipal !=null }">
-				<a href="${homeUrl}">Home</a>
-				<a href="${lobbyUrl }">My Lobby <span id="unread-messages"
+				<a href="${homeUrl}" class="${fn:startsWith(pageContext.request.servletPath,homeUrl)?'active':' '}">Home</a>
+				<a href="${lobbyUrl }" class="${fn:startsWith(pageContext.request.servletPath,lobbyUrl)?'active':' '}">My Lobby <span id="unread-messages"
 					class="badge hidden"></span></a>
-				<a href="${campaignsUrl }">Campaigns</a>
-				<a href="${pcsUrl }">Characters</a>
-				<a href="${combatsUrl }">Combats</a>
+				<a href="${campaignsUrl }" class="${fn:startsWith(pageContext.request.servletPath,campaignsUrl)?'active':' '}">Campaigns</a>
+				<a href="${pcsUrl }" class="${fn:startsWith(pageContext.request.servletPath,pcsUrl)?'active':' '}">Characters</a>
+				<a href="${combatsUrl }" class="${fn:startsWith(pageContext.request.servletPath,combatsUrl)?'active':' '}">Combats</a>
 			</c:if>
 			<decorator:getProperty property="page.local_submenu"/>
 		</nav>
