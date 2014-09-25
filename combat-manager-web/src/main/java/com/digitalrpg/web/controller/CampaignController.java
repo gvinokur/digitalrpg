@@ -11,6 +11,7 @@ import javax.validation.Valid;
 
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -35,6 +36,7 @@ import com.digitalrpg.web.controller.model.MessageVO;
 import com.digitalrpg.web.service.CampaignService;
 import com.digitalrpg.web.service.CharacterService;
 import com.digitalrpg.web.service.MessageService;
+import com.digitalrpg.web.service.TransactionalUserService;
 import com.digitalrpg.web.service.UserService;
 import com.digitalrpg.web.service.UserWrapper;
 import com.google.common.collect.Collections2;
@@ -56,7 +58,7 @@ public class CampaignController {
     private CharacterService characterService;
 
     @Autowired
-    private UserService userService;
+    private TransactionalUserService userService;
 
 
     @ModelAttribute("createCampaignVO")

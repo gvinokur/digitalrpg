@@ -35,26 +35,27 @@
 
 	</div>
 	<h5>
-		<a data-toggle="collapse" data-parent="#accordion" href="#collapseGMSmall">
-			I'm a GM of <span class="pull-right glyphicon glyphicon-chevron-down"></span>
+		<a data-toggle="collapse" data-parent="#accordion"
+			href="#collapseGMSmall"> I'm a GM of <span
+			class="pull-right glyphicon glyphicon-chevron-down"></span>
 		</a>
 	</h5>
 	<div id="collapseGMSmall" class="collapse">
-	<c:forEach items="${campaigns}" var="campaign">
-		<c:if test="${campaign.gameMaster.name == user.name }">
-			<c:url value="/campaigns/${campaign.id }/show" var="url"></c:url>
-			<a class="campaign_list_item" id="campaign_${campaign.id }"
-				href="${url }">${campaign.name }</a>
-		</c:if>
-	</c:forEach>
-	</div> 
+		<c:forEach items="${campaigns}" var="campaign">
+			<c:if test="${campaign.gameMaster.name == user.name }">
+				<c:url value="/campaigns/${campaign.id }/show" var="url"></c:url>
+				<a class="campaign_list_item" id="campaign_${campaign.id }"
+					href="${url }">${campaign.name }</a>
+			</c:if>
+		</c:forEach>
+	</div>
 	</content>
 
 	<div class="container main">
 		<div class="row">
 			<div class="hidden-xs col-sm-3 content-block">
-				<h4>My Campaigns</h4>
-				<div class="" id="accordion">
+				<div class="cbp-spmenu" id="accordion">
+					<h4 class="inverse">My Campaigns</h4>
 					<div class="">
 						<div class="">
 							<h5>
@@ -66,16 +67,14 @@
 							</h5>
 						</div>
 						<div id="collapsePlayer" class="collapse">
-							<div class="scroll_list_150 nice_list">
-								<ul class="campaigns">
-									<c:forEach items="${campaigns}" var="campaign">
-										<c:if test="${campaign.gameMaster.name != user.name }">
-											<c:url value="/campaigns/${campaign.id }/show" var="url"></c:url>
-											<li><a class="campaign_list_item"
-												id="campaign_${campaign.id }" href="${url }">${campaign.name }</a></li>
-										</c:if>
-									</c:forEach>
-								</ul>
+							<div class="scroll_list_150">
+								<c:forEach items="${campaigns}" var="campaign">
+									<c:if test="${campaign.gameMaster.name != user.name }">
+										<c:url value="/campaigns/${campaign.id }/show" var="url"></c:url>
+										<a class="campaign_list_item short" id="campaign_${campaign.id }"
+											href="${url }">${campaign.name }</a>
+									</c:if>
+								</c:forEach>
 							</div>
 						</div>
 					</div>
@@ -89,35 +88,38 @@
 							</h5>
 						</div>
 						<div id="collapseGM" class="collapse">
-							<div class="scroll_list_150 nice_list">
-								<ul class="campaigns">
-									<c:forEach items="${campaigns}" var="campaign">
-										<c:if test="${campaign.gameMaster.name == user.name }">
-											<c:url value="/campaigns/${campaign.id }/show" var="url"></c:url>
-											<li><a class="campaign_list_item"
-												id="campaign_${campaign.id }" href="${url }">${campaign.name }</a></li>
-										</c:if>
-									</c:forEach>
-								</ul>
+							<div class="scroll_list_150">
+								<c:forEach items="${campaigns}" var="campaign">
+									<c:if test="${campaign.gameMaster.name == user.name }">
+										<c:url value="/campaigns/${campaign.id }/show" var="url"></c:url>
+										<a class="campaign_list_item short" id="campaign_${campaign.id }"
+											href="${url }">${campaign.name }</a>
+									</c:if>
+								</c:forEach>
 							</div>
 						</div>
 					</div>
-				</div>
 
+				</div>
 				<input type="button" value="New Campaign"
 					id="create_campaign_button"
+					style="margin-top: 20px; margin-bottom: 20px;"
 					class="btn btn-default btn-block btn-sm" />
+
 
 				<div class="horizontal_divider">
 					<!--  -->
 				</div>
-				<h4>Search Campaign</h4>
-				<div class="row search">
-					<div class="col-xs-9">
+				<div class="cbp-spmenu">
+					<h4 class="inverse">Search Campaign</h4>
+
+				</div>
+				<div class="row search" style="margin-top: 20px; margin-bottom: 20px;">
+					<div class="col-md-9 col-sm-12">
 						<input class="form-control" type="text" id="search_field"
 							name="campaign" placeholder="Enter keywords" />
 					</div>
-					<div class="col-xs-3">
+					<div class="col-md-3 col-sm-3">
 						<a role="button" id="search_button" class="btn btn-default"
 							data-loading-text="&lt;i class='fa fa-spinner fa-spin'/&gt;">
 							<span class="glyphicon glyphicon-search"></span>
@@ -212,8 +214,7 @@
 							method="POST">
 							<input type="hidden" name="${_csrf.parameterName}"
 								value="${_csrf.token}" />
-							<input type="hidden" name="id"
-								value="${createCampaignVO.id}" />
+							<input type="hidden" name="id" value="${createCampaignVO.id}" />
 							<spring:bind path="name">
 								<div class="form-group ${status.error? 'has-error' :'' }">
 									<label class="control-label" for="name">Name <form:errors
@@ -231,11 +232,11 @@
 								<form:errors element="div" path="name" />
 							</div>
 
-							<div class="form-group ${createCampaignVO.id == null ? '' : 'hidden' }" id="systemType">
-								<label class="form-text" for="system">System</label>
-								 
-								<select
-									name="systemType" class="form-control" >
+							<div
+								class="form-group ${createCampaignVO.id == null ? '' : 'hidden' }"
+								id="systemType">
+								<label class="form-text" for="system">System</label> <select
+									name="systemType" class="form-control">
 									<c:forEach items="${systems }" var="system">
 										<c:choose>
 											<c:when test="${createCampaignVO.systemType == system }">
@@ -255,11 +256,12 @@
 								</label>
 							</div>
 
-							<input type="submit" value="${createCampaignVO.id == null ? 'Create' : 'Save' }"
+							<input type="submit"
+								value="${createCampaignVO.id == null ? 'Create' : 'Save' }"
 								class="btn btn-lg btn-default btn-block"></input>
 						</form:form>
 					</div>
-					
+
 					<div id="campaign_view"
 						class="col-xs-12 content-block center dynamic ${show_content == 'campaign_view'?'':'hidden' }">
 						<div class="row">
@@ -276,12 +278,14 @@
 										data-placement="top righ"> <!--  -->
 									</a>
 									<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-									
+
 										<c:if test="${campaign.gameMaster.name == user.username }">
-											<li>
-												<c:url var="url" value="/campaigns/${campaign.id }/edit"></c:url>
-												<a class="" href="${url }"><i class="fa fa-pencil-square-o fa-fw"><!--  --></i>&#160; Edit Campaign</a>
-											</li>
+											<li><c:url var="url"
+													value="/campaigns/${campaign.id }/edit"></c:url> <a
+												class="" href="${url }"><i
+													class="fa fa-pencil-square-o fa-fw">
+														<!--  -->
+												</i>&#160; Edit Campaign</a></li>
 											<li><a class="" href="#" data-toggle="modal"
 												data-target="#invite-form-dialog"><i
 													class="fa fa-envelope-o fa-fw"> <!--  -->
@@ -338,47 +342,46 @@
 										<div id="campaign_members" class="tab-pane">
 											<div class="row" style="height: 185px; margin-bottom: 10px">
 												<div class="col-xs-4">
-													<div class="">
-														<h5>
-															<a data-toggle="collapse" data-parent="#rightBar"
-																href="#collapseMembers"> Members <span
-																class="pull-right glyphicon glyphicon-chevron-up"></span>
-															</a>
-														</h5>
-													</div>
-													<div id="collapseMembers" class="collapse in">
-														<c:set var="userIsMember" value="false"></c:set>
-														<div class="scroll_list_150 nice_list">
-															<ul>
+													<div class="cbp-spmenu">
+														<div class="">
+															<h5 class="inverse">
+																<a data-toggle="collapse" data-parent="#rightBar"
+																	href="#collapseMembers" class="short"> Members <span
+																	class="pull-right glyphicon glyphicon-chevron-up"></span>
+																</a>
+															</h5>
+														</div>
+														<div id="collapseMembers" class="collapse in">
+															<c:set var="userIsMember" value="false"></c:set>
+															<div class="scroll_list_150 ">
 																<c:forEach items="${campaign.members}" var="member">
-																	<li><a>${member.name }</a></li>
+																	<a class="short">${member.name }</a>
 																	<c:if test="${member.name == user.username  }">
 																		<c:set var="userIsMember" value="true"></c:set>
 																	</c:if>
 																</c:forEach>
-															</ul>
-
-
+	
+															</div>
+	
 														</div>
-
 													</div>
 												</div>
 												<div class="col-xs-4">
-													<div class="">
-														<h5>
-															<a data-toggle="collapse" data-parent="#rightBar"
-																href="#collapseCharacter"> My Characters <span
-																class="pull-right glyphicon glyphicon-chevron-up"></span>
-															</a>
-														</h5>
-													</div>
-													<div id="collapseCharacter" class="collapse in">
-														<div class="scroll_list_150 nice_list">
-															<ul>
+													<div class="cbp-spmenu">
+														<div class="">
+															<h5 class="inverse">
+																<a data-toggle="collapse" data-parent="#rightBar"
+																	href="#collapseCharacter" class="short"> My Characters <span
+																	class="pull-right glyphicon glyphicon-chevron-up"></span>
+																</a>
+															</h5>
+														</div>
+														<div id="collapseCharacter" class="collapse in">
+															<div class="scroll_list_150 nice_list">
 																<c:forEach var="character" items="${characters }">
 																	<c:url var="url"
 																		value="/characters/${character.id }/show"></c:url>
-																	<li><a href="${url }"> <c:if
+																	<a href="${url }" class="short"> <c:if
 																				test="${character.character.pictureUrl != '' }">
 																				<img alt="${character.character.name} Image"
 																					src="${character.character.pictureUrl}"
@@ -388,28 +391,28 @@
 																			<p class="overflown tooltipable"
 																				title="${character.character.name}">
 																				${character.character.name}</p>
-																	</a></li>
+																	</a>
 																</c:forEach>
-															</ul>
+															</div>
 														</div>
 													</div>
 												</div>
 												<div class="col-xs-4">
-													<div class="">
-														<h5>
-															<a data-toggle="collapse" data-parent="#rightBar"
-																href="#collapseOtherCharacter"> Other Characters <span
-																class="pull-right glyphicon glyphicon-chevron-up"></span>
-															</a>
-														</h5>
-													</div>
-													<div id="collapseOtherCharacter" class="collapse in">
-														<div class="scroll_list_150 nice_list">
-															<ul>
+													<div class="cbp-spmenu">
+														<div class="">
+															<h5 class="inverse">
+																<a data-toggle="collapse" data-parent="#rightBar"
+																	href="#collapseOtherCharacter" class="short"> Other Characters <span
+																	class="pull-right glyphicon glyphicon-chevron-up"></span>
+																</a>
+															</h5>
+														</div>
+														<div id="collapseOtherCharacter" class="collapse in">
+															<div class="scroll_list_150 nice_list">
 																<c:forEach var="character" items="${otherCharacters }">
 																	<c:url var="url"
 																		value="/characters/${character.id }/show"></c:url>
-																	<li><a href="${url }"> <c:if
+																	<a href="${url }" class="short"> <c:if
 																				test="${character.character.pictureUrl != '' }">
 																				<img alt="${character.character.name} Image"
 																					src="${character.character.pictureUrl}"
@@ -419,9 +422,9 @@
 																			<p class="overflown tooltipable"
 																				title="${character.character.name}">
 																				${character.character.name}</p>
-																	</a></li>
+																	</a>
 																</c:forEach>
-															</ul>
+															</div>
 														</div>
 													</div>
 												</div>

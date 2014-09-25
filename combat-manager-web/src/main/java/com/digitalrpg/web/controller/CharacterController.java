@@ -9,6 +9,7 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -56,6 +57,7 @@ public class CharacterController {
     private CombatService combatService;
 
     @Autowired
+    @Qualifier("userService")
     private UserService userService;
 
     @ModelAttribute("createCharacterVO")

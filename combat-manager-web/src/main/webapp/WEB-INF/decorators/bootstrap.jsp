@@ -86,7 +86,7 @@ view the page via file:// --&gt; &lt;!--[if lt IE 9]&gt;
 		<!-- Make user available for all pages if exists -->
 		<sec:authentication property="principal" var="user" />
 
-		<nav class="cbp-spmenu cbp-spmenu-vertical cbp-spmenu-left"
+		<nav class="cbp-spmenu hideable-menu cbp-spmenu-vertical cbp-spmenu-left"
 			id="cbp-spmenu-s1">
 			<h3>Menu</h3>
 			<c:url var="homeUrl" value="/home" />

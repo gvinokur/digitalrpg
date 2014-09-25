@@ -43,7 +43,7 @@ public class CombatLog {
         this.id = id;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "combat_id", referencedColumnName = "id")
     public Combat<? extends SystemAction> getCombat() {
         return combat;

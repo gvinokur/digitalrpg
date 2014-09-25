@@ -8,26 +8,25 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 import com.opensymphony.sitemesh.webapp.SiteMeshFilter;
 
 @Order(1)
-public class WebApplicationInitializer extends
-        AbstractAnnotationConfigDispatcherServletInitializer {
+public class WebApplicationInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return new Class[] { RootConfiguration.class };
+        return new Class[] {RootConfiguration.class};
     }
 
     @Override
     protected Class<?>[] getServletConfigClasses() {
-        return new Class[] { WebMvcConfig.class };
+        return new Class[] {WebMvcConfig.class};
     }
 
     @Override
     protected String[] getServletMappings() {
-        return new String[] { "/" };
+        return new String[] {"/"};
     }
 
     @Override
     protected Filter[] getServletFilters() {
-        return new Filter[] { new SiteMeshFilter() };
+        return new Filter[] {new SiteMeshFilter()};
     }
 }

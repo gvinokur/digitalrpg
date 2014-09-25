@@ -1,6 +1,7 @@
 package com.digitalrpg.domain.model;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.NavigableSet;
 import java.util.Set;
@@ -50,6 +51,8 @@ public abstract class Combat<ACTION_TYPE extends SystemAction> {
     private CombatCharacter<ACTION_TYPE> currentCharacter;
 
     private SortedSet<CombatLog> combatLogs;
+
+    private Date lastUpdated;
 
     @OneToOne(fetch = FetchType.EAGER, targetEntity = CombatCharacter.class)
     @JoinColumn(name = "current_character_id", referencedColumnName = "id")
@@ -168,5 +171,13 @@ public abstract class Combat<ACTION_TYPE extends SystemAction> {
 
     @Transient
     public abstract String getContextDescription();
+
+    public Date getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(Date lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
 
 }

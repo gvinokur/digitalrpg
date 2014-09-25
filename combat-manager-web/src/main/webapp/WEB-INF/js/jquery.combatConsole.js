@@ -31,6 +31,10 @@
 				{ 'name' : 'Actions',  'modes' : ['gm'], 'children' : [
 	               { 'name' : 'Conditions',  'modes' : ['gm'], 'items' : 'conditions' },
 	               { 'name' : 'Magical Effects',  'modes' : ['gm'], 'items' : 'magicalEffects'  }
+				]},
+				{ 'name' : 'Actions',  'modes' : ['player'], 'children' : [
+	               { 'name' : 'Conditions',  'modes' : ['player'], 'items' : 'conditions', 'readOnly' : true },
+	               { 'name' : 'Magical Effects',  'modes' : ['player'], 'items' : 'magicalEffects', 'readOnly' : true  }
 				]}
 			],
 			'sm' : [ { 'name' : 'Stats', 'modes' : ['gm','player'], 'html' : '' }],
@@ -443,9 +447,12 @@
 		    				var itemLiEL = $("<li/>").addClass("item").appendTo(scrollUlEL);
 		    				var itemLinkEl = $("<a/>").appendTo(itemLiEL);
 		    				
-		    				
-		    				$("<input/>").attr("type","checkbox").addClass("pull-right").css("margin-right","10px")
-	    						.attr("item-type",partDefinition.items).attr("item-id",item.id).appendTo(itemLinkEl);
+		    				if(partDefinition.readOnly) {
+		    					itemLiEL.addClass("hidden").addClass("hideable").attr("item-id",item.id).attr("item-type",partDefinition.items)
+		    				}else {
+			    				$("<input/>").attr("type","checkbox").addClass("pull-right").css("margin-right","10px")
+		    						.attr("item-type",partDefinition.items).attr("item-id",item.id).appendTo(itemLinkEl);
+		    				}
 		    				$("<label/>").addClass("overflown").append(item.label).appendTo(itemLinkEl);
 		    			}
 		    		}
@@ -618,6 +625,12 @@
 				}
 			}
 			this.updateWidgetData(characterWidget, character);
+//			TODO: Is not the same data type
+//			if(characterWidget.hasClass("selected")) {
+//				$(".panel .character-data").each(function() {
+//					combatConsole.updateDataItem($(this), character);
+//				})
+//			}
 		}
 		
 	}
@@ -680,6 +693,15 @@
 					$(this).prop("checked", true);
 				} else {
 					$(this).prop("checked", false);
+				}
+			});
+			item.find(".hideable").each(function() {
+				var itemType = $(this).attr("item-type");
+				var itemId = parseInt($(this).attr("item-id"));
+				if(items[itemType] && items[itemType].indexOf(itemId) >= 0) {
+					$(this).removeClass("hidden");
+				} else {
+					$(this).addClass("hidden");
 				}
 			});
 		} else { 

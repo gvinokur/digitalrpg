@@ -15,7 +15,7 @@
 	<div class="container main">
 		<div class="row">
 			<div class="hidden-xs col-sm-3 content-block">
-				<div class="" id="accordion">
+				<div class="cbp-spmenu" id="accordion">
 					<div class="">
 						<div class="">
 							<h5>
@@ -28,12 +28,10 @@
 						</div>
 						<div id="collapseRecent" class="collapse in">
 							<div class="scroll_list_150 nice_list">
-								<ul>
-									<c:forEach items="${pageContext.request.userPrincipal.principal.recentItems }" var="recentItem">
-					           			<c:url value="${recentItem.url }" var="recentItemUrl"></c:url>
-					               		<li><a href="${recentItemUrl }">${recentItem.title }</a></li>
-					                </c:forEach>
-								</ul>
+								<c:forEach items="${recentItems }" var="recentItem">
+				           			<c:url value="${recentItem.url }" var="recentItemUrl"></c:url>
+				               		<a href="${recentItemUrl }">${recentItem.title }</a>
+				                </c:forEach>
 							</div>
 						</div>
 					</div>

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.digitalrpg.domain.dao.CharacterDao;
@@ -33,6 +34,7 @@ public class CharacterService {
     private CharacterDao characterDao;
 
     @Autowired
+    @Qualifier("userService")
     private UserService userService;
 
     @Autowired
@@ -41,31 +43,29 @@ public class CharacterService {
     @Autowired
     private MailService mailService;
 
-    public static final Function<SystemCharacter, CharacterVO> characterToVOfunction =
-            new Function<SystemCharacter, CharacterVO>() {
+    public static final Function<SystemCharacter, CharacterVO> characterToVOfunction = new Function<SystemCharacter, CharacterVO>() {
 
-                public CharacterVO apply(SystemCharacter character) {
-                    CharacterVO characterVO = null;
-                    if (character instanceof PathfinderCharacter) {
-                        characterVO = createPathfinderCharacterVO((PathfinderCharacter) character);
-                    }
-                    if (characterVO != null) {
-                        characterVO.setName(character.getCharacter().getName());
-                        characterVO.setDescription(character.getCharacter().getBio());
-                        characterVO.setPictureUrl(character.getCharacter().getPictureUrl());
-                        characterVO.setId(character.getId());
-                        characterVO.setCampaign(CampaignService.campaignToVOFunction
-                                .apply(character.getCampaign()));
-                        characterVO.setOwner(character.getCharacter().getOwner());
-                    }
-                    return characterVO;
-                }
+        public CharacterVO apply(SystemCharacter character) {
+            CharacterVO characterVO = null;
+            if (character instanceof PathfinderCharacter) {
+                characterVO = createPathfinderCharacterVO((PathfinderCharacter) character);
+            }
+            if (characterVO != null) {
+                characterVO.setName(character.getCharacter().getName());
+                characterVO.setDescription(character.getCharacter().getBio());
+                characterVO.setPictureUrl(character.getCharacter().getPictureUrl());
+                characterVO.setId(character.getId());
+                characterVO.setCampaign(CampaignService.campaignToVOFunction.apply(character.getCampaign()));
+                characterVO.setOwner(character.getCharacter().getOwner());
+            }
+            return characterVO;
+        }
 
-                private CharacterVO createPathfinderCharacterVO(PathfinderCharacter character) {
-                    PathfinderCharacterVO vo = new PathfinderCharacterVO();
-                    return vo;
-                }
-            };
+        private CharacterVO createPathfinderCharacterVO(PathfinderCharacter character) {
+            PathfinderCharacterVO vo = new PathfinderCharacterVO();
+            return vo;
+        }
+    };
 
     public SystemCharacter get(Long playerId) {
         return characterDao.get(playerId);
@@ -86,20 +86,17 @@ public class CharacterService {
         return null;
     }
 
-    private void sendMail(User from, String email, String contextPath, SystemCharacter character,
-            MessageVO message) {
+    private void sendMail(User from, String email, String contextPath, SystemCharacter character, MessageVO message) {
         Map<String, Object> model = new HashMap<String, Object>();
         model.put("email", email);
         model.put("username", from.getName());
         try {
             model.put("contextPath", new URI(contextPath));
-        } catch (URISyntaxException ignore) {
-        }
+        } catch (URISyntaxException ignore) {}
         model.put("character", character);
         model.put("message", message);
 
-        mailService.sendMail("Join Campaign on DigitalRPG", from, ImmutableList.of(email), model,
-                MailType.CLAIM_CHARACTER);
+        mailService.sendMail("Join Campaign on DigitalRPG", from, ImmutableList.of(email), model, MailType.CLAIM_CHARACTER);
     }
 
     public void transfer(SystemCharacter systemCharacter, User user) {
@@ -107,9 +104,8 @@ public class CharacterService {
     }
 
     @Transactional
-    public SystemCharacter createPlayerCharacter(Campaign campaign, String name, String pictureUrl,
-            String bio, Boolean isBioPublic, String webBioUrl, Boolean isWebBioPublic,
-            String notes, List<String> links, CharacterType characterType,
+    public SystemCharacter createPlayerCharacter(Campaign campaign, String name, String pictureUrl, String bio, Boolean isBioPublic,
+            String webBioUrl, Boolean isWebBioPublic, String notes, List<String> links, CharacterType characterType,
             SystemProperties properties, User user) {
         Character playerCharacter = characterDao.createPlayerCharacter(name, pictureUrl, bio, user);
         playerCharacter.setCharacterType(characterType);
@@ -120,17 +116,14 @@ public class CharacterService {
         playerCharacter.setWebBioUrl(webBioUrl);
         SystemCharacter character = null;
         if (SystemType.Pathfinder == campaign.getSystem()) {
-            character =
-                    characterDao.createPathfinderCharacter(playerCharacter,
-                            (PathfinderCharacterProperties) properties, campaign);
+            character = characterDao.createPathfinderCharacter(playerCharacter, (PathfinderCharacterProperties) properties, campaign);
         }
         return character;
     }
 
     @Transactional
-    public SystemCharacter editPlayerCharacter(Long id, String name, String pictureUrl, String bio,
-            Boolean isBioPublic, String webBioUrl, Boolean isWebBioPublic, String notes,
-            List<String> links, CharacterType characterType, SystemProperties systemProperties,
+    public SystemCharacter editPlayerCharacter(Long id, String name, String pictureUrl, String bio, Boolean isBioPublic, String webBioUrl,
+            Boolean isWebBioPublic, String notes, List<String> links, CharacterType characterType, SystemProperties systemProperties,
             User unwrap) {
         SystemCharacter systemCharacter = characterDao.get(id);
         systemCharacter.getCharacter().setName(name);
@@ -159,17 +152,13 @@ public class CharacterService {
     }
 
     @Transactional
-    public SystemCharacter createNonPlayerCharacter(Campaign campaign, String name,
-            String pictureUrl, String description, Boolean isPublic,
-            SystemProperties systemProperties, User user) {
-        Character nonPlayerCharacter =
-                characterDao
-                        .createNonPlayerCharacter(name, pictureUrl, description, isPublic, user);
+    public SystemCharacter createNonPlayerCharacter(Campaign campaign, String name, String pictureUrl, String description,
+            Boolean isPublic, SystemProperties systemProperties, User user) {
+        Character nonPlayerCharacter = characterDao.createNonPlayerCharacter(name, pictureUrl, description, isPublic, user);
         SystemCharacter character = null;
         if (SystemType.Pathfinder == campaign.getSystem()) {
             character =
-                    characterDao.createPathfinderCharacter(nonPlayerCharacter,
-                            (PathfinderCharacterProperties) systemProperties, campaign);
+                    characterDao.createPathfinderCharacter(nonPlayerCharacter, (PathfinderCharacterProperties) systemProperties, campaign);
         }
         return character;
     }
