@@ -28,36 +28,34 @@ import com.digitalrpg.web.service.MessageService;
 @RequestMapping("/messages")
 public class MessageController {
 
-	SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
-	
-	@Autowired
-	private MessageService messageService;
+    SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
 
-	@RequestMapping(method = RequestMethod.GET)
-	public ResponseEntity<Collection<MessageVO>> getUserMessages(
-			Principal principal, @RequestHeader(required = false, value = "If-Modified-Since") String ifModifiedSince) throws ParseException {
-		if (principal == null)
-			return new ResponseEntity<Collection<MessageVO>>(HttpStatus.OK);
-		User user = (User) ((AbstractAuthenticationToken) principal)
-				.getPrincipal();
+    @Autowired
+    private MessageService messageService;
 
-		Collection<MessageVO> userMessages = messageService
-				.getUserMessages(user, StringUtils.isNotEmpty(ifModifiedSince) ? format.parse(ifModifiedSince) : null);
-		MultiValueMap<String, String> headers = new HttpHeaders();
-		headers.add("Last-Modified", format.format(new Date()));
-		if(userMessages != null) {
-			return new ResponseEntity<Collection<MessageVO>>(userMessages, headers,
-				HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>(headers, HttpStatus.NOT_MODIFIED);
-		}
+    @RequestMapping(method = RequestMethod.GET)
+    public ResponseEntity<Collection<MessageVO>> getUserMessages(Principal principal, @RequestHeader(required = false,
+            value = "If-Modified-Since") String ifModifiedSince) throws ParseException {
+        if (principal == null)
+            return new ResponseEntity<Collection<MessageVO>>(HttpStatus.OK);
+        User user = (User) ((AbstractAuthenticationToken) principal).getPrincipal();
 
-	}
+        Collection<MessageVO> userMessages =
+                messageService.getUserMessages(user, StringUtils.isNotEmpty(ifModifiedSince) ? format.parse(ifModifiedSince) : null);
+        MultiValueMap<String, String> headers = new HttpHeaders();
+        headers.add("Last-Modified", format.format(new Date()));
+        if (userMessages != null) {
+            return new ResponseEntity<Collection<MessageVO>>(userMessages, headers, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(headers, HttpStatus.NOT_MODIFIED);
+        }
 
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	@ResponseBody
-	public void deleteMessage(@PathVariable Long id) {
-		messageService.deleteMessage(id);
-	}
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @ResponseBody
+    public void deleteMessage(@PathVariable Long id) {
+        messageService.deleteMessage(id);
+    }
 
 }

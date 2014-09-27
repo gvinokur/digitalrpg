@@ -7,7 +7,6 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -27,18 +26,17 @@ import com.digitalrpg.domain.model.Combat;
 import com.digitalrpg.domain.model.User;
 import com.digitalrpg.domain.model.characters.Character.CharacterType;
 import com.digitalrpg.domain.model.characters.SystemCharacter;
-import com.digitalrpg.web.controller.model.CreateCampaignVO;
+import com.digitalrpg.domain.model.messages.InviteToClaimCharacterMessage;
+import com.digitalrpg.domain.model.messages.Message;
 import com.digitalrpg.web.controller.model.CreateCharacterVO;
 import com.digitalrpg.web.controller.model.CreatePathfinderCharacterVO;
 import com.digitalrpg.web.controller.model.InviteClaimCharacterMessageVO;
-import com.digitalrpg.web.controller.model.MessageVO;
 import com.digitalrpg.web.service.CampaignService;
 import com.digitalrpg.web.service.CharacterService;
 import com.digitalrpg.web.service.CombatService;
 import com.digitalrpg.web.service.MessageService;
 import com.digitalrpg.web.service.UserService;
 import com.digitalrpg.web.service.UserWrapper;
-import com.google.common.collect.ImmutableList;
 
 @Controller
 @RequestMapping("/characters")
@@ -201,9 +199,9 @@ public class CharacterController {
         modelMap.put("character", systemCharacter);
         modelMap.put("show_content", "view_character");
         if (messageId != null) {
-            MessageVO message = messageService.getMessage(messageId);
-            if (message instanceof InviteClaimCharacterMessageVO && message.getTo().equals(user)) {
-                modelMap.put("message", message);
+            Message message = messageService.getMessage(messageId);
+            if (message instanceof InviteToClaimCharacterMessage && message.getTo().equals(user)) {
+                modelMap.put("message", MessageService.messageToVOFunction.apply(message));
             }
         }
         return new ModelAndView("/characters", modelMap);

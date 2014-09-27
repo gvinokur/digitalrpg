@@ -672,17 +672,28 @@
 				item.attr("src", "/img/no_pic_available.jpg");
 			}
 		} else if (attributeType == 'Stats') {
-			for(key in data[attributeName]) {
-				var value = data[attributeName][key]
-				var statWidget = item.find(".stat-widget[stat='" + key + "']")
-				if(statWidget.size() == 0) {
-					var groupDivEL = $("<div/>").addClass("row").addClass("pull-left").css("width","120px").appendTo(item);
-					$("<span/>").addClass("control-label").addClass("col-xs-6").append(key).appendTo(groupDivEL)
-					var statDivEL = $("<span/>").addClass("col-xs-6").appendTo(groupDivEL)
-					$("<strong/>").addClass("stat-widget").attr("stat",key).append(value).appendTo(statDivEL)
-					
+			var statWidgetContainer = item.find(".stat-widget-container");
+			var createWidgets = false;
+			if(statWidgetContainer.size() == 0) {
+				statWidgetContainer = $("<div/>").addClass("stat-widget-container").appendTo(item);
+				createWidgets = true;
+			}
+			for(var i = 0; i < data[attributeName].length; i++) {
+				var statGroup = data[attributeName][i];
+				var groupDivEL;
+				if(createWidgets) {
+					groupDivEL = $("<div>").addClass("row").addClass("pull-left").css("width","120px").appendTo(statWidgetContainer)
 				}
-				statWidget.empty().append(value);
+				for(key in statGroup) {
+					var value = statGroup[key]
+					var statWidget = item.find(".stat-widget[stat='" + key + "']")
+					if(statWidget.size() == 0) {
+						$("<span/>").addClass("control-label").addClass("col-xs-6").append(key).appendTo(groupDivEL)
+						var statDivEL = $("<span/>").addClass("col-xs-6").appendTo(groupDivEL)
+						$("<strong/>").addClass("stat-widget").attr("stat",key).append(value).appendTo(statDivEL)
+					}
+					statWidget.empty().append(value);
+				}
 			}
 		} else if (attributeType == "Items") {
 			var items = data[attributeName];

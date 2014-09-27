@@ -198,6 +198,11 @@
 	    												<a href="#" data-toggle="modal" data-target="#confirm-delete"><i class="fa fa-trash-o fa-fw"><!--  --></i>&#160; Delete Combat</a>
 	    											</li>
 												</c:if>
+												<c:if test="${combat.state == 'FINISHED'}">
+													<li>
+	    												<a href="#" data-toggle="modal" data-target="#view-logs"><i class="fa fa-comments fa-fw"><!--  --></i>&#160; View Logs</a>
+	    											</li>
+												</c:if>
 											</ul>
 										</div>
 									</c:if>
@@ -269,6 +274,33 @@
 	        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 	        <c:url var="url" value="/combats/${combat.id }/delete"></c:url>
 	        <a href="${url }" class="btn btn-primary">Delete</a>
+	      </div>
+	    </div><!-- /.modal-content -->
+	  </div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+	
+	<div class="modal fade" id="view-logs">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&#215;</button>
+	        <h4 class="modal-title">Combat Log</h4>
+	      </div>
+	      <div class="modal-body vertical-scroll-max-350">
+	        <!--  -->
+	        <c:forEach items="${combat.combatLogs }" var="log">
+	        	<div class="panel panel-default">
+	        		<div class="panel-heading">
+	        			<h3 class="panel-title">${log.combatContextDescription }</h3>
+	        		</div>
+	        		<div class="panel-body">
+	        			${log.log }
+	        		</div>
+	        	</div>
+	        </c:forEach>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
 	      </div>
 	    </div><!-- /.modal-content -->
 	  </div><!-- /.modal-dialog -->

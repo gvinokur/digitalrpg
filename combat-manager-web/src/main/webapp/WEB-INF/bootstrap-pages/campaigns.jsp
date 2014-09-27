@@ -576,10 +576,33 @@
 																	</c:if>
 																</c:forEach>
 															</ul>
-
-
 														</div>
-
+													</div>
+												</div>
+												<div class="col-xs-6">
+													<div class="">
+														<h5>
+															<a data-toggle="collapse" data-parent="#rightBar"
+																href="#collapseCombats"> Finished Combats <span
+																class="pull-right glyphicon glyphicon-chevron-up"></span>
+															</a>
+														</h5>
+													</div>
+													<div id="collapseCombats" class="collapse in">
+														<div class="scroll_list_150 nice_list">
+															<ul>
+																<c:forEach var="combat" items="${campaign.combats }">
+																	<c:if
+																		test="${combat.state == 'FINISHED'}">
+																		<c:url var="url" value="/combats/${combat.id }/show"></c:url>
+																		<li><a href="${url }"> 
+																				<p class="overflown tooltipable"
+																					title="${combat.name}">${combat.name}</p>
+																		</a></li>
+																	</c:if>
+																</c:forEach>
+															</ul>
+														</div>
 													</div>
 												</div>
 											</div>

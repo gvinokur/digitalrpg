@@ -30,6 +30,7 @@ import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.SystemType;
 import com.digitalrpg.domain.model.User;
 import com.digitalrpg.domain.model.characters.SystemCharacter;
+import com.digitalrpg.domain.model.messages.Message;
 import com.digitalrpg.web.controller.model.CampaignVO;
 import com.digitalrpg.web.controller.model.CreateCampaignVO;
 import com.digitalrpg.web.controller.model.MessageVO;
@@ -176,7 +177,7 @@ public class CampaignController {
     @RequestMapping(value = "/{id}/join", method = RequestMethod.GET)
     public String showJoinCampaign(@PathVariable Long id, @RequestParam Long messageId, @AuthenticationPrincipal UserWrapper user,
             RedirectAttributes attributes) {
-        MessageVO message = messageService.getMessage(messageId);
+        Message message = messageService.getMessage(messageId);
         Campaign campaign = campaignService.get(id);
         if (message.getTo() == null || !message.getTo().equals(user.unwrap())) {
             attributes
@@ -198,7 +199,7 @@ public class CampaignController {
     @RequestMapping(value = "/{id}/accept/{requestId}")
     public String acceptRequest(@PathVariable Long id, @PathVariable Long requestId, @AuthenticationPrincipal UserWrapper user,
             RedirectAttributes attributes) {
-        MessageVO message = messageService.getMessage(requestId);
+        Message message = messageService.getMessage(requestId);
         Campaign campaign = campaignService.get(id);
         if (!message.getTo().equals(user.unwrap()) || !campaign.getGameMaster().equals(user.unwrap())) {
             attributes.addFlashAttribute("error_message", "Only the Game master can accept a request.");

@@ -10,7 +10,6 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -26,10 +25,10 @@ import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.User;
 import com.digitalrpg.domain.model.characters.SystemCharacter;
 import com.digitalrpg.domain.model.characters.pathfinder.PathfinderCharacter;
+import com.digitalrpg.domain.model.messages.InviteToClaimCharacterMessage;
+import com.digitalrpg.domain.model.messages.Message;
 import com.digitalrpg.web.controller.model.CharacterVO;
 import com.digitalrpg.web.controller.model.CreateCharacterVO;
-import com.digitalrpg.web.controller.model.InviteClaimCharacterMessageVO;
-import com.digitalrpg.web.controller.model.MessageVO;
 import com.digitalrpg.web.controller.model.PathfinderCharacterVO;
 import com.digitalrpg.web.service.CampaignService;
 import com.digitalrpg.web.service.CharacterService;
@@ -49,30 +48,28 @@ public class MonsterController {
     @Autowired
     private MessageService messageService;
 
-    public static final Function<SystemCharacter, CharacterVO> characterToVOfunction =
-            new Function<SystemCharacter, CharacterVO>() {
+    public static final Function<SystemCharacter, CharacterVO> characterToVOfunction = new Function<SystemCharacter, CharacterVO>() {
 
-                public CharacterVO apply(SystemCharacter character) {
-                    CharacterVO characterVO = null;
-                    if (character instanceof PathfinderCharacter) {
-                        characterVO = createPathfinderCharacterVO((PathfinderCharacter) character);
-                    }
-                    if (characterVO != null) {
-                        characterVO.setName(character.getCharacter().getName());
-                        characterVO.setDescription(character.getCharacter().getBio());
-                        characterVO.setPictureUrl(character.getCharacter().getPictureUrl());
-                        characterVO.setId(character.getId());
-                        characterVO.setCampaign(CampaignService.campaignToVOFunction
-                                .apply(character.getCampaign()));
-                    }
-                    return characterVO;
-                }
+        public CharacterVO apply(SystemCharacter character) {
+            CharacterVO characterVO = null;
+            if (character instanceof PathfinderCharacter) {
+                characterVO = createPathfinderCharacterVO((PathfinderCharacter) character);
+            }
+            if (characterVO != null) {
+                characterVO.setName(character.getCharacter().getName());
+                characterVO.setDescription(character.getCharacter().getBio());
+                characterVO.setPictureUrl(character.getCharacter().getPictureUrl());
+                characterVO.setId(character.getId());
+                characterVO.setCampaign(CampaignService.campaignToVOFunction.apply(character.getCampaign()));
+            }
+            return characterVO;
+        }
 
-                private CharacterVO createPathfinderCharacterVO(PathfinderCharacter character) {
-                    PathfinderCharacterVO vo = new PathfinderCharacterVO();
-                    return vo;
-                }
-            };
+        private CharacterVO createPathfinderCharacterVO(PathfinderCharacter character) {
+            PathfinderCharacterVO vo = new PathfinderCharacterVO();
+            return vo;
+        }
+    };
 
     @ModelAttribute("characters")
     public Collection<SystemCharacter> getUserCharacters(Principal principal) {
@@ -88,31 +85,26 @@ public class MonsterController {
     @RequestMapping(value = "/create")
     public ModelAndView showCreatePlayerCharacterPage(@RequestParam Long campaignId) {
         Map<String, Object> modelMap = new HashMap<String, Object>();
-        modelMap.put("campaign",
-                CampaignService.campaignToVOFunction.apply(campaignService.get(campaignId)));
+        modelMap.put("campaign", CampaignService.campaignToVOFunction.apply(campaignService.get(campaignId)));
         modelMap.put("show_content", "create_character");
         return new ModelAndView("/monsters", modelMap);
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ModelAndView createPlayerCharacter(
-            @Valid @ModelAttribute("createCharacter") CreateCharacterVO character,
-            BindingResult result, Principal principal, RedirectAttributes attributes) {
+    public ModelAndView createPlayerCharacter(@Valid @ModelAttribute("createCharacter") CreateCharacterVO character, BindingResult result,
+            Principal principal, RedirectAttributes attributes) {
         if (result.hasErrors()) {
             Map<String, Object> modelMap = new HashMap<String, Object>();
-            modelMap.put("campaign", CampaignService.campaignToVOFunction.apply(campaignService
-                    .get(character.getCampaignId())));
+            modelMap.put("campaign", CampaignService.campaignToVOFunction.apply(campaignService.get(character.getCampaignId())));
             modelMap.put("show_content", "create_character");
             modelMap.put("createCharacter", character);
             return new ModelAndView("monsters", modelMap);
         }
         User user = (User) ((AbstractAuthenticationToken) principal).getPrincipal();
         Campaign campaign = campaignService.get(character.getCampaignId());
-        characterService.createNonPlayerCharacter(campaign, character.getName(),
-                character.getPictureUrl(), character.getBio(), true,
+        characterService.createNonPlayerCharacter(campaign, character.getName(), character.getPictureUrl(), character.getBio(), true,
                 character.getSystemProperties(), user);
-        attributes.addFlashAttribute("form_message", "Character " + character.getName()
-                + " created!");
+        attributes.addFlashAttribute("form_message", "Character " + character.getName() + " created!");
         return new ModelAndView("redirect:/campaigns/" + campaign.getId() + "/show");
     }
 
@@ -127,34 +119,28 @@ public class MonsterController {
 
     @RequestMapping(value = "/{id}/invite/{email:.*}")
     @ResponseBody
-    public Boolean invite(@PathVariable Long id, @PathVariable String email, Principal principal,
-            HttpServletRequest request) {
+    public Boolean invite(@PathVariable Long id, @PathVariable String email, Principal principal, HttpServletRequest request) {
         User user = (User) ((AbstractAuthenticationToken) principal).getPrincipal();
         String contextPath =
-                "http://"
-                        + request.getServerName()
-                        + (request.getContextPath() != null && !request.getContextPath().isEmpty() ? "/"
-                                + request.getContextPath()
-                                : "");
+                "http://" + request.getServerName()
+                        + (request.getContextPath() != null && !request.getContextPath().isEmpty() ? "/" + request.getContextPath() : "");
 
         return characterService.invite(id, user, email, contextPath);
     }
 
     @RequestMapping(value = "/{id}/claim/{messageId}", method = RequestMethod.GET)
     @Transactional(rollbackFor = Exception.class)
-    public String claimCharacter(@PathVariable Long id, @PathVariable Long messageId,
-            Principal principal, RedirectAttributes attributes) {
+    public String claimCharacter(@PathVariable Long id, @PathVariable Long messageId, Principal principal, RedirectAttributes attributes) {
         User user = (User) ((AbstractAuthenticationToken) principal).getPrincipal();
         SystemCharacter character = characterService.get(id);
-        MessageVO message = messageService.getMessage(messageId);
-        if (message instanceof InviteClaimCharacterMessageVO && message.getTo().equals(user)) {
+        Message message = messageService.getMessage(messageId);
+        if (message instanceof InviteToClaimCharacterMessage && message.getTo().equals(user)) {
             characterService.transfer(character, user);
             messageService.deleteMessage(messageId);
             attributes.addFlashAttribute("form_message", "You own this character now!");
         } else {
-            attributes
-                    .addFlashAttribute("form_error",
-                            "You cannot claim this character, either this is an invalid message or it was not sent to you.");
+            attributes.addFlashAttribute("form_error",
+                    "You cannot claim this character, either this is an invalid message or it was not sent to you.");
         }
 
         return "redirect:/player-characters/" + id + "/show";
@@ -162,17 +148,14 @@ public class MonsterController {
 
     @RequestMapping(value = "/{id}/take", method = RequestMethod.GET)
     @Transactional(rollbackFor = Exception.class)
-    public String takeCharacter(@PathVariable Long id, Principal principal,
-            RedirectAttributes attributes) {
+    public String takeCharacter(@PathVariable Long id, Principal principal, RedirectAttributes attributes) {
         User user = (User) ((AbstractAuthenticationToken) principal).getPrincipal();
         SystemCharacter character = characterService.get(id);
         if (character.getCampaign().getGameMaster().equals(user)) {
             characterService.transfer(character, user);
             attributes.addFlashAttribute("form_message", "You own this character now!");
         } else {
-            attributes
-                    .addFlashAttribute("form_error",
-                            "You cannot take this character, you must be the campaign game master to do that.");
+            attributes.addFlashAttribute("form_error", "You cannot take this character, you must be the campaign game master to do that.");
         }
 
         return "redirect:/player-characters/" + id + "/show";

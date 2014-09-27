@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableSet;
@@ -69,15 +70,21 @@ public class CombatService {
 
                     out.setName(in.getCharacter().getCharacter().getName());
 
-                    Map<String, Object> stats = new LinkedHashMap<>();
+                    List<Map<String, Object>> stats = new LinkedList<>();
                     PathfinderCharacter pathfinderCharacter = (PathfinderCharacter) in.getCharacter();
-                    stats.put("HP", pathfinderCharacter.getHp());
-                    stats.put("AC", pathfinderCharacter.getAc());
-                    stats.put("CMB", pathfinderCharacter.getCmb());
-                    stats.put("CMD", pathfinderCharacter.getCmd());
-                    stats.put("FORT", pathfinderCharacter.getFort());
-                    stats.put("REF", pathfinderCharacter.getRef());
-                    stats.put("WILL", pathfinderCharacter.getWill());
+                    Map<String, Object> statsGroup = new LinkedHashMap<>();
+                    statsGroup.put("HP", pathfinderCharacter.getHp());
+                    statsGroup.put("AC", pathfinderCharacter.getAc());
+                    stats.add(statsGroup);
+                    statsGroup = new LinkedHashMap<>();
+                    statsGroup.put("REF", pathfinderCharacter.getRef());
+                    statsGroup.put("FORT", pathfinderCharacter.getFort());
+                    statsGroup.put("WILL", pathfinderCharacter.getWill());
+                    stats.add(statsGroup);
+                    statsGroup = new LinkedHashMap<>();
+                    statsGroup.put("CMB", pathfinderCharacter.getCmb());
+                    statsGroup.put("CMD", pathfinderCharacter.getCmd());
+                    stats.add(statsGroup);
                     out.setStats(stats);
 
                     Map<String, Collection<Long>> currentItemsMap = new HashMap<String, Collection<Long>>();
@@ -348,6 +355,7 @@ public class CombatService {
         return this.getCombat(combat.getId());
     }
 
+    @Transactional
     public void deleteCombatant(Combat combat, Long characterId) {
 
         CombatCharacter combatCharacter = combatDao.getCombatCharacter(characterId);

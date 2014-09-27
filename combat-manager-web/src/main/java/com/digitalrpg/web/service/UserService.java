@@ -1,19 +1,32 @@
 package com.digitalrpg.web.service;
 
-import java.util.Date;
-import java.util.SortedSet;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.digitalrpg.domain.dao.UserDao;
-import com.digitalrpg.domain.model.RecentItem;
 import com.digitalrpg.domain.model.User;
+import com.digitalrpg.web.controller.model.UserVO;
+import com.google.common.base.Function;
 
 public class UserService implements UserDetailsService {
+
+    public static final Function<User, UserVO> userToVOFuction = new Function<User, UserVO>() {
+
+        @Override
+        public UserVO apply(User input) {
+            if (input == null) {
+                return null;
+            }
+            UserVO output = new UserVO();
+            output.setName(input.getName());
+            output.setId(input.getId());
+            output.setEmail(input.getEmail());
+            return output;
+        }
+
+    };
 
     @Autowired
     private UserDao userDao;

@@ -54,7 +54,7 @@ public abstract class Combat<ACTION_TYPE extends SystemAction> {
 
     private Date lastUpdated;
 
-    @OneToOne(fetch = FetchType.EAGER, targetEntity = CombatCharacter.class)
+    @OneToOne(fetch = FetchType.EAGER, targetEntity = CombatCharacter.class, cascade = CascadeType.ALL)
     @JoinColumn(name = "current_character_id", referencedColumnName = "id")
     public CombatCharacter<ACTION_TYPE> getCurrentCharacter() {
         return currentCharacter;
