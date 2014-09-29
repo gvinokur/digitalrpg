@@ -669,6 +669,7 @@
 										var newResult = $(".search-result[campaign-id=template]").clone().removeClass("hidden");
 										newResult.attr("campaign-id", result[i].id);
 										newResult.find(".panel-title").append(result[i].name);
+										newResult.find(".panel-gm").append(result[i].game_master.name);
 										var panelBody = newResult.find(".panel-body")
 										var url = "${showCampaignUrl}".replace("[id]",result[i].id)
 										$("<a/>").attr("href", url).attr('title','Open Campaign').appendTo(panelBody).addClass("tooltipable").addClass("close").addClass("wide").addClass("glyphicon")
@@ -702,7 +703,7 @@
 	<div campaign-id="template"
 		class="hidden search-result panel panel-default">
 		<div class="panel-heading">
-			<h3 class="panel-title"></h3>
+			<h3 class="panel-title"><!--  --></h3> <small> by <span class="panel-gm"><!--  --></span></small>
 		</div>
 		<div class="panel-body">
 			<!--  -->
