@@ -48,14 +48,31 @@ li.combat-character {
 	white-space: nowrap;
 	overflow: hidden;
 	color: #FF9900;
+	
 }
 
 
-.combat-character .character-name {
+.combat-character .character-name,
+.combat-character .action-row {
 	text-overflow: ellipsis;
 	width: 80%;
 	white-space: nowrap;
 	overflow: hidden;
+}
+
+.combat-character.md .character-name,
+.combat-character.md .action-row {
+	width: 75%;
+}
+
+.combat-character.sm .character-name,
+.combat-character.sm .action-row {
+	width: 70%;
+}
+
+.combat-character .hiddenSelect {
+	display: inline;
+	margin-right: 10px;
 }
 
 .combat-character div.hp {

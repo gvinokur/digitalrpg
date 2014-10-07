@@ -85,6 +85,14 @@ view the page via file:// --&gt; &lt;!--[if lt IE 9]&gt;
 
 		<!-- Make user available for all pages if exists -->
 		<sec:authentication property="principal" var="user" />
+		<sec:authorize access="isAuthenticated()" var="isAuthenticated">
+			<c:url var="logoutUrl" value="/logout" />
+			<form:form id="logout" action="${logoutUrl}" method="post">
+				<!--  -->
+				<input type="hidden" name="${_csrf.parameterName}"
+					value="${_csrf.token}" />
+			</form:form>
+		</sec:authorize>
 
 		<nav class="cbp-spmenu hideable-menu cbp-spmenu-vertical cbp-spmenu-left"
 			id="cbp-spmenu-s1">
@@ -103,6 +111,20 @@ view the page via file:// --&gt; &lt;!--[if lt IE 9]&gt;
 				<a href="${combatsUrl }" class="${fn:startsWith(pageContext.request.servletPath,combatsUrl)?'active':' '}">Combats</a>
 			</c:if>
 			<decorator:getProperty property="page.local_submenu"/>
+			<c:if test="${isAuthenticated }">
+				<a class="logout-link">Logout</a>
+			</c:if>
+			<c:if test="${!isAuthenticated }">
+				<c:url var="loginBarUrl" value="/login" />
+				<c:url var="registerBarUrl" value="/register" />
+				<li>
+					<p class="navbar-text">
+						<strong>Welcome Hero!</strong>
+					</p>
+				</li>
+				<li><a href="${loginBarUrl }">Login</a></li>
+				<li><a href="${registerBarUrl }">Register</a></li>
+			</c:if>
 		</nav>
 
 		<div class="main-container">
@@ -171,8 +193,7 @@ view the page via file:// --&gt; &lt;!--[if lt IE 9]&gt;
 							</c:if>
 						</ul>
 						<ul class="nav navbar-nav navbar-right">
-							<sec:authorize access="isAuthenticated()" var="isAuthenticated">
-								<c:url var="logoutUrl" value="/logout" />
+							<c:if test="${isAuthenticated }">
 								<li class="hidden-sm">
 									<p class="navbar-text">
 										Welcome <strong>${user.username }</strong>
@@ -180,13 +201,8 @@ view the page via file:// --&gt; &lt;!--[if lt IE 9]&gt;
 								</li>
 								<li><c:set var="url" value="/profile" /> <a href="${url }">Profile</a>
 								</li>
-								<li><a id="logout-link">Logout</a></li>
-								<form:form id="logout" action="${logoutUrl}" method="post">
-									<!--  -->
-									<input type="hidden" name="${_csrf.parameterName}"
-										value="${_csrf.token}" />
-								</form:form>
-							</sec:authorize>
+								<li><a class="logout-link">Logout</a></li>
+							</c:if>
 							<c:if test="${!isAuthenticated }">
 								<c:url var="loginBarUrl" value="/login" />
 								<c:url var="registerBarUrl" value="/register" />
@@ -217,7 +233,7 @@ view the page via file:// --&gt; &lt;!--[if lt IE 9]&gt;
 
 		<script type="text/javascript">
 		$(document).ready(function(){
-			$("#logout-link").click(function(){
+			$(".logout-link").click(function(){
 				$("#logout").submit();
 			})
 			

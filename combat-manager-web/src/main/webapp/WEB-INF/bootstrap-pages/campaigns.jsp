@@ -316,7 +316,9 @@
 
 									</ul>
 								</div>
-								<h3 class="overflown tooltipable">${campaign.name }</h3>
+								<h3 class="overflown tooltipable">
+									${campaign.name }
+								</h3>
 								</p>
 								<c:if test="${campaign.activeCombat !=null }">
 									<form class="form-inline">

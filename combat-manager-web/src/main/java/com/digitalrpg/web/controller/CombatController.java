@@ -301,6 +301,14 @@ public class CombatController {
         return "redirect:/characters/create?campaignId=" + combat.getCampaign().getId() + "&combatId=" + combat.getId();
     }
 
+    @RequestMapping(value = "{id}/character/{characterId}/edit", method = RequestMethod.GET)
+    public String editCharacter(@PathVariable Long id, @PathVariable Long characterId) {
+        Combat<?> combat = combatService.getCombat(id);
+        Long systemCharacterId = combat.getCharacter(characterId).getCharacter().getId();
+        return "redirect:/characters/" + systemCharacterId + "/edit?campaignId=" + combat.getCampaign().getId() + "&combatId="
+                + combat.getId();
+    }
+
     @RequestMapping(value = "{id}/characters/remaining", method = RequestMethod.GET)
     @ResponseBody
     public Set<SystemCharacter> getRemainingCharacters(@PathVariable Long id) {

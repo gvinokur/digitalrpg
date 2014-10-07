@@ -96,14 +96,15 @@
 									            			<li class="dd-item dd3-item" data-id="${character.id}">
 									            				<div class="dd-handle dd3-handle">Drag</div>
 									                    		<div class="dd3-content">
-									                    			<span class="overflown tooltipable">${character.character.name }
-									                    			</span>
+									                    			<p class="overflown tooltipable">
 									                    			<c:if test="${character.character.characterType == 'NPC' }">
 									                    				<!-- GM Char, can be hidden -->
 									                    				<span class="pull-right">
 									                    					Hidden <input type="checkbox" name="extraInfo[${character.id }].hidden"/>
 									                    				</span>
 									                    			</c:if>
+									                    			${character.character.name }
+									                    			</p>
 									                    		</div>
 									                		</li>
 									            		</c:forEach>
@@ -127,14 +128,16 @@
 									            			<li class="dd-item dd3-item" data-id="${character.character.id}">
 									            				<div class="dd-handle dd3-handle">Drag</div>
 									                    		<div class="dd3-content">
-									                    			<span class="overflown tooltipable">${character.character.character.name }
-									                    			</span>
-									                    			<c:if test="${character.character.character.owner.name == user.name }">
-									                    				<!-- GM Char, can be hidden -->
-									                    				<span class="pull-right">
-									                    					Hidden <input type="checkbox" name="extraInfo[${character.character.id }].hidden"/>
-									                    				</span>
-									                    			</c:if>
+									                    			
+									                    			<p class="overflown tooltipable">
+										                    			<c:if test="${character.character.character.owner.name == user.name }">
+										                    				<!-- GM Char, can be hidden -->
+										                    				<span class="pull-right">
+										                    					Hidden <input type="checkbox" name="extraInfo[${character.character.id }].hidden"/>
+										                    				</span>
+										                    			</c:if>
+										                    			${character.character.character.name }
+									                    			</p>
 									                    		</div>
 									                		</li>
 									            		</c:forEach>

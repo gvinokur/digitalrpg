@@ -180,4 +180,14 @@ public abstract class Combat<ACTION_TYPE extends SystemAction> {
         this.lastUpdated = lastUpdated;
     }
 
+    @Transient
+    public CombatCharacter<ACTION_TYPE> getCharacter(Long characterId) {
+        for (CombatCharacter<ACTION_TYPE> combatCharacter : combatCharacters) {
+            if (characterId.equals(combatCharacter.getId())) {
+                return combatCharacter;
+            }
+        }
+        return currentCharacter;
+    }
+
 }

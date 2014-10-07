@@ -255,7 +255,7 @@
 								<div class="form-group">
 									<label class="form-text" for="notes">Other Resources</label>
 									<c:forEach var="link" items="${character.character.links }">
-										<p class="form-control-static">
+										<p class="form-control-static overflown">
 											<a href="${link }" target="_new">${link }</a>
 										</p>
 									</c:forEach>

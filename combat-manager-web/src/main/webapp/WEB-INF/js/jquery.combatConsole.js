@@ -19,7 +19,9 @@
 	
 	var widgets = {
 		'Pathfinder' : {
-			'lg' : '<li character-id="{character-id}" class="combat-character"><div class="selected-char" style="width: 10px">&#160;</div><div class="character-name" ><span class="character-data" attribute-name="name"></span>&nbsp;-&nbsp;<span class="character-data" attribute-name="type"></span></div><div style="width:25px" attribute-name="hp" attribute-type="life" class="character-data hp editable" data-type="number" data-title="HP" data-pk="" data-url="/combats/character/currentHitPoints"></div><div class="hiddenSelect character-data editable" attribute-name="hidden" attribute-type="boolean" data-pk="" data-url="/combats/character/hidden">Hidden <input type="checkbox"/></div><div class="character-data conditions-and-effects" attribute-name="conditionsAndEffects" title=""></div>	</li>'
+			'lg' : '<li character-id="{character-id}" class="combat-character lg"><div class="selected-char" style="width: 10px">&#160;</div><div class="character-name" ><span class="character-data" attribute-name="name"></span>&nbsp;-&nbsp;<span class="character-data" attribute-name="type"></span></div><div style="width:25px" attribute-name="hp" attribute-type="life" class="character-data hp editable" data-type="number" data-title="HP" data-pk="" data-url="/combats/character/currentHitPoints"></div><div class="action-row"><div class="hiddenSelect character-data editable" attribute-name="hidden" attribute-type="boolean" data-pk="" data-url="/combats/character/hidden">Hidden <input type="checkbox"/></div><a class="character-data conditions-and-effects popover-target" data-placement="bottom" data-toggle="popover" attribute-type="conditions" attribute-name="conditionsAndEffects" title="Conditions and Magical Effects" data-content=""></a></div></li>',
+			'md' : '<li character-id="{character-id}" class="combat-character lg"><div class="selected-char" style="width: 10px">&#160;</div><div class="character-name" ><span class="character-data" attribute-name="name"></span>&nbsp;-&nbsp;<span class="character-data" attribute-name="type"></span></div><div style="width:25px" attribute-name="hp" attribute-type="life" class="character-data hp editable" data-type="number" data-title="HP" data-pk="" data-url="/combats/character/currentHitPoints"></div><div class="action-row"><div class="hiddenSelect character-data editable" attribute-name="hidden" attribute-type="boolean" data-pk="" data-url="/combats/character/hidden">Hidden <input type="checkbox"/></div><a class="character-data conditions-and-effects popover-target" data-placement="bottom" data-toggle="popover" attribute-type="conditions" attribute-name="conditionsAndEffects" title="Conditions and Magical Effects" data-content=""></a></div></li>',
+			'sm' : '<li character-id="{character-id}" class="combat-character lg"><div class="selected-char" style="width: 10px">&#160;</div><div class="character-name" ><span class="character-data" attribute-name="name"></span>&nbsp;-&nbsp;<span class="character-data" attribute-name="type"></span></div><div style="width:25px" attribute-name="hp" attribute-type="life" class="character-data hp editable" data-type="number" data-title="HP" data-pk="" data-url="/combats/character/currentHitPoints"></div><div class="action-row"><div class="hiddenSelect character-data editable" attribute-name="hidden" attribute-type="boolean" data-pk="" data-url="/combats/character/hidden">Hidden <input type="checkbox"/></div><a class="character-data conditions-and-effects popover-target" data-placement="bottom" data-toggle="popover" attribute-type="conditions" attribute-name="conditionsAndEffects" title="Conditions and Magical Effects" data-content=""></a></div></li>'
 		}
 	}
 	
@@ -38,14 +40,14 @@
 				]}
 			],
 			'sm' : [ { 'name' : 'Stats', 'modes' : ['gm','player'], 'html' : '' }],
-			'player' : [ { 'name' : 'All', 'modes': ['player'], 'html' : '<div class="row"><div class="col-xs-3"><img class="player-data img-rounded" style="max-height:1px;max-width:100%" attribute-name="image_url" attribute-type="Image" src="/img/no_pic_available.jpg"/></div><div class="col-xs-9 player-data" attribute-name="stats" attribute-type="Stats"></div></div>' }]
+			'player' : [ { 'name' : 'All', 'modes': ['player'], 'html' : '<div class="row"><div class="col-sm-4 hidden-xs"><img class="player-data img-rounded" style="max-height:1px;max-width:100%" attribute-name="image_url" attribute-type="Image" src="/img/no_pic_available.jpg"/></div><div class="col-xs-12 col-sm-8 player-data" attribute-name="stats" attribute-type="Stats"></div></div>' }]
 		}
 	}
 	
 	var controls = {
 		'Pathfinder': { 
-			'header' : '<div class="navbar navbar-inverse"><div><ul class="nav navbar-nav centered"><li><a href="#" class="previous" title="Previous"><i class="fa fa-step-backward"></i></a></li><li><a>Round <span class="combat-data" attribute-name="round">3</span></a></li><li><a>Turn <span class="combat-data" attribute-name="turn">5</span></a></li><li><a href="#contact" class="next" title="Next"><i class="fa fa-step-forward"></i></a></li></ul></div></div>',
-			'footer' : '<div class="navbar navbar-inverse"><div><ul class="nav navbar-nav centered"><li><a href="#" class="add-character" title="Add Character"><span><i class="fa fa-user"></i><i class="fa fa-plus small"></i></span></a></li><li><a href="#" class="delete-character" title="Delete Selected Character"><span><i class="fa fa-user"></i><i class="fa fa-minus small"></i></span></a></li><li><li><a href="#" class="add-log" title="Add Log Entry"><span><i class="fa fa-comment"></i></i></span></a></li><li><li><a href="#" class="view-log" title="View Log"><span><i class="fa fa-comments"></i></i></span></a></li><li><a href="#" class="end-combat" title="End Combat"><i class="fa fa-stop"></i></a></li></ul></div></div>'
+			'header' : '<div class="navbar navbar-inverse"><div><ul class="nav navbar-nav centered"><li><a href="#" class="previous" title="Previous"><i class="fa fa-step-backward"></i></a></li><li><a>Round <span class="combat-data" attribute-name="round"></span></a></li><li><a>Turn <span class="combat-data" attribute-name="turn"></span></a></li><li><a href="#contact" class="next" title="Next"><i class="fa fa-step-forward"></i></a></li></ul></div></div>',
+			'footer' : '<div class="navbar navbar-inverse"><div><ul class="nav navbar-nav centered"><li><a href="#" class="add-character" title="Add Character"><span><i class="fa fa-user"></i><i class="fa fa-plus small"></i></span></a></li><li><a href="#" class="edit-character" title="Edit Character"><span><i class="fa fa-user"></i><i class="fa fa-pencil small"></i></span></a></li><li><a href="#" class="delete-character" title="Delete Selected Character"><span><i class="fa fa-user"></i><i class="fa fa-minus small"></i></span></a></li><li><li><a href="#" class="add-log" title="Add Log Entry"><span><i class="fa fa-comment"></i></i></span></a></li><li><li><a href="#" class="view-log" title="View Log"><span><i class="fa fa-comments"></i></i></span></a></li><li><a href="#" class="end-combat" title="End Combat"><i class="fa fa-stop"></i></a></li></ul></div></div>'
 		}
 	}
 	
@@ -78,7 +80,7 @@
 		$.fn.editable.defaults.ajaxOptions = {
     		    beforeSend: beforePost
     		};
-    	$.fn.editable.defaults.showbuttons = false;
+    	$.fn.editable.defaults.showbuttons = true;
     	$.fn.editable.defaults.placement = "right";
     	
     	$(this).on('click',".editable[attribute-type='boolean'] input",function(){
@@ -117,6 +119,10 @@
     	
     	$(this).on('click','.delete-character', function() {
     		combatConsole.deleteCharacter();
+    	})
+    	
+    	$(this).on('click','.edit-character', function() {
+    		combatConsole.editCharacter();
     	})
     	
     	$(this).on('click','.add-log', function() {
@@ -217,6 +223,14 @@
 			});
 			confirmDialog.modal();	
 		}
+	}
+	
+	Console.prototype.editCharacter = function() {
+		var selectedCharacter = $(".combat-character.selected");
+		if(selectedCharacter.length == 1) {
+			window.location = this.buildUrl("combats/{id}/character/" + selectedCharacter.attr("character-id") + "/edit")	
+		}
+		
 	}
 	
 	Console.prototype.addCharacter = function() {
@@ -359,8 +373,8 @@
     		type: "GET",
     		success : function(charactersData) {
     			var containerEL = $("<div/>").addClass("row").appendTo(el)
-    			var tabsEL = $("<ul/>").addClass("col-xs-3").addClass("nav").addClass("nav-pills").addClass("nav-stacked").css("padding-left","15px").attr("role","tablist").appendTo(containerEL);
-    			var tabContentEL = $("<div/>").addClass("col-xs-9").addClass("tab-content").appendTo(containerEL)
+    			var tabsEL = $("<ul/>").addClass("col-xs-6 col-sm-4 col-md-3").addClass("nav").addClass("nav-pills").addClass("nav-stacked").css("padding-left","15px").attr("role","tablist").appendTo(containerEL);
+    			var tabContentEL = $("<div/>").addClass("col-xs-6 col-sm-8 col-md-9").addClass("tab-content").appendTo(containerEL)
     			var maxHeight = Math.max(40 * charactersData.length + 2 * (charactersData.length-1), 82);
     			for(var i = 0; i < charactersData.length; i++){
     				var characterData = charactersData[i];
@@ -516,12 +530,15 @@
 			gridsterDIV.addClass("gridster")
 			var gridsterUL = $("<ul/>").appendTo(gridsterDIV)
 			
-			gridsterWidth = (combatConsole.consoleWidth-40)/5;
+			var gridsterCols = this.size == 'lg' ? 5 : this.size =='md' ? 6 : 7;
+			this.widgetWidth = this.size == 'lg' ? 3 : this.size =='md' ? 4 : 5;
+			var gridsterMargin = this.size == 'lg' ? 40 : this.size =='md' ? 60 : 80;
+			var gridsterWidth = (combatConsole.consoleWidth-gridsterMargin)/gridsterCols;
 			combatConsole.gridster = gridsterUL.gridster({
 	            widget_margins: [5, 5],
 	            widget_base_dimensions: [gridsterWidth, 40],
-	            min_cols:5,
-	            max_cols:5,
+	            min_cols: gridsterCols,
+	            max_cols: gridsterCols,
 	            draggable : {
 	            	stop : function(e, ui, $widget){
 	            		var data = combatConsole.buildSortAndStatusData();
@@ -543,7 +560,7 @@
 			
 			if(this.settings.mode == 'player') {
 				this.gridster.disable();
-				$('.previous,.next,.end-combat,.delete-character,.add-character,.add-log,.view-log').css("display", "none");
+				$('.previous,.next,.end-combat,.edit-character,.delete-character,.add-character,.add-log,.view-log').css("display", "none");
 			}
 			
 		}
@@ -621,7 +638,8 @@
 				var widgetText = widgets[this.settings.systemType][this.size].replace("{character-id}", character.id);
 				var col = actions[this.settings.systemType].indexOf(character.currentAction) + 1;
 				if(this.useGridster) {
-					characterWidget = this.gridster.add_widget(widgetText, 3, 1, col, character.order + 1)	
+					characterWidget = this.gridster.add_widget(widgetText, this.widgetWidth, 1, col, character.order + 1)
+					characterWidget.find(".popover-target").popover({container: 'body'})
 				}
 			}
 			this.updateWidgetData(characterWidget, character);
@@ -715,6 +733,13 @@
 					$(this).addClass("hidden");
 				}
 			});
+		} else if (attributeType == "conditions") {
+			if(data[attributeName] != "") {
+				item.empty().append($("<i/>").addClass("fa").addClass("fa-exclamation-circle"))
+			} else {
+				item.empty();
+			}
+			item.attr('data-content', data[attributeName]);
 		} else { 
 			item.text(data[attributeName]);
 			
