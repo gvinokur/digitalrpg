@@ -30,34 +30,36 @@
 				<div class="alert alert-danger">${error_message }</div>
 			</c:if>
 			 <c:if test="${param.error != null}">
-			 	<div class="alert alert-danger alert-short">Invalid username or password</div>
+			 	<div class="alert alert-danger alert-short"><spring:message code="login.error.invalid"/></div>
 	 		</c:if>
 			
-			<h2 class="form-signin-heading">Please sign in</h2>
+			<h2 class="form-signin-heading"><spring:message code="login.title"/></h2>
 			<div class="form-group">
-				<label class="sr-only" for="username">Username</label> 
+				<spring:message code="login.username" var="usernameMsg"/>
+				<label class="sr-only" for="username">${usernameMsg }</label> 
 				<input
 					type="text" class="form-control" id="username" name="username"
-					placeholder="Enter username"/>
+					placeholder="${usernameMsg }"/>
 			</div>
 			<div class="form-group">
-				<label class="sr-only" for="password">Password</label> 
+			<spring:message code="login.password" var="passwordMsg"/>
+				<label class="sr-only" for="password">${passwordMsg }</label> 
 				<input
 					type="password" class="form-control" id="password" name="password"
-					placeholder="Password"/>
+					placeholder="${passwordMsg }"/>
 			</div>
 			<div class="checkbox">
 				<label> <input type="checkbox"
-					name="remember-me"/> Stay Logged In.  Do not use this option on Public computers
+					name="remember-me"/> <spring:message code="login.rememberme"/>
 				</label>
 			</div>
-			<button type="submit" class="btn btn-lg btn-primary btn-block">Sign in</button>
+			<button type="submit" class="btn btn-lg btn-primary btn-block"><spring:message code="main.login"/></button>
 
 			<c:url value="/reset-password" var="resetPasswordUrl" />
 			<c:url value="/register" var="registerUrl" />
 			<div class="row">
-				<div class="col-md-6"><a href="${resetPasswordUrl}" role="button" class="btn btn-default btn-block">Reset Password</a></div>
-				<div class="col-md-6"><a href="${registerUrl}" role="button" class="btn btn-default btn-block">Register</a></div>
+				<div class="col-md-6"><a href="${resetPasswordUrl}" role="button" class="btn btn-default btn-block"><spring:message code="login.resetpassword"/></a></div>
+				<div class="col-md-6"><a href="${registerUrl}" role="button" class="btn btn-default btn-block"><spring:message code="main.register"/></a></div>
 			</div>
 		</form:form>
 	</div>

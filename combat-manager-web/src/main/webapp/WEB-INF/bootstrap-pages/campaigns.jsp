@@ -343,32 +343,7 @@
 											${campaign.description }</div>
 										<div id="campaign_members" class="tab-pane">
 											<div class="row" style="height: 185px; margin-bottom: 10px">
-												<div class="col-xs-4">
-													<div class="cbp-spmenu">
-														<div class="">
-															<h5 class="inverse">
-																<a data-toggle="collapse" data-parent="#rightBar"
-																	href="#collapseMembers" class="short"> Members <span
-																	class="pull-right glyphicon glyphicon-chevron-up"></span>
-																</a>
-															</h5>
-														</div>
-														<div id="collapseMembers" class="collapse in">
-															<c:set var="userIsMember" value="false"></c:set>
-															<div class="scroll_list_150 ">
-																<c:forEach items="${campaign.members}" var="member">
-																	<a class="short">${member.name }</a>
-																	<c:if test="${member.name == user.username  }">
-																		<c:set var="userIsMember" value="true"></c:set>
-																	</c:if>
-																</c:forEach>
-	
-															</div>
-	
-														</div>
-													</div>
-												</div>
-												<div class="col-xs-4">
+												<div class="col-xs-6">
 													<div class="cbp-spmenu">
 														<div class="">
 															<h5 class="inverse">
@@ -399,7 +374,7 @@
 														</div>
 													</div>
 												</div>
-												<div class="col-xs-4">
+												<div class="col-xs-6">
 													<div class="cbp-spmenu">
 														<div class="">
 															<h5 class="inverse">
@@ -434,7 +409,32 @@
 										</div>
 										<div id="campaign_messages" class="tab-pane">
 											<div class="row" style="height: 185px; margin-bottom: 10px">
-												<div class="col-xs-6">
+												<div class="col-xs-4">
+													<div class="cbp-spmenu">
+														<div class="">
+															<h5 class="inverse">
+																<a data-toggle="collapse" data-parent="#rightBar"
+																	href="#collapseMembers" class="short"> Members <span
+																	class="pull-right glyphicon glyphicon-chevron-up"></span>
+																</a>
+															</h5>
+														</div>
+														<div id="collapseMembers" class="collapse in">
+															<c:set var="userIsMember" value="false"></c:set>
+															<div class="scroll_list_150 ">
+																<c:forEach items="${campaign.members}" var="member">
+																	<a class="short">${member.name }</a>
+																	<c:if test="${member.name == user.username  }">
+																		<c:set var="userIsMember" value="true"></c:set>
+																	</c:if>
+																</c:forEach>
+	
+															</div>
+	
+														</div>
+													</div>
+												</div>
+												<div class="col-xs-4">
 													<div class="">
 														<h5>
 															<a data-toggle="collapse" data-parent="#rightBar"
@@ -466,7 +466,7 @@
 														</div>
 													</div>
 												</div>
-												<div class="col-xs-6">
+												<div class="col-xs-4">
 													<div class="">
 														<h5>
 															<a data-toggle="collapse" data-parent="#rightBar"
@@ -614,7 +614,7 @@
 										<li class="active"><a href="#campaign_description"
 											role="tab" data-toggle="tab">Description</a></li>
 										<li><a href="#campaign_members" role="tab"
-											data-toggle="tab">Members and Characters</a></li>
+											data-toggle="tab">Characters</a></li>
 										<li><a href="#campaign_combats" role="tab"
 											data-toggle="tab">Combats</a></li>
 										<c:if

@@ -33,6 +33,8 @@
 <script src='${url}'><!-- --></script>
 <c:url var="url" value="/js/bootstrap-tabdrop.js" />
 <script src='${url}'><!-- --></script>
+<c:url var="url" value="/js/jquery.iconToggle.js"/>
+<script src="${url}"><!-- --></script>
 
 </head>
 <body>

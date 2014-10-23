@@ -19,10 +19,10 @@
 				<c:url var="lobbyUrl" value="/lobby" />
 				<c:url var="campaignsUrl" value="/campaigns/public" />
 				<h4>
-					<a href="${lobbyUrl }">My Lobby</a>
+					<a href="${lobbyUrl }"><spring:message code="main.lobby"/></a>
 				</h4>
 				<h4>
-					<a href="${campaignUrl }">Featured Campaigns</a>
+					<a href="${campaignUrl }"><spring:message code="home.campaigns.featured"/></a>
 				</h4>
 				<ul>
 					<c:forEach items="${campaigns }" var="campaign">
@@ -32,11 +32,12 @@
 
 				<div class="divider">&#160;</div>
 
-				<h4>Search Campaign</h4>
+				<h4><spring:message code="campaigns.search"/></h4>
+				<spring:message code="campaigns.search.keywords" var="keywordsMsg"/>
 				<div class="row search">
 					<div class="col-xs-12">
 						<input class="form-control" type="text" id="search_field"
-							name="campaign" placeholder="Enter keywords" />
+							name="campaign" placeholder="${keywordsMsg }" />
 					</div>
 				</div>
 				<div class="row search">

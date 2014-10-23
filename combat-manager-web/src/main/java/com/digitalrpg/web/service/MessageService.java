@@ -126,7 +126,9 @@ public class MessageService {
     @Transactional
     public MessageVO acceptRequest(Long requestId, Campaign campaign, User user) {
         Message message = messageDao.get(requestId);
-        messageDao.acceptRequest(user, message.getFrom(), campaign);
+        if (message.sendMessageOnAccept()) {
+            messageDao.acceptRequest(user, message.getFrom(), campaign);
+        }
         messageDao.deleteMessage(requestId);
         return messageToVOFunction.apply(message);
     }

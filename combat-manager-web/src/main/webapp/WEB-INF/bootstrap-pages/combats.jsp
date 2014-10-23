@@ -16,6 +16,8 @@
 <link href="${url}" rel="stylesheet"/>
 <c:url var="url" value="/js/jquery.nestable.js"/>
 <script src="${url}"><!-- --></script>
+<c:url var="url" value="/js/jquery.iconToggle.js"/>
+<script src="${url}"><!-- --></script>
 </head>
 <body>
 	<sec:authentication property="principal" var="user"/>
@@ -100,7 +102,7 @@
 									                    			<c:if test="${character.character.characterType == 'NPC' }">
 									                    				<!-- GM Char, can be hidden -->
 									                    				<span class="pull-right">
-									                    					Hidden <input type="checkbox" name="extraInfo[${character.id }].hidden"/>
+									                    					<input class="iconToggle" type="checkbox" name="extraInfo[${character.id }].hidden"/>
 									                    				</span>
 									                    			</c:if>
 									                    			${character.character.name }
@@ -133,7 +135,7 @@
 										                    			<c:if test="${character.character.character.owner.name == user.name }">
 										                    				<!-- GM Char, can be hidden -->
 										                    				<span class="pull-right">
-										                    					Hidden <input type="checkbox" name="extraInfo[${character.character.id }].hidden"/>
+										                    					<input class="iconToggle" type="checkbox" name="extraInfo[${character.character.id }].hidden"/>
 										                    				</span>
 										                    			</c:if>
 										                    			${character.character.character.name }
@@ -163,6 +165,15 @@
 								    })
 								    $('#selectedPlayers').val(players);
 								});
+								
+								$('.iconToggle').iconToggle(
+										{
+											trueIcon : 'fa-eye-slash',
+											falseIcon : 'fa-eye',
+											trueDescription : 'Hidden',
+											falseDescription : 'Visible',
+											description : 'Toggle character visibility'
+										})
 							})
 							</script>
 							

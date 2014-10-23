@@ -353,6 +353,10 @@ a:focus {
 	display: inline-block;
 }
 
+.icon-toggle-container {
+	display: inline-block;
+}
+
 /* General styles for all menus - TODO: validate which ones I need and change some according to css */
 .main-container {
 	padding: 0px;

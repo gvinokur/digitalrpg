@@ -30,6 +30,7 @@ import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.SystemType;
 import com.digitalrpg.domain.model.User;
 import com.digitalrpg.domain.model.characters.SystemCharacter;
+import com.digitalrpg.domain.model.characters.Character.CharacterType;
 import com.digitalrpg.domain.model.messages.Message;
 import com.digitalrpg.web.controller.model.CampaignVO;
 import com.digitalrpg.web.controller.model.CreateCampaignVO;
@@ -40,6 +41,7 @@ import com.digitalrpg.web.service.MessageService;
 import com.digitalrpg.web.service.TransactionalUserService;
 import com.digitalrpg.web.service.UserService;
 import com.digitalrpg.web.service.UserWrapper;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 
@@ -139,8 +141,17 @@ public class CampaignController {
         modelMap.put("campaign", campaign);
         List<SystemCharacter> userCharacters = campaign.getUserCharacters(user.unwrap());
         modelMap.put("characters", userCharacters);
-        List<SystemCharacter> otherCharacters = Lists.newArrayList(campaign.getCharacters());
+        Collection<SystemCharacter> otherCharacters = Lists.newArrayList(campaign.getCharacters());
         otherCharacters.removeAll(userCharacters);
+        if (!campaign.getGameMaster().equals(user.unwrap())) {
+            otherCharacters = Collections2.filter(otherCharacters, new Predicate<SystemCharacter>() {
+
+                @Override
+                public boolean apply(SystemCharacter input) {
+                    return input.getCharacter().getCharacterType() != CharacterType.NPC;
+                }
+            });
+        }
         modelMap.put("otherCharacters", otherCharacters);
         return new ModelAndView("/campaigns", modelMap);
     }

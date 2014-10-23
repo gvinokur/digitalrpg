@@ -103,27 +103,27 @@ view the page via file:// --&gt; &lt;!--[if lt IE 9]&gt;
 			<c:url var="pcsUrl" value="/characters" />
 			<c:url var="combatsUrl" value="/combats" />
 			<c:if test="${pageContext.request.userPrincipal !=null }">
-				<a href="${homeUrl}" class="${fn:startsWith(pageContext.request.servletPath,homeUrl)?'active':' '}">Home</a>
-				<a href="${lobbyUrl }" class="${fn:startsWith(pageContext.request.servletPath,lobbyUrl)?'active':' '}">My Lobby <span id="unread-messages"
+				<a href="${homeUrl}" class="${fn:startsWith(pageContext.request.servletPath,homeUrl)?'active':' '}"><spring:message code="main.home"/></a>
+				<a href="${lobbyUrl }" class="${fn:startsWith(pageContext.request.servletPath,lobbyUrl)?'active':' '}"><spring:message code="main.lobby"/> <span id="unread-messages"
 					class="badge hidden"></span></a>
-				<a href="${campaignsUrl }" class="${fn:startsWith(pageContext.request.servletPath,campaignsUrl)?'active':' '}">Campaigns</a>
-				<a href="${pcsUrl }" class="${fn:startsWith(pageContext.request.servletPath,pcsUrl)?'active':' '}">Characters</a>
-				<a href="${combatsUrl }" class="${fn:startsWith(pageContext.request.servletPath,combatsUrl)?'active':' '}">Combats</a>
+				<a href="${campaignsUrl }" class="${fn:startsWith(pageContext.request.servletPath,campaignsUrl)?'active':' '}"><spring:message code="main.campaigns"/></a>
+				<a href="${pcsUrl }" class="${fn:startsWith(pageContext.request.servletPath,pcsUrl)?'active':' '}"><spring:message code="main.characters"/></a>
+				<a href="${combatsUrl }" class="${fn:startsWith(pageContext.request.servletPath,combatsUrl)?'active':' '}"><spring:message code="main.combats"/></a>
 			</c:if>
 			<decorator:getProperty property="page.local_submenu"/>
 			<c:if test="${isAuthenticated }">
-				<a class="logout-link">Logout</a>
+				<a class="logout-link"><spring:message code="main.logout"/></a>
 			</c:if>
 			<c:if test="${!isAuthenticated }">
 				<c:url var="loginBarUrl" value="/login" />
 				<c:url var="registerBarUrl" value="/register" />
 				<li>
 					<p class="navbar-text">
-						<strong>Welcome Hero!</strong>
+						<strong><spring:message code="main.welcome"/></strong>
 					</p>
 				</li>
-				<li><a href="${loginBarUrl }">Login</a></li>
-				<li><a href="${registerBarUrl }">Register</a></li>
+				<li><a href="${loginBarUrl }"><spring:message code="main.login"/></a></li>
+				<li><a href="${registerBarUrl }"><spring:message code="main.register"/></a></li>
 			</c:if>
 		</nav>
 
@@ -176,43 +176,43 @@ view the page via file:// --&gt; &lt;!--[if lt IE 9]&gt;
 							<c:if test="${pageContext.request.userPrincipal !=null }">
 								<li
 									class="${fn:startsWith(pageContext.request.servletPath,homeUrl)?'active':' '}"><a
-									href="${homeUrl}">Home</a></li>
+									href="${homeUrl}"><spring:message code="main.home"/></a></li>
 								<li
 									class="${fn:startsWith(pageContext.request.servletPath,lobbyUrl)?'active':' '}"
-									id="lobby"><a href="${lobbyUrl }">My Lobby <span
+									id="lobby"><a href="${lobbyUrl }"><spring:message code="main.lobby"/> <span
 										id="unread-messages" class="badge hidden"></span></a></li>
 								<li
 									class="${fn:startsWith(pageContext.request.servletPath,campaignsUrl)?'active':' '}"><a
-									href="${campaignsUrl }">Campaigns</a></li>
+									href="${campaignsUrl }"><spring:message code="main.campaigns"/></a></li>
 								<li
 									class="${fn:startsWith(pageContext.request.servletPath,pcsUrl)?'active':''}"><a
-									href="${pcsUrl }">Characters</a></li>
+									href="${pcsUrl }"><spring:message code="main.characters"/></a></li>
 								<li
 									class="${fn:startsWith(pageContext.request.servletPath,combatsUrl)?'active':''}"><a
-									href="${combatsUrl }">Combats</a></li>
+									href="${combatsUrl }"><spring:message code="main.combats"/></a></li>
 							</c:if>
 						</ul>
 						<ul class="nav navbar-nav navbar-right">
 							<c:if test="${isAuthenticated }">
 								<li class="hidden-sm">
 									<p class="navbar-text">
-										Welcome <strong>${user.username }</strong>
+										<spring:message code="main.welcome.username" arguments="${user.username }"/> 
 									</p>
 								</li>
-								<li><c:set var="url" value="/profile" /> <a href="${url }">Profile</a>
+								<li><c:set var="url" value="/profile" /><a href="${url }"><spring:message code="main.profile"/></a>
 								</li>
-								<li><a class="logout-link">Logout</a></li>
+								<li><a class="logout-link"><spring:message code="main.logout"/></a></li>
 							</c:if>
 							<c:if test="${!isAuthenticated }">
 								<c:url var="loginBarUrl" value="/login" />
 								<c:url var="registerBarUrl" value="/register" />
 								<li>
 									<p class="navbar-text">
-										<strong>Welcome Hero!</strong>
+										<strong><spring:message code="main.welcome"/></strong>
 									</p>
 								</li>
-								<li><a href="${loginBarUrl }">Login</a></li>
-								<li><a href="${registerBarUrl }">Register</a></li>
+								<li><a href="${loginBarUrl }"><spring:message code="main.login"/></a></li>
+								<li><a href="${registerBarUrl }"><spring:message code="main.register"/></a></li>
 							</c:if>
 
 						</ul>

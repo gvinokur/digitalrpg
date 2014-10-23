@@ -1,6 +1,7 @@
 <jsp:root xmlns:jsp="http://java.sun.com/JSP/Page"
 	xmlns:spring="http://www.springframework.org/tags"
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:sec="http://www.springframework.org/security/tags"
 	xmlns:form="http://www.springframework.org/tags/form" version="2.0">
 
 	<jsp:directive.page contentType="text/html" pageEncoding="UTF-8" />
@@ -12,6 +13,7 @@
 <title>Lobby</title>
 </head>
 <body>
+	<sec:authentication property="principal" var="user"/>
 	<div class="container main">
 		<div class="row">
 			<div class="hidden-xs col-sm-3 content-block">
@@ -20,7 +22,7 @@
 						<div class="">
 							<h5>
 								<a data-toggle="collapse" data-parent="#accordion"
-									href="#collapseRecent"> Recently Visited <span
+									href="#collapseRecent"> <spring:message code="lobby.recentlyvisited"/> <span
 									id="collapseRecentIcon"
 									class="pull-right glyphicon glyphicon-chevron-down"></span>
 								</a>
@@ -39,7 +41,7 @@
 						<div class="">
 							<h5>
 								<a data-toggle="collapse" data-parent="#accordion"
-									href="#collapseFriends"> Friends <span
+									href="#collapseFriends"><spring:message code="lobby.friends"/> <span
 									id="collapseFriendsIcon"
 									class="pull-right glyphicon glyphicon-chevron-down"></span>
 								</a>
@@ -59,17 +61,13 @@
 				<!--  -->
 				<div class="row">
 					<div class="col-xs-12 content-block center ">
-						<h3>Welcome ${pageContext.request.userPrincipal.principal.name} !</h3>
-						<p><strong>This is your personal Lobby.</strong> In this page you can check your recently played campaigns, created characters and check your messages</p>
-		                <p><strong>Enjoy all the features of DigitalRPG.</strong> </p>
-		                <p>Go to the Campaign page to create your own campaign or join a public one.</p>
-		                <p>Go to the Characters page to create and administrate your own characters.</p>
-		                <p>Go to the Combats page and watch your active combats and combats history</p>
+						<h3><spring:message code="lobby.message.title" arguments="${user.name }"/></h3>
+						<spring:message code="lobby.message"/>
 					</div>
 				</div>
 				<div class="row">
 					<div class="col-xs-12 content-block center bottom" id="messageHolder">
-						<h3>Messages</h3>
+						<h3><spring:message code="lobby.messages"/></h3>
 						
 					</div>
 				</div>
@@ -141,17 +139,17 @@
 		function drawMessageInvite(messageDiv, message) {
 			var url = "${inviteUrl}".replace("[id]",message.campaign_id).replace("[message_id]", message.id)
 			var deleteUrl = "${deleteUrl}".replace("[id]", message.id)
-			
-			messageDiv.find(".panel-title").append(message.from.name + ' invited you to join his campaign "' + message.campaign_name +' "!')
+			var msg = '<spring:message code="lobby.messages.invite.title"/>'.replace("[from]", message.from.name).replace('[campaign]', message.campaign_name)  
+			messageDiv.find(".panel-title").append(msg)
 			var panelBody = messageDiv.find(".panel-body")
-			$("<button/>").attr("action", deleteUrl).attr('title','Delete Message').addClass("tooltipable").addClass("close").addClass("wide").addClass("glyphicon")
+			$("<button/>").attr("action", deleteUrl).attr('title','<spring:message code="lobby.messages.delete"/>').addClass("tooltipable").addClass("close").addClass("wide").addClass("glyphicon")
 				.addClass("glyphicon-remove").addClass("delete_message").appendTo(panelBody)
 				
-			$("<button/>").attr("action", url).attr('title','Accept Request').addClass("tooltipable").addClass("close").addClass("wide").addClass("glyphicon")
+			$("<button/>").attr("action", url).attr('title','<spring:message code="lobby.messages.request.accept"/>').addClass("tooltipable").addClass("close").addClass("wide").addClass("glyphicon")
 				.addClass("glyphicon-ok").appendTo(panelBody)
 				
 			$("<p/>")
-				.append("Hurry up and claim your spot on the table!")
+				.append('<spring:message code="lobby.messages.invite"/>')
 				.appendTo(panelBody)
 		}
 		
@@ -159,20 +157,20 @@
 		<c:url var="acceptRequestUrl" value="/campaigns/[id]/accept/[message_id]"/>
 		function drawMessageRequestJoin(messageDiv, message) {
 			var url = "${acceptRequestUrl}".replace("[id]",message.campaign_id).replace("[message_id]", message.id)
-			var deleteUrl = "${deleteUrl}".replace("[id]", message.id)
-			var title = $("<a/>").attr("href",url).append( message.from.name + " request")
 			
-			messageDiv.find(".panel-title").append(message.from.name + ' access request!')
+			var title = $("<a/>").attr("href",url).append( message.from.name + " request")
+			var msg = '<spring:message code="lobby.messages.requestaccess.title"/>'.replace("[from]", message.from.name).replace('[campaign]', message.campaign_name)
+			messageDiv.find(".panel-title").append(msg)
 			var panelBody = messageDiv.find(".panel-body")
-			$("<button/>").attr("action", deleteUrl).attr('title','Delete Message').appendTo(panelBody).addClass("tooltipable").addClass("close").addClass("wide").addClass("glyphicon")
+			$("<button/>").attr("action", deleteUrl).attr('title','<spring:message code="lobby.messages.delete"/>').appendTo(panelBody).addClass("tooltipable").addClass("close").addClass("wide").addClass("glyphicon")
 				.addClass("glyphicon-remove").addClass("delete_message")
 				
-			$("<button/>").attr("action", url).attr('title','Accept Request').appendTo(panelBody).addClass("tooltipable").addClass("close").addClass("wide").addClass("glyphicon")
+			$("<button/>").attr("action", url).attr('title','<spring:message code="lobby.messages.request.accept"/>').appendTo(panelBody).addClass("tooltipable").addClass("close").addClass("wide").addClass("glyphicon")
 				.addClass("glyphicon-ok")
 			
 			
 			$("<p/>")
-				.append(message.from.name + " has requested access to join your campaign " +  message.campaign_name)
+				.append('<spring:message code="lobby.messages.requestaccess"/>'.replace("[from]", message.from.name).replace('[campaign]', message.campaign_name))
 				.appendTo(panelBody)
 			
 		}
@@ -181,17 +179,18 @@
 		function drawMessageAcceptRequestJoin(messageDiv, message) {
 			var url = "${showCampaignUrl}".replace("[id]",message.campaign_id)
 			var deleteUrl = "${deleteUrl}".replace("[id]", message.id)
-			var title = $("<a/>").attr("href",url).append("Join " + message.from.name + "'s campaign")
-			messageDiv.find(".panel-title").append(message.from.name + ' accepted your request!')
+			
+			var msg = '<spring:message code="lobby.messages.request.accepted.title"/>'.replace("[from]", message.from.name).replace('[campaign]', message.campaign_name)
+			messageDiv.find(".panel-title").append(msg)
 			var panelBody = messageDiv.find(".panel-body")
-			$("<button/>").attr("action", deleteUrl).attr('title','Delete Message').appendTo(panelBody).addClass("tooltipable").addClass("close").addClass("wide").addClass("glyphicon")
+			$("<button/>").attr("action", deleteUrl).attr('title','<spring:message code="lobby.messages.delete"/>').appendTo(panelBody).addClass("tooltipable").addClass("close").addClass("wide").addClass("glyphicon")
 				.addClass("glyphicon-remove").addClass("delete_message")
 				
-			$("<button/>").attr("action", url).attr('title','Open Campaign').appendTo(panelBody).addClass("tooltipable").addClass("close").addClass("wide").addClass("glyphicon")
+			$("<button/>").attr("action", url).attr('title','<spring:message code="lobby.messages.campaign.open"/>').appendTo(panelBody).addClass("tooltipable").addClass("close").addClass("wide").addClass("glyphicon")
 				.addClass("glyphicon-share-alt")
 			
 			$("<p/>")
-				.append("Welcome to " + message.from.name + "'s  campaign " + '"' +  message.campaign_name + '"!')
+				.append('<spring:message code="lobby.messages.request.accepted"/>'.replace("[from]", message.from.name).replace('[campaign]', message.campaign_name))
 				.appendTo(panelBody)
 				
 			
