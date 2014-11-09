@@ -137,10 +137,10 @@ public class CharacterController {
     }
 
     @RequestMapping(value = "/{id}/edit")
-    public ModelAndView showEditPlayerCharacterPage(@PathVariable Long id, @AuthenticationPrincipal UserWrapper user,
-            RedirectAttributes attributes) {
+    public ModelAndView showEditPlayerCharacterPage(@PathVariable Long id, @RequestParam(required = false) Long combatId,
+            @AuthenticationPrincipal UserWrapper user, RedirectAttributes attributes) {
         SystemCharacter systemCharacter = characterService.get(id);
-        return showCreateEditOrClonePage(user, attributes, systemCharacter.getCampaign(), systemCharacter, false, null);
+        return showCreateEditOrClonePage(user, attributes, systemCharacter.getCampaign(), systemCharacter, false, combatId);
     }
 
     @RequestMapping(value = "/{id}/clone")
@@ -166,8 +166,12 @@ public class CharacterController {
                             character.getBio(), character.getIsBioPublic(), character.getWebBio(), character.getIsWebBioPublic(),
                             character.getNotes(), character.getAdditionalResources(), character.getCharacterType(),
                             character.getSystemProperties(), user.unwrap());
-            attributes.addFlashAttribute("form_message", "Character " + character.getName() + " edited!");
-            return new ModelAndView("redirect:/characters/" + systemCharacter.getId() + "/show");
+            if (character.getCombatId() != null) {
+                return new ModelAndView("redirect:/combats/" + character.getCombatId() + "/show");
+            } else {
+                attributes.addFlashAttribute("form_message", "Character " + character.getName() + " edited!");
+                return new ModelAndView("redirect:/characters/" + systemCharacter.getId() + "/show");
+            }
         } else {
             Campaign campaign = campaignService.get(character.getCampaignId());
             SystemCharacter systemCharacter =

@@ -24,6 +24,7 @@
 		$(this).data("iconToggle", iconToggle);
 		
 		iconToggle.create();
+		return $(this);
 	}
 	
 	function IconToggle(el, settings) {
@@ -43,24 +44,26 @@
 		this.icon = this.el.parents(".icon-toggle-container").find("i")
 		this.setIcon();
 		this.icon.click(function() {
-			iconToggle.toggleValue();
+			iconToggle.toggleValue(true);
 		})
 	}
 	
 	IconToggle.prototype.setValue = function(value) {
-		if(value != this.value) this.toggleValue();
+		if(value != this.value) this.toggleValue(false);
 	}
 	
 	IconToggle.prototype.getValue = function() {
 		return this.value;
 	}
 	
-	IconToggle.prototype.toggleValue = function() {
+	IconToggle.prototype.toggleValue = function(propagate) {
 		this.value = !this.value;
 		this.setIcon();
 		this.el.prop("checked", this.value);
-		for(var i = 0 ; i < this.changeFunctions.length ; i++) {
-			this.changeFunctions[i](this, this.value);
+		if(propagate) {
+			for(var i = 0 ; i < this.changeFunctions.length ; i++) {
+				this.changeFunctions[i](this.el, this.value);
+			}	
 		}
 	}
 	

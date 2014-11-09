@@ -32,8 +32,8 @@ import com.digitalrpg.domain.model.SystemCombatItems;
 import com.digitalrpg.domain.model.SystemCombatProperties;
 import com.digitalrpg.domain.model.SystemType;
 import com.digitalrpg.domain.model.User;
-import com.digitalrpg.domain.model.characters.SystemCharacter;
 import com.digitalrpg.domain.model.characters.Character.CharacterType;
+import com.digitalrpg.domain.model.characters.SystemCharacter;
 import com.digitalrpg.domain.model.characters.pathfinder.PathfinderCharacter;
 import com.digitalrpg.domain.model.characters.pathfinder.PathfinderCombatCharacter;
 import com.digitalrpg.domain.model.pathfinder.PathfinderAction;
@@ -242,7 +242,9 @@ public class CombatService {
             default:
                 break;
         }
-        combatStatusVO.setCurrentCharacterId(combat.getCurrentCharacter() != null ? combat.getCurrentCharacter().getId() : null);
+        Long currentCharacterId = combat.getCurrentCharacter() != null ? combat.getCurrentCharacter().getId() : null;
+        Long possibleCurrentCharacterId = null;
+        boolean updateCurrentCharacterId = false;
         combatStatusVO.setFinished(combat.getCurrentCharacter() == null);
         if (includeCharacters) {
             SortedSet<CombatCharacterStatusVO> combatCharactersVO = new TreeSet<CombatCharacterStatusVO>();
@@ -250,12 +252,23 @@ public class CombatService {
             for (CombatCharacter<? extends SystemAction> combatCharacter : combat.getCombatCharacters()) {
                 if (combat.getCampaign().getGameMaster().equals(user) || BooleanUtils.isNotTrue(combatCharacter.getHidden())) {
                     combatCharactersVO.add(getStatus(combatCharacter, combat.getCampaign().getSystem(), user, hiddenChars));
+                    if (updateCurrentCharacterId) {
+                        updateCurrentCharacterId = false;
+                        currentCharacterId = combatCharacter.getId();
+                    } else {
+                        possibleCurrentCharacterId = combatCharacter.getId();
+                    }
                 } else {
+                    if (combatCharacter.getId().equals(currentCharacterId)) {
+                        updateCurrentCharacterId = true;
+                        currentCharacterId = possibleCurrentCharacterId;
+                    }
                     hiddenChars++;
                 }
             }
             combatStatusVO.setCombatCharacters(combatCharactersVO);
         }
+        combatStatusVO.setCurrentCharacterId(currentCharacterId);
         return combatStatusVO;
     }
 
@@ -303,10 +316,6 @@ public class CombatService {
         return combatDao.getSystemCombatItems(system);
     }
 
-    public List<Combat> getCombats(User user) {
-        return combatDao.getCombatsForUser(user.getName());
-    }
-
     @Transactional
     public <T extends SystemAction> Combat<T> updateOrderAndActions(Long id, Map<Long, OrderAndAction> charactersOrderAndActions) {
         Combat<T> combat = combatDao.get(id);
@@ -350,33 +359,37 @@ public class CombatService {
     public Combat<? extends SystemAction> addCombatant(Combat<? extends SystemAction> combat, Long characterId) {
 
         SystemCharacter systemCharacter = characterService.get(characterId);
+        long order =
+                Long.valueOf(combat.getCombatCharactersAsNavigableSet().isEmpty() ? 0 : combat.getCombatCharactersAsNavigableSet().last()
+                        .getOrder() + 1);
         combatDao.createCharacter(combat, systemCharacter, !CharacterType.PC.equals(systemCharacter.getCharacter().getCharacterType()),
-                Long.valueOf(0), Long.valueOf(combat.getCombatCharactersAsNavigableSet().last().getOrder() + 1), null);
+                Long.valueOf(0), order, null);
         return this.getCombat(combat.getId());
     }
 
-    @Transactional
     public void deleteCombatant(Combat combat, Long characterId) {
 
         CombatCharacter combatCharacter = combatDao.getCombatCharacter(characterId);
-        if (combat.getCurrentCharacter() != null && combat.getCurrentCharacter().getId().equals(combatCharacter.getId())) {
-            NavigableSet<CombatCharacter> navigableSet = combat.getCombatCharactersAsNavigableSet();
-            NavigableSet<CombatCharacter> tailSet = navigableSet.tailSet(combatCharacter, false);
-            if (!tailSet.isEmpty()) {
+
+        NavigableSet<CombatCharacter> navigableSet = combat.getCombatCharactersAsNavigableSet();
+        NavigableSet<CombatCharacter> tailSet = navigableSet.tailSet(combatCharacter, false);
+        if (!tailSet.isEmpty()) {
+            if (combat.getCurrentCharacter() != null && combat.getCurrentCharacter().getId().equals(combatCharacter.getId())) {
                 combat.setCurrentCharacter(tailSet.first());
-                for (CombatCharacter<?> character : tailSet) {
-                    character.setOrder(character.getOrder() - 1);
-                    combatDao.update(combatCharacter);
-                }
+            }
+            for (CombatCharacter<?> character : tailSet) {
+                character.setOrder(character.getOrder() - 1);
+                combatDao.update(combatCharacter);
+            }
+        } else if (combat.getCurrentCharacter() != null && combat.getCurrentCharacter().getId().equals(combatCharacter.getId())) {
+            NavigableSet<CombatCharacter> headSet = navigableSet.headSet(combatCharacter, false);
+            if (!headSet.isEmpty()) {
+                combat.setCurrentCharacter(headSet.last());
             } else {
-                NavigableSet<CombatCharacter> headSet = navigableSet.headSet(combatCharacter, false);
-                if (!headSet.isEmpty()) {
-                    combat.setCurrentCharacter(headSet.last());
-                } else {
-                    combat.setCurrentCharacter(null);
-                }
+                combat.setCurrentCharacter(null);
             }
         }
+
         combatDao.update(combat);
         combatDao.delete(combatCharacter);
     }
@@ -407,6 +420,10 @@ public class CombatService {
     @Transactional(readOnly = true)
     public SortedSet<CombatLog> getCombatLogs(Long id) {
         return combatDao.get(id).getCombatLogs();
+    }
+
+    public List<Combat> getCombats(User user, CombatState... combatStates) {
+        return combatDao.getCombatsForUser(user, combatStates);
     }
 
 

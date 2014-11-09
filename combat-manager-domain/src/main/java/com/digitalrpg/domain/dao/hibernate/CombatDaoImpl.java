@@ -20,6 +20,7 @@ import com.digitalrpg.domain.model.SystemCombatCharacterProperties;
 import com.digitalrpg.domain.model.SystemCombatItems;
 import com.digitalrpg.domain.model.SystemCombatProperties;
 import com.digitalrpg.domain.model.SystemType;
+import com.digitalrpg.domain.model.User;
 import com.digitalrpg.domain.model.characters.SystemCharacter;
 import com.digitalrpg.domain.model.factory.CombatFactory;
 import com.digitalrpg.domain.model.pathfinder.PathfinderCombat;
@@ -38,19 +39,23 @@ public class CombatDaoImpl extends HibernateDao implements CombatDao {
 
     @SuppressWarnings("unchecked")
     @Transactional(readOnly = true)
-    public List<Combat> getCombatsForUser(final String user) {
+    public List<Combat> getCombatsForUser(final User user, CombatState... states) {
+        if (states.length == 0) {
+            states = CombatState.values();
+        }
         List<Combat> combatAsPlayer =
                 sessionFactory
                         .getCurrentSession()
                         .createQuery(
-                                "select distinct combat from Campaign c join c.playerCharacters psc join c.combats combat, PlayerCharacter pc where combat.active = true and psc!= null and psc.character = pc and pc.owner.name = :user")
-                        .setParameter("user", user).list();
+                                "select distinct combat from Campaign c join c.combats combat where :user in elements(c.members) and combat.state != :stagingCombatState and combat.state in (:states)")
+                        .setParameter("user", user).setParameterList("states", states)
+                        .setParameter("stagingCombatState", CombatState.STAGING).list();
         List<Combat> combatsAsGameMaster =
                 sessionFactory
                         .getCurrentSession()
                         .createQuery(
-                                "select combat from Campaign c join c.combats combat where c.gameMaster.name = :user and combat.active = true")
-                        .setParameter("user", user).list();
+                                "select combat from Campaign c join c.combats combat where c.gameMaster = :user and combat.state in (:states)")
+                        .setParameter("user", user).setParameterList("states", states).list();
         List<Combat> sorted = new LinkedList<Combat>();
         sorted.addAll(combatsAsGameMaster);
         sorted.addAll(combatAsPlayer);
@@ -167,12 +172,12 @@ public class CombatDaoImpl extends HibernateDao implements CombatDao {
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public void update(Combat combat) {
-        this.sessionFactory.getCurrentSession().update(combat);
+        this.sessionFactory.getCurrentSession().saveOrUpdate(combat);
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public void update(CombatCharacter<?> combatCharacter) {
-        this.sessionFactory.getCurrentSession().update(combatCharacter);
+        this.sessionFactory.getCurrentSession().saveOrUpdate(combatCharacter);
 
     }
 

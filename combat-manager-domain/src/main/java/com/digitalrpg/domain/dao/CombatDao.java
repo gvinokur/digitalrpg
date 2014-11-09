@@ -5,10 +5,12 @@ import java.util.List;
 import com.digitalrpg.domain.model.Campaign;
 import com.digitalrpg.domain.model.Combat;
 import com.digitalrpg.domain.model.CombatCharacter;
+import com.digitalrpg.domain.model.CombatState;
 import com.digitalrpg.domain.model.SystemCombatCharacterProperties;
 import com.digitalrpg.domain.model.SystemCombatItems;
 import com.digitalrpg.domain.model.SystemCombatProperties;
 import com.digitalrpg.domain.model.SystemType;
+import com.digitalrpg.domain.model.User;
 import com.digitalrpg.domain.model.characters.SystemCharacter;
 
 public interface CombatDao {
@@ -28,7 +30,7 @@ public interface CombatDao {
 
     public <T> T getCombatItem(Class<T> clazz, Long id);
 
-    public List<Combat> getCombatsForUser(final String user);
+    public List<Combat> getCombatsForUser(final User user, CombatState... states);
 
     public void delete(CombatCharacter combatCharacter);
 

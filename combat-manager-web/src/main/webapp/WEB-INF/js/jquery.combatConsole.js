@@ -19,9 +19,9 @@
 	
 	var widgets = {
 		'Pathfinder' : {
-			'lg' : '<li character-id="{character-id}" class="combat-character lg"><div class="selected-char" style="width: 10px">&#160;</div><div class="character-name" ><span class="character-data" attribute-name="name"></span>&nbsp;-&nbsp;<span class="character-data" attribute-name="type"></span></div><div style="width:25px" attribute-name="hp" attribute-type="life" class="character-data hp editable" data-type="number" data-title="HP" data-pk="" data-url="/combats/character/currentHitPoints"></div><div class="action-row"><div class="hiddenSelect character-data editable" attribute-name="hidden" attribute-type="boolean" data-pk="" data-url="/combats/character/hidden"><input type="checkbox"/></div><a class="character-data conditions-and-effects popover-target" data-placement="bottom" data-toggle="popover" attribute-type="conditions" attribute-name="conditionsAndEffects" title="Conditions and Magical Effects" data-content=""></a></div></li>',
-			'md' : '<li character-id="{character-id}" class="combat-character lg"><div class="selected-char" style="width: 10px">&#160;</div><div class="character-name" ><span class="character-data" attribute-name="name"></span>&nbsp;-&nbsp;<span class="character-data" attribute-name="type"></span></div><div style="width:25px" attribute-name="hp" attribute-type="life" class="character-data hp editable" data-type="number" data-title="HP" data-pk="" data-url="/combats/character/currentHitPoints"></div><div class="action-row"><div class="hiddenSelect character-data editable" attribute-name="hidden" attribute-type="boolean" data-pk="" data-url="/combats/character/hidden"><input type="checkbox"/></div><a class="character-data conditions-and-effects popover-target" data-placement="bottom" data-toggle="popover" attribute-type="conditions" attribute-name="conditionsAndEffects" title="Conditions and Magical Effects" data-content=""></a></div></li>',
-			'sm' : '<li character-id="{character-id}" class="combat-character lg"><div class="selected-char" style="width: 10px">&#160;</div><div class="character-name" ><span class="character-data" attribute-name="name"></span>&nbsp;-&nbsp;<span class="character-data" attribute-name="type"></span></div><div style="width:25px" attribute-name="hp" attribute-type="life" class="character-data hp editable" data-type="number" data-title="HP" data-pk="" data-url="/combats/character/currentHitPoints"></div><div class="action-row"><div class="hiddenSelect character-data editable" attribute-name="hidden" attribute-type="boolean" data-pk="" data-url="/combats/character/hidden"><input type="checkbox"/></div><a class="character-data conditions-and-effects popover-target" data-placement="bottom" data-toggle="popover" attribute-type="conditions" attribute-name="conditionsAndEffects" title="Conditions and Magical Effects" data-content=""></a></div></li>'
+			'lg' : '<li character-id="{character-id}" class="combat-character lg"><div class="selected-char" style="width: 10px">&#160;</div><div class="character-name" ><span class="character-data" attribute-name="name"></span>&nbsp;-&nbsp;<span class="character-data" attribute-name="type"></span></div><div style="width:25px;font-size:0px;" attribute-name="hp" attribute-type="life" class="character-data hp editable" data-type="number" data-title="HP" data-pk="" data-url="/combats/character/currentHitPoints"></div><div class="action-row"><div class="hiddenSelect character-data editable" attribute-name="hidden" attribute-type="boolean" data-pk="" data-url="/combats/character/hidden"><input type="checkbox"/></div><a class="character-data conditions-and-effects popover-target" data-placement="bottom" data-toggle="popover" attribute-type="conditions" attribute-name="conditionsAndEffects" title="Conditions and Magical Effects" data-content=""></a></div></li>',
+			'md' : '<li character-id="{character-id}" class="combat-character lg"><div class="selected-char" style="width: 10px">&#160;</div><div class="character-name" ><span class="character-data" attribute-name="name"></span>&nbsp;-&nbsp;<span class="character-data" attribute-name="type"></span></div><div style="width:25px;font-size:0px;" attribute-name="hp" attribute-type="life" class="character-data hp editable" data-type="number" data-title="HP" data-pk="" data-url="/combats/character/currentHitPoints"></div><div class="action-row"><div class="hiddenSelect character-data editable" attribute-name="hidden" attribute-type="boolean" data-pk="" data-url="/combats/character/hidden"><input type="checkbox"/></div><a class="character-data conditions-and-effects popover-target" data-placement="bottom" data-toggle="popover" attribute-type="conditions" attribute-name="conditionsAndEffects" title="Conditions and Magical Effects" data-content=""></a></div></li>',
+			'sm' : '<li character-id="{character-id}" class="combat-character lg"><div class="selected-char" style="width: 10px">&#160;</div><div class="character-name" ><span class="character-data" attribute-name="name"></span>&nbsp;-&nbsp;<span class="character-data" attribute-name="type"></span></div><div style="width:25px;font-size:0px;" attribute-name="hp" attribute-type="life" class="character-data hp editable" data-type="number" data-title="HP" data-pk="" data-url="/combats/character/currentHitPoints"></div><div class="action-row"><div class="hiddenSelect character-data editable" attribute-name="hidden" attribute-type="boolean" data-pk="" data-url="/combats/character/hidden"><input type="checkbox"/></div><a class="character-data conditions-and-effects popover-target" data-placement="bottom" data-toggle="popover" attribute-type="conditions" attribute-name="conditionsAndEffects" title="Conditions and Magical Effects" data-content=""></a></div></li>'
 		}
 	}
 	
@@ -269,6 +269,7 @@
 	
 	Console.prototype.addLog = function() {
 		var addLogDialog = $(this.settings.dialogs.addLog)
+		addLogDialog.find('.log-entry').val(""); 
 		addLogDialog.find(".confirm").unbind('click').click(function(){
 			var data = { logEntry : addLogDialog.find('.log-entry').val() };
 			var url = combatConsole.buildUrl("combats/{id}/logs");
@@ -636,13 +637,29 @@
 				if(this.useGridster) {
 					characterWidget = this.gridster.add_widget(widgetText, this.widgetWidth, 1, col, character.order + 1)
 					characterWidget.find(".popover-target").popover({container: 'body'})
-					characterWidget.find(".hiddenSelect input").iconToggle(
+					var hiddenDiv = characterWidget.find(".hiddenSelect");
+					var hiddenToggle = hiddenDiv.find("input").iconToggle(
 						{
 							trueIcon : 'fa-eye-slash',
 							falseIcon : 'fa-eye',
 							trueDescription : 'Hidden',
 							falseDescription : 'Visible',
 							description : 'Toggle character visibility'
+						});
+					hiddenToggle.data("parent", hiddenDiv)
+					hiddenToggle.data("iconToggle").change(function(elem, value) {
+							var pk = elem.data("parent").attr("data-pk");
+				    		var url = elem.data("parent").attr("data-url");
+				    		$.ajax({
+				    			url: url,
+				    			beforeSend : beforePost,
+				    			type: "POST",
+				    			data: {pk : pk, value : value},
+				    			dataType : "json",
+				    			success : function(combatStatus) {
+				    				//Do nothing, already updated here.
+				    			}
+				    		})
 						});
 				}
 			}

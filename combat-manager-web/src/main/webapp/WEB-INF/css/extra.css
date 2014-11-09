@@ -212,11 +212,13 @@ input:focus:required:invalid:focus, textarea:focus:required:invalid:focus,
 	max-height: 219px;
 	min-height: 219px;
 	overflow-x: overlay;
+	overflow-y: auto;
 }
 
 .scroll_list_150 {
 	max-height: 150px;
 	overflow-x: overlay;
+	overflow-y: auto; 
 }
 
 .scroll_description {
@@ -224,6 +226,7 @@ input:focus:required:invalid:focus, textarea:focus:required:invalid:focus,
 	min-height: 185px;
 	overflow-x: overlay;
 	margin-bottom: 10px;
+	overflow-y: auto;
 }
 
 .nice_list ul {

@@ -15,6 +15,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.codec.digest.Md5Crypt;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
@@ -27,20 +28,26 @@ public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    @JsonIgnore
     private Long id;
 
     private String name;
 
+    @JsonIgnore
     private String password;
 
     private Boolean active;
 
+    @JsonIgnore
     private String activationToken;
 
+    @JsonIgnore
     private String email;
 
+    @JsonIgnore
     private SubscriptionType subscriptionType;
 
+    @JsonIgnore
     private SortedSet<RecentItem> recentItems;
 
     @Id

@@ -1,6 +1,5 @@
 package com.digitalrpg.web.controller;
 
-import java.security.Principal;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -10,11 +9,9 @@ import java.util.SortedSet;
 
 import javax.validation.Valid;
 
-import org.apache.commons.collections.SetUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.web.bind.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -38,7 +35,6 @@ import com.digitalrpg.domain.model.SystemCombatItem;
 import com.digitalrpg.domain.model.SystemCombatItems;
 import com.digitalrpg.domain.model.SystemCombatProperties;
 import com.digitalrpg.domain.model.SystemType;
-import com.digitalrpg.domain.model.User;
 import com.digitalrpg.domain.model.characters.SystemCharacter;
 import com.digitalrpg.domain.model.pathfinder.PathfinderCombatProperties;
 import com.digitalrpg.web.controller.model.CombatCharacterVO;
@@ -53,10 +49,8 @@ import com.digitalrpg.web.service.combat.ItemAction;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
-import com.google.common.collect.Sets;
 
 @Controller
 @RequestMapping("/combats")
@@ -68,9 +62,19 @@ public class CombatController {
     @Autowired
     private CombatService combatService;
 
-    @ModelAttribute("combats")
-    public List<Combat> getCombats(@AuthenticationPrincipal UserWrapper user) {
-        return ImmutableList.of();
+    @ModelAttribute("activeCombats")
+    public List<Combat> getActiveCombats(@AuthenticationPrincipal UserWrapper user) {
+        return combatService.getCombats(user.unwrap(), CombatState.STARTED);
+    }
+
+    @ModelAttribute("futureCombats")
+    public List<Combat> getFutureCombats(@AuthenticationPrincipal UserWrapper user) {
+        return combatService.getCombats(user.unwrap(), CombatState.STAGING, CombatState.READY);
+    }
+
+    @ModelAttribute("historicCombats")
+    public List<Combat> getHistoricCombats(@AuthenticationPrincipal UserWrapper user) {
+        return combatService.getCombats(user.unwrap(), CombatState.FINISHED);
     }
 
     @RequestMapping(method = RequestMethod.GET)
