@@ -7,6 +7,7 @@ import java.util.Properties;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp.BasicDataSource;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -40,7 +41,10 @@ public class PersistenceConfig {
     @Bean
     public DataSource restDataSource() throws URISyntaxException {
         BasicDataSource dataSource = new BasicDataSource();
-        String databaseUrl = env.getProperty("DATABASE_URL");
+        String databaseUrl = env.getProperty("DATABASE_URL", "");
+        if(StringUtils.isBlank(databaseUrl)l) {
+            databaseUrl = env.getProperty("OPENSHIFT_POSTGRESQL_DB_URL") + "/" + env.getProperty("PGDATABASE");
+        }
         URI uri = new URI(databaseUrl);
         dataSource.setDriverClassName(env.getProperty("database.driverClassName"));
         dataSource.setUrl("jdbc:postgresql://" + uri.getHost() + ":" + uri.getPort() + uri.getPath());
