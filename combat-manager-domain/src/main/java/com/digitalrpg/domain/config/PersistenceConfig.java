@@ -42,7 +42,7 @@ public class PersistenceConfig {
     public DataSource restDataSource() throws URISyntaxException {
         BasicDataSource dataSource = new BasicDataSource();
         String databaseUrl = env.getProperty("DATABASE_URL", "");
-        if(StringUtils.isBlank(databaseUrl)l) {
+        if (StringUtils.isBlank(databaseUrl)) {
             databaseUrl = env.getProperty("OPENSHIFT_POSTGRESQL_DB_URL") + "/" + env.getProperty("PGDATABASE");
         }
         URI uri = new URI(databaseUrl);
