@@ -68,10 +68,18 @@ public class PersistenceConfig {
     }
 
     Properties hibernateProperties() {
+        // <prop key="hibernate.cache">false</prop>
+        // <!-- <prop key="hibernate.cache.use_query_cache">true</prop> -->
+        // <prop key="hibernate.cglib.use_reflection_optimizer">fal se</prop>
+        // <prop key="cache.provider_class">org.hibernate.cache.NoC acheProvider</prop>
+        // <prop key="hibernate.cache.use_second_level_cache">false </prop>
         return new Properties() {
             {
                 setProperty("hibernate.hbm2ddl.auto", env.getProperty("hibernate.hbm2ddl.auto"));
                 setProperty("hibernate.dialect", env.getProperty("hibernate.dialect"));
+                setProperty("hibernate.cache", "false");
+                setProperty("hibernate.cglib.use_reflection_optimizer", "false");
+                setProperty("hibernate.cache.use_second_level_cache", "false");
             }
         };
     }
